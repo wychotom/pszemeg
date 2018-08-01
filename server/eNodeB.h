@@ -8,10 +8,11 @@ class eNodeB
 {
     public:
         eNodeB();
+        ~eNodeB();
         void start();
 
     private:
-        std::vector<Channel> channels;
+        std::vector<Channel*> channels;
 };
 
 #endif

@@ -56,16 +56,15 @@ Channel::Channel(int port) : max_number_of_events(255)
 
 Channel::~Channel()
 {
+    delete[] this->events;
     close(this->socket_fd);
 }
 
 void Channel::set_socket_non_blocking(int socket_fd)
 {
-    int flags;
-
-    flags = fcntl (socket_fd, F_GETFL, 0);
+    int flags = fcntl(socket_fd, F_GETFL, 0);
     flags |= O_NONBLOCK;
-    fcntl (socket_fd, F_SETFL, flags);
+    fcntl(socket_fd, F_SETFL, flags);
 }
 
 void Channel::handle_connections()
