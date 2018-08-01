@@ -17,16 +17,16 @@ Channel::Channel(int port) : max_number_of_events(255)
     this->socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 
     this->addr.sin_family = AF_INET;
-    this->addr.sin_port = htons (this->port);
+    this->addr.sin_port = htons(this->port);
     this->addr.sin_addr.s_addr = INADDR_ANY;
 
-    if(bind(this->socket_fd, (struct sockaddr*) &addr, sizeof (addr)) == -1)
+    if(bind(this->socket_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
     {
         perror("ERROR: ");
         throw std::string("Bind fail");
     }
 
-    set_socket_non_blocking(this->epoll_fd);
+    set_socket_non_blocking(this->socket_fd);
 
     if(listen(this->socket_fd, 5) == -1)
     {
@@ -41,7 +41,7 @@ Channel::Channel(int port) : max_number_of_events(255)
     }
 
     std::memset(&(this->event), 0, sizeof(struct epoll_event));
-    this->event.data.fd = this->epoll_fd;
+    this->event.data.fd = this->socket_fd;
     this->event.events = EPOLLIN | EPOLLET;
 
     if(epoll_ctl(this->epoll_fd, EPOLL_CTL_ADD, this->socket_fd, &event) == -1)
@@ -63,8 +63,8 @@ Channel::~Channel()
 void Channel::set_socket_non_blocking(int socket_fd)
 {
     int flags = fcntl(socket_fd, F_GETFL, 0);
-    flags |= O_NONBLOCK;
-    fcntl(socket_fd, F_SETFL, flags);
+    flags = (flags == -1 ? 0 : flags);
+    fcntl(socket_fd, F_SETFL, flags | O_NONBLOCK);
 }
 
 void Channel::handle_connections()
