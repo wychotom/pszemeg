@@ -8,11 +8,13 @@ class Channel
 {
     public:
         Channel(int port);
+        ~Channel();
         void handle_connections();
 
     private:
         void set_socket_non_blocking(int socket_fd);
         void accept_new_connection();
+        void read_incoming_data(int event_fd);
 
         int port;
         int socket_fd, epoll_fd;

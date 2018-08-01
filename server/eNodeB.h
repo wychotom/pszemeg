@@ -2,14 +2,16 @@
 #define ENB
 
 #include "Channel.h"
+#include <vector>
 
 class eNodeB
 {
     public:
         eNodeB();
+        void start();
 
     private:
-        Channel ch1;
+        std::vector<Channel> channels;
 };
 
 #endif

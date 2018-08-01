@@ -54,6 +54,11 @@ Channel::Channel(int port) : max_number_of_events(255)
     std::memset(this->events, 0, sizeof(struct epoll_event) * max_number_of_events);
 }
 
+Channel::~Channel()
+{
+    close(this->socket_fd);
+}
+
 void Channel::set_socket_non_blocking(int socket_fd)
 {
     int flags;
@@ -76,6 +81,10 @@ void Channel::handle_connections()
             if (this->socket_fd == this->events[i].data.fd)
             {
                 accept_new_connection();
+            }
+            else
+            {
+                read_incoming_data(this->events[i].data.fd);
             }
         }
         else
@@ -113,5 +122,27 @@ void Channel::accept_new_connection()
             perror("ERROR: ");
             throw std::string("Epoll ctl fail");
         }
+    }
+}
+
+void Channel::read_incoming_data(int event_fd)
+{
+    ssize_t bytes_count;
+    char buffer[1024];
+
+    while((bytes_count = read(event_fd, buffer, sizeof(buffer))) > 0)
+    {
+        std::cout << "NEW MSG: [" << buffer << "] FROM: [" << event_fd << "]" << std::endl;
+    }
+
+    if(bytes_count == -1 && errno != EAGAIN)
+    {
+        perror("ERROR: ");
+        throw std::string("Read fail");
+    }
+    else if(bytes_count == 0)
+    {
+        std::cout << event_fd << " has disconnected" << std::endl;
+        close(event_fd);
     }
 }
