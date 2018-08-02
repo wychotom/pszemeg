@@ -1,5 +1,5 @@
-#ifndef ENB
-#define ENB
+#ifndef _ENB
+#define _ENB
 
 #include "Channel.h"
 #include <vector>

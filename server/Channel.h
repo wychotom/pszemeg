@@ -1,5 +1,5 @@
-#ifndef CHANNEL
-#define CHANNEL
+#ifndef _CHANNEL
+#define _CHANNEL
 
 #include <netinet/in.h>
 #include <sys/epoll.h>
