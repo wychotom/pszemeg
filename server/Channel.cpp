@@ -10,6 +10,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <netdb.h>
+#include <map>
 
 Channel::Channel(int port) : max_number_of_events(255)
 {
@@ -70,6 +71,7 @@ void Channel::set_socket_non_blocking(int socket_fd)
 void Channel::handle_connections()
 {
     int number_of_incoming_events;
+    int MIB_wait_couner;
 
     number_of_incoming_events = epoll_wait(this->epoll_fd, this->events, max_number_of_events, 0);
 
@@ -88,7 +90,8 @@ void Channel::handle_connections()
         }
         else
         {
-            //ERR
+            clients_fds.erase(this->events[i].events);
+            close(this->events[i].events);
         }
     }
 }
@@ -113,6 +116,9 @@ void Channel::accept_new_connection()
 
         set_socket_non_blocking(new_client_fd);
 
+        clients_fds.insert(std::pair<int,int>(clients_fds.size(), new_client_fd));
+        send_data(new_client_fd, "HELLO");
+
         event.data.fd = new_client_fd;
         event.events = EPOLLIN | EPOLLET;
 
@@ -121,6 +127,7 @@ void Channel::accept_new_connection()
             perror("ERROR: ");
             throw std::string("Epoll ctl fail");
         }
+
     }
 }
 
@@ -142,6 +149,16 @@ void Channel::read_incoming_data(int event_fd)
     else if(bytes_count == 0)
     {
         std::cout << event_fd << " has disconnected" << std::endl;
+        clients_fds.erase(event_fd);
         close(event_fd);
+    }
+}
+
+void Channel::send_data(int socket_fd, const char message[1024])
+{
+    if(send(socket_fd , message , strlen(message) + 1, 0) < 0)
+    {
+        perror("ERROR: ");
+        throw std::string("Send fail");
     }
 }
