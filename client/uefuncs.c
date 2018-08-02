@@ -59,7 +59,7 @@ void handlerecv(int socket)
     return;
 }
 
-void receive_broadcast_msg()
+void receive_broadcast_msg(int * flag)
 {
 	int broadcast_socket = socket(AF_INET, SOCK_DGRAM, 0);
 
@@ -89,22 +89,26 @@ void receive_broadcast_msg()
 	int recvbytes;
 	char recvbuf[BUFFER_LENGTH];
 
-	struct message *msg_from_enb = (struct message *)calloc(sizeof(struct message), 1);
+	struct MIB_MESSAGE *msg_from_enb = (struct MIB_MESSAGE *)calloc(sizeof(struct MIB_MESSAGE), 1);
 
 	ca_len = sizeof(clientConfig);
-    recvbytes = recvfrom(broadcast_socket, msg_from_enb, sizeof(struct message), 0,
+    recvbytes = recvfrom(broadcast_socket, msg_from_enb, sizeof(struct MIB_MESSAGE), 0,
 						(struct sockaddr *)&clientConfig, &ca_len);
 
 	if(recvbytes > 0)
 	{
 		if (recvbytes > BUFFER_LENGTH)
 		{
+			free(msg_from_enb);
 			return;
 		}
 		else
 		{
-	    	printf("from ENB %s : UDP %u : HEAD = %s\tMSG = %s \n",inet_ntoa(clientConfig.sin_addr),
-					ntohs(clientConfig.sin_port), msg_from_enb->msg_header, msg_from_enb->msg);
+			*flag = 1;
+	    	printf("from ENB %s : UDP %u :\nBROADCAST = %d\nPRACH = %d\nDL_SCH = %d\nUL_SCH = %d\nPDDCH = %d\nPUCCH = %d\n"
+			,inet_ntoa(clientConfig.sin_addr), ntohs(clientConfig.sin_port), msg_from_enb->broadcast_port,
+			msg_from_enb->prach_port, msg_from_enb->dl_sch_port, msg_from_enb->ul_sch_port, msg_from_enb->pdcch_port,
+			msg_from_enb->pucch_port);
 		}
 	}
 	if(recvbytes == 0)
@@ -112,7 +116,7 @@ void receive_broadcast_msg()
         printf("Server dropped connection.\n");
         exit(EXIT_SUCCESS);
     }
-
+	free(msg_from_enb);
     return;
 }
 

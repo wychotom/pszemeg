@@ -14,10 +14,14 @@
 #define REMOTE_SERVER_PORT 20700
 #define MAX_MSG 100
 
-struct message
+struct MIB_MESSAGE
 {
-    char msg_header[6];
-    char msg[1024 - 6];
+    int prach_port;
+    int broadcast_port;
+    int dl_sch_port;
+    int ul_sch_port;
+    int pdcch_port;
+    int pucch_port;
 };
 
 
@@ -74,34 +78,16 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-  struct message *sending = (struct message *)calloc(sizeof(struct message), 1);
-  //sending->msg_header = (char *)calloc(sizeof(char), 6);
-  //sending->msg = (char *)calloc(sizeof(char), 1024 - 5);
+  struct MIB_MESSAGE *sending = (struct MIB_MESSAGE *)calloc(sizeof(struct MIB_MESSAGE), 1);
 
-  char * msg1 = "PRACH";
-  char * msg2 = "KURWA NO NIE ZABIJE XD";
+  sending->broadcast_port = 20700;
+  sending->prach_port = 20701;
+  sending->dl_sch_port = 20702;
+  sending->ul_sch_port = 20703;
+  sending->pdcch_port = 20704;
+  sending->pucch_port = 20705;
 
-  memcpy(sending->msg_header, msg1, strlen(msg1));
-  memcpy(sending->msg, msg2, strlen(msg2));
-  //sending->msg = argv[3];
-
-
-  /* send data */
-  // for(i=2;i<argc;i++) {
-  //   rc = sendto(sd, argv[i], strlen(argv[i])+1, 0, 
-	// 	(struct sockaddr *) &remoteServAddr, 
-	// 	sizeof(remoteServAddr));
-
-  //   if(rc<0) {
-  //     printf("%s: cannot send data %d \n",argv[0],rc);
-  //     close(sd);
-  //     exit(1);
-  //   }
-
-  // }
-  
-  //for(i=2;i<argc;i++) {
-    rc = sendto(sd, sending, sizeof(struct message), 0, 
+    rc = sendto(sd, sending, sizeof(struct MIB_MESSAGE), 0, 
 		(struct sockaddr *) &remoteServAddr, 
 		sizeof(remoteServAddr));
 
