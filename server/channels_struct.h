@@ -7,3 +7,15 @@ struct MIB_MESSAGE
     int pdcch_port;
     int pucch_port;
 };
+
+struct DCI_MESSAGE
+{
+    unsigned char format0_a_flag;
+    unsigned char freqency_hooping;
+    int riv;
+    int mcs;
+    unsigned char ndi;
+    int tpc;
+    int cyclic_shift;
+    unsigned char cqi_request;
+};

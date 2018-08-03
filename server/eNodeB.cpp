@@ -1,29 +1,32 @@
 #include "eNodeB.h"
 #include <vector>
 
-eNodeB::eNodeB()
+eNodeB::eNodeB() : pdcch(27000, 0xFFFFFF)
 {
-    this->channels.push_back(new Channel(27000));
-    this->channels.push_back(new Channel(27001));
-    this->channels.push_back(new Channel(27002));
-    this->channels.push_back(new Channel(27003));
+//    this->channels.push_back(new Channel(27000));
+//    this->channels.push_back(new Channel(27001));
+//    this->channels.push_back(new Channel(27002));
+//    this->channels.push_back(new Channel(27003));
+
 }
 
 eNodeB::~eNodeB()
 {
-    for(auto channel : this->channels)
-    {
-        delete channel;
-    }
+//    for(auto channel : this->channels)
+//    {
+//        delete channel;
+//    }
 }
 
 void eNodeB::start()
 {
     while(true)
     {
-        for(auto channel : this->channels)
+        this->pdcch.handle_connections();
+
+        if(this->pdcch.getCounter() == 0)
         {
-            channel->handle_connections();
+            this->pdcch.send_dci_to_all(true);
         }
     }
 }

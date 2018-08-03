@@ -12,9 +12,10 @@
 #include <netdb.h>
 #include <map>
 
-Channel::Channel(int port) : max_number_of_events(255)
+Channel::Channel(int port, size_t counter_reset) : max_number_of_events(255), counter(1)
 {
     this->port = port;
+    this->counter_reset = counter_reset;
     this->socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 
     this->addr.sin_family = AF_INET;
@@ -71,7 +72,11 @@ void Channel::set_socket_non_blocking(int socket_fd)
 void Channel::handle_connections()
 {
     int number_of_incoming_events;
-    int MIB_wait_couner;
+
+    if(++counter >= this->counter_reset)
+    {
+        counter = 0;
+    }
 
     number_of_incoming_events = epoll_wait(this->epoll_fd, this->events, max_number_of_events, 0);
 
@@ -116,7 +121,7 @@ void Channel::accept_new_connection()
 
         set_socket_non_blocking(new_client_fd);
 
-        clients_fds.insert(std::pair<int,int>(clients_fds.size(), new_client_fd));
+        clients_fds.insert(std::pair<int,int>(new_client_fd, clients_fds.size()));
         send_data(new_client_fd, "HELLO");
 
         event.data.fd = new_client_fd;
@@ -133,13 +138,7 @@ void Channel::accept_new_connection()
 
 void Channel::read_incoming_data(int event_fd)
 {
-    ssize_t bytes_count;
-    char buffer[1024];
-
-    while((bytes_count = read(event_fd, buffer, sizeof(buffer))) > 0)
-    {
-        std::cout << "NEW MSG: [" << buffer << "] FROM: [" << event_fd << "]" << std::endl;
-    }
+    ssize_t bytes_count = recv_message(event_fd);
 
     if(bytes_count == -1 && errno != EAGAIN)
     {
@@ -156,9 +155,14 @@ void Channel::read_incoming_data(int event_fd)
 
 void Channel::send_data(int socket_fd, const char message[1024])
 {
-    if(send(socket_fd , message , strlen(message) + 1, 0) < 0)
+    if(send(socket_fd, message, strlen(message) + 1, 0) < 0)
     {
         perror("ERROR: ");
         throw std::string("Send fail");
     }
+}
+
+size_t Channel::getCounter()
+{
+    return counter;
 }
