@@ -22,7 +22,7 @@ void PDCCH::send_message(int socket_fd)
     if(send(socket_fd, &dci_message, sizeof(struct DCI_MESSAGE), 0) < 0)
     {
         perror("ERROR: ");
-        throw std::string("Send fail");
+        throw std::string("DCI send fail");
     }
 
     std::cout << "DCI sent to " << clients_fds[socket_fd] << std::endl;

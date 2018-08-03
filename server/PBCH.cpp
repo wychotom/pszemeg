@@ -51,14 +51,14 @@ PBCH::PBCH(int port)
 
 void PBCH::send_MIB()
 {
-    MIB_MESSAGE new_message;
+    struct MIB_MESSAGE new_message;
 
-    new_message.broadcast_port = 20700;
-    new_message.dl_sch_port = 20701;
-    new_message.ul_sch_port = 20702;
-    new_message.pdcch_port = 20703;
-    new_message.pucch_port = 20704;
-    new_message.prach_port = 20705;
+    new_message.broadcast_port = PORTS::broadcast_port;
+    new_message.dl_sch_port = PORTS::dl_sch_port;
+    new_message.ul_sch_port = PORTS::ul_sch_port;
+    new_message.pdcch_port = PORTS::pdcch_port;
+    new_message.pucch_port = PORTS::pucch_port;
+    new_message.prach_port = PORTS::prach_port;
 
     if(sendto(this->socket_fd, &new_message, sizeof(struct MIB_MESSAGE), 0, (struct sockaddr*) &server_addr, sizeof(this->server_addr)) < 0)
     {

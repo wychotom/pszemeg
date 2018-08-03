@@ -12,7 +12,7 @@ class PDCCH : public Channel
     private:
         bool cqi_request;
 
-        void send_message(int socket_fd) override;
+        void send_message(int socket_fd);
         int recv_message(int event_fd) override;
 };
 

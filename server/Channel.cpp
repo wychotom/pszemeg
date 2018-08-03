@@ -147,7 +147,7 @@ void Channel::read_incoming_data(int event_fd)
     }
     else if(bytes_count == 0)
     {
-        std::cout << event_fd << " has disconnected" << std::endl;
+        std::cout << clients_fds[event_fd] << " has disconnected" << std::endl;
         clients_fds.erase(event_fd);
         close(event_fd);
     }

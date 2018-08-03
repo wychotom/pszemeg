@@ -18,7 +18,6 @@ class Channel
         void accept_new_connection();
         void read_incoming_data(int event_fd);
         void send_data(int socket_fd, const char message[1024]);
-        virtual void send_message(int socket_fd) = 0;
         virtual int recv_message(int event_fd) = 0;
 
         int port;

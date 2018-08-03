@@ -1,9 +1,12 @@
 #include <iostream>
 #include "eNodeB.h"
 #include <string>
+#include <ctime>
 
 int main()
 {
+    srand(time(NULL));
+
     try
     {
         eNodeB enb;
