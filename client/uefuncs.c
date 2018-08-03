@@ -64,7 +64,7 @@ int get_unique_name()
 	return rand() % RAND_MAX;
 }
 
-void set_up_socket(int * sockfd, int port)
+void set_up_socket(int * sockfd, char port)
 {
 	int errflag;
 
@@ -76,7 +76,7 @@ void set_up_socket(int * sockfd, int port)
 	hints.ai_socktype = SOCK_STREAM; /* We want a TCP socket */
 	hints.ai_flags = AI_PASSIVE;     /* All interfaces */
 
-	errflag = getaddrinfo(NULL, port, &hints, &result);
+	errflag = getaddrinfo(NULL, &port, &hints, &result);
 	if (errflag != 0)
 	{
 		perror("getaddrinfo");
@@ -129,15 +129,15 @@ int set_non_block(int sockfd)
 
 void open_channels(struct eNB_conn_info * eNB, struct epoll_event *ev, int *efd)
 {
-	init_channel((*&eNB).broadcast, ev, efd);
-	init_channel((*&eNB).prach, ev, efd);
-	init_channel((*&eNB).dl_sch, ev, efd);
-	init_channel(&eNB.ul_sch, ev, efd);
-	init_channel(&eNB.pdcch, ev, efd);
-	init_channel(&eNB.pucch, ev, efd);
+	init_channel(&eNB->broadcast, ev, efd);
+	init_channel(&eNB->prach, ev, efd);
+	init_channel(&eNB->dl_sch, ev, efd);
+	init_channel(&eNB->ul_sch, ev, efd);
+	init_channel(&eNB->pdcch, ev, efd);
+	init_channel(&eNB->pucch, ev, efd);
 }
 
-void init_channel(struct int_pair *channel, struct epoll_event *ev, int *efd)
+void init_channel(struct conn_pair *channel, struct epoll_event *ev, int *efd)
 {
 	set_up_socket(&channel->sock, channel->port);
 	set_non_block(channel->sock);
@@ -176,5 +176,5 @@ void handletraffic(struct MIB_MESSAGE init_msg)
 	const int max_epoll_events = 6;
 	struct epoll_event ev, events[max_epoll_events];
 
-	void open_channels(&connection_information, &ev, &efd)
+	open_channels(&connection_information, &ev, &efd);
 }

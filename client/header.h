@@ -23,20 +23,20 @@
 #define BUFFER_LENGTH   1024
 #define BROADCAST_PORT  20700
 
-struct int_pair
+struct conn_pair
 {
     int sock;
-    int port;
+    char port;
 };
 
 struct eNB_conn_info
 {
-    struct int_pair broadcast;
-    struct int_pair prach;
-    struct int_pair dl_sch;
-    struct int_pair ul_sch;
-    struct int_pair pdcch;
-    struct int_pair pucch;
+    struct conn_pair broadcast;
+    struct conn_pair prach;
+    struct conn_pair dl_sch;
+    struct conn_pair ul_sch;
+    struct conn_pair pdcch;
+    struct conn_pair pucch;
 };
 
 
@@ -59,12 +59,12 @@ struct RANDOM_ACCESS_PREAMBLE
 
 
 
-void open_channels(struct eNB_conn_info eNB, struct epoll_event * ev, int * efd);
-void init_channel(struct int_pair * channel, struct epoll_event * ev, int * efd);
+void open_channels(struct eNB_conn_info * eNB, struct epoll_event *ev, int *efd);
+void init_channel(struct conn_pair * channel, struct epoll_event * ev, int * efd);
 void add_socket_epoll(struct epoll_event * ev, int * efd, int to_watch);
-void handletraffic();
+void handletraffic(struct MIB_MESSAGE init_msg);
 
-void set_up_socket(int *, int);
+void set_up_socket(int *, char);
 int set_non_block();
 int get_unique_name();
 

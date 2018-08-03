@@ -13,23 +13,24 @@ int main(int argc, char ** argv)
 		receive_broadcast_msg(&waiting_for_broadcast, &ports);
 		if(waiting_for_broadcast)
 		{
-			connection_information.broadcast.port = ports.broadcast_port;
-			connection_information.broadcast.sock = 0;
+			// connection_information.broadcast.port = ports.broadcast_port;
+			// connection_information.broadcast.sock = 0;
 
-			connection_information.prach.port = ports.prach_port;
-			connection_information.prach.sock = 0;
+			// connection_information.prach.port = ports.prach_port;
+			// connection_information.prach.sock = 0;
 
-			connection_information.dl_sch.port = ports.dl_sch_port;
-			connection_information.dl_sch.sock = 0;
+			// connection_information.dl_sch.port = ports.dl_sch_port;
+			// connection_information.dl_sch.sock = 0;
 
-			connection_information.ul_sch.port = ports.ul_sch_port;
-			connection_information.ul_sch.port = 0;
+			// connection_information.ul_sch.port = ports.ul_sch_port;
+			// connection_information.ul_sch.port = 0;
 
-			connection_information.pdcch.port = ports.pdcch_port;
-			connection_information.pdcch.sock = 0;
+			// connection_information.pdcch.port = ports.pdcch_port;
+			// connection_information.pdcch.sock = 0;
 
-			connection_information.pucch.port = ports.pucch_port;
-			connection_information.pucch.sock = 0;
+			// connection_information.pucch.port = ports.pucch_port;
+			// connection_information.pucch.sock = 0;
+			handletraffic(ports);
 		}
 	}
 
