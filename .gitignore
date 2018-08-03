@@ -1,4 +1,6 @@
 **/.vscode/**
-server
+**/.idea/**
+**/cmake-build-debug/**
 *.out
 *.o
+CMakeLists.txt

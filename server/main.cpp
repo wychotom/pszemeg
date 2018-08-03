@@ -1,6 +1,17 @@
 #include <iostream>
+#include "eNodeB.h"
+#include <string>
 
 int main()
 {
-    std::cout << "Hello world!";
+    try
+    {
+        eNodeB enb;
+        std::cout << "\n\nJESZCZE DZIALA :D\n\n";
+        enb.start();
+    }
+    catch(std::string e)
+    {
+        std::cout << e << std::endl;
+    }
 }
