@@ -2,7 +2,7 @@
 #include <vector>
 #include <iostream>
 
-eNodeB::eNodeB() : pdcch(27000, 0xFFFFFF), pbch(27019)
+eNodeB::eNodeB() : pdcch(20703, 0xFFFFFF), pbch(20700)
 {
 //    this->channels.push_back(new Channel(27000));
 //    this->channels.push_back(new Channel(27001));
