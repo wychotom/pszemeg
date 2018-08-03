@@ -6,11 +6,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include <string.h>
-#include <signal.h>
 #include <netinet/in.h>
-#include <arpa/inet.h>
 #include <netdb.h>
-#include <getopt.h>
 #include <sys/epoll.h>
 #include <sys/utsname.h>
 #include <sys/fcntl.h>
@@ -18,6 +15,7 @@
 #include <netdb.h>
 #include <time.h>
 #include <assert.h>
+#include <errno.h>
 
 #define HEADER_LENGTH   6
 #define BUFFER_LENGTH   1024
@@ -26,7 +24,8 @@
 struct conn_pair
 {
     int sock;
-    char port;
+    int port;
+    int type;//0 downlink 1 uplink
 };
 
 struct eNB_conn_info
@@ -62,9 +61,10 @@ struct RANDOM_ACCESS_PREAMBLE
 void open_channels(struct eNB_conn_info * eNB, struct epoll_event *ev, int *efd);
 void init_channel(struct conn_pair * channel, struct epoll_event * ev, int * efd);
 void add_socket_epoll(struct epoll_event * ev, int * efd, int to_watch);
-void handletraffic(struct MIB_MESSAGE init_msg);
+void handletraffic(struct MIB_MESSAGE *init_msg);
 
-void set_up_socket(int *, char);
+void set_up_socket(int *, int);
+
 int set_non_block();
 int get_unique_name();
 

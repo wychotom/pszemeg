@@ -30,7 +30,9 @@ int main(int argc, char ** argv)
 
 			// connection_information.pucch.port = ports.pucch_port;
 			// connection_information.pucch.sock = 0;
-			handletraffic(ports);
+			printf("BC: sock = %d\t port = %d\n", 0, ports.prach_port);
+			
+			handletraffic(&ports);
 		}
 	}
 
