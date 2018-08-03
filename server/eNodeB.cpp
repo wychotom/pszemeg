@@ -2,20 +2,21 @@
 #include <vector>
 #include <iostream>
 
-eNodeB::eNodeB() : pbch(27019)
+eNodeB::eNodeB() : pdcch(27000, 0xFFFFFF), pbch(27019)
 {
-    this->channels.push_back(new Channel(27020));
-    this->channels.push_back(new Channel(27021));
-    this->channels.push_back(new Channel(27022));
-    this->channels.push_back(new Channel(27023));
+//    this->channels.push_back(new Channel(27000));
+//    this->channels.push_back(new Channel(27001));
+//    this->channels.push_back(new Channel(27002));
+//    this->channels.push_back(new Channel(27003));
+
 }
 
 eNodeB::~eNodeB()
 {
-    for(auto channel : this->channels)
-    {
-        delete channel;
-    }
+//    for(auto channel : this->channels)
+//    {
+//        delete channel;
+//    }
 }
 
 void eNodeB::start()
@@ -32,9 +33,11 @@ void eNodeB::start()
             this->pbch.send_MIB();
         }
 
-        for(auto channel : this->channels)
+        this->pdcch.handle_connections();
+
+        if(this->pdcch.getCounter() == 0)
         {
-            channel->handle_connections();
+            this->pdcch.send_dci_to_all(true);
         }
     }
 }

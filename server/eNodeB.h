@@ -2,6 +2,7 @@
 #define _ENB
 
 #include "Channel.h"
+#include "PDCCH.h"
 #include "PBCH.h"
 #include <vector>
 
@@ -13,7 +14,8 @@ class eNodeB
         void start();
 
     private:
-        std::vector<Channel*> channels;
+        //std::vector<Channel*> channels;
+        PDCCH pdcch;
         PBCH pbch;
 };
 
