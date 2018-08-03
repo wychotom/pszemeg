@@ -3,9 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
 #include <sys/socket.h>
-#include <pthread.h>
 #include <unistd.h>
 #include <string.h>
 #include <signal.h>
@@ -13,22 +11,34 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <getopt.h>
+#include <sys/epoll.h>
+#include <sys/utsname.h>
+#include <sys/fcntl.h>
+#include <sys/types.h>
+#include <netdb.h>
+#include <time.h>
 #include <assert.h>
 
 #define HEADER_LENGTH   6
 #define BUFFER_LENGTH   1024
-
 #define BROADCAST_PORT  20700
 
-//broadcast, shared, control
+struct int_pair
+{
+    int sock;
+    int port;
+};
 
-void send_message(char *, int);
-char *receive_message(int);
-void handlerecv(int);
+struct eNB_conn_info
+{
+    struct int_pair broadcast;
+    struct int_pair prach;
+    struct int_pair dl_sch;
+    struct int_pair ul_sch;
+    struct int_pair pdcch;
+    struct int_pair pucch;
+};
 
-void receive_broadcast_msg(int *);
-void set_non_block();
-const char* getUniqueName();
 
 struct MIB_MESSAGE
 {
@@ -38,6 +48,27 @@ struct MIB_MESSAGE
     int ul_sch_port;
     int pdcch_port;
     int pucch_port;
+    int checksum;
 };
+
+struct RANDOM_ACCESS_PREAMBLE
+{
+    short int preamble; //505245414d424c45
+    int RA_RNTI;
+};
+
+
+
+void open_channels(struct eNB_conn_info eNB, struct epoll_event * ev, int * efd);
+void init_channel(struct int_pair * channel, struct epoll_event * ev, int * efd);
+void add_socket_epoll(struct epoll_event * ev, int * efd, int to_watch);
+void handletraffic();
+
+void set_up_socket(int *, int);
+int set_non_block();
+int get_unique_name();
+
+void receive_broadcast_msg(int *, struct MIB_MESSAGE *);
+
 
 #endif

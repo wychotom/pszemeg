@@ -1,72 +1,13 @@
 #include "header.h"
 
-#include <sys/utsname.h>
-#include <time.h>
-
-void send_message(char *msg, int sock)
-{
-	int sentbytes;
-	char msgbuff[BUFFER_LENGTH];
-	memset(msgbuff, '\0', BUFFER_LENGTH);
-	strcpy(msgbuff, msg);
-	sentbytes = send(sock, msgbuff, strlen(msgbuff), 0);
-}
-
-char *receive_message(int sock)
-{
-	int recvbytes;
-	char recvbuf[BUFFER_LENGTH];
-	struct sockaddr_in clientConfig;
-
-	//recvbytes = recv(sock, recvbuf, BUFFER_LENGTH, MSG_DONTWAIT);
-    //recvfrom(s, buf, sizeof(buf)-1, 0, (sockaddr *)&si_other, &slen);
-	memset(recvbuf, 0x0, BUFFER_LENGTH);
-	int ca_len = sizeof(clientConfig);
-    recvbytes = recvfrom(sock, recvbuf, BUFFER_LENGTH, 0, (struct sockaddr *)&clientConfig, &ca_len);
-	if(recvbytes > 0)
-	{
-        printf("yo im here\n");
-
-		if (recvbytes > BUFFER_LENGTH)
-		{
-			return NULL;
-		}
-		else
-		{
-			
-		}
-	}
-	if(recvbytes == 0)
-    {
-        printf("Server dropped connection.\n");
-        exit(EXIT_SUCCESS);
-    }
-	return NULL;
-}
-
-void handlerecv(int socket)
-{
-	char *result = NULL;
-	while(1)
-	{
-		result = receive_message(socket);
-		if(result != NULL)
-		{
-			printf("%s\n", result);
-            free(result);
-		}
-	}
-    return;
-}
-
-void receive_broadcast_msg(int * flag)
+void receive_broadcast_msg(int * flag, struct MIB_MESSAGE * return_MIB)
 {
 	int broadcast_socket = socket(AF_INET, SOCK_DGRAM, 0);
 
     assert(broadcast_socket != -1);
 
 	int broadcast = 1;
-    int ca_len;
+    unsigned int ca_len;
 	int retval = setsockopt(broadcast_socket, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast));
     if(retval == -1)
 	{
@@ -87,8 +28,6 @@ void receive_broadcast_msg(int * flag)
 	}
 
 	int recvbytes;
-	char recvbuf[BUFFER_LENGTH];
-
 	struct MIB_MESSAGE *msg_from_enb = (struct MIB_MESSAGE *)calloc(sizeof(struct MIB_MESSAGE), 1);
 
 	ca_len = sizeof(clientConfig);
@@ -105,29 +44,137 @@ void receive_broadcast_msg(int * flag)
 		else
 		{
 			*flag = 1;
-	    	printf("from ENB %s : UDP %u :\nBROADCAST = %d\nPRACH = %d\nDL_SCH = %d\nUL_SCH = %d\nPDDCH = %d\nPUCCH = %d\n"
-			,inet_ntoa(clientConfig.sin_addr), ntohs(clientConfig.sin_port), msg_from_enb->broadcast_port,
-			msg_from_enb->prach_port, msg_from_enb->dl_sch_port, msg_from_enb->ul_sch_port, msg_from_enb->pdcch_port,
-			msg_from_enb->pucch_port);
+			*return_MIB = *msg_from_enb;
 		}
 	}
 	if(recvbytes == 0)
     {
-        printf("Server dropped connection.\n");
+        perror("Server dropped connection.\n");
         exit(EXIT_SUCCESS);
     }
-	free(msg_from_enb);
+	if(!flag)
+		free(msg_from_enb);
+
     return;
 }
 
-const char* getUniqueName()
+int get_unique_name()
 {
+	srand(time(NULL));
+	return rand() % RAND_MAX;
+}
 
-	static struct utsname u;
-	if ( uname(&u) < 0 )
-	{       
-		assert(0);   
-		return "unknown";
+void set_up_socket(int * sockfd, int port)
+{
+	int errflag;
+
+	struct addrinfo hints;
+	struct addrinfo *result, *rp;
+
+	memset (&hints, 0, sizeof (struct addrinfo));
+	hints.ai_family = AF_UNSPEC;     /* Return IPv4 and IPv6 choices */
+	hints.ai_socktype = SOCK_STREAM; /* We want a TCP socket */
+	hints.ai_flags = AI_PASSIVE;     /* All interfaces */
+
+	errflag = getaddrinfo(NULL, port, &hints, &result);
+	if (errflag != 0)
+	{
+		perror("getaddrinfo");
+		//return -1;
 	}
-	return u.nodename;
+
+	for (rp = result; rp != NULL; rp = rp->ai_next)
+	{
+		*sockfd = socket (rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+		if (*sockfd == -1)
+			continue;
+
+		errflag = bind (*sockfd, rp->ai_addr, rp->ai_addrlen);
+		if (errflag == 0)
+		{
+			break;
+		}
+
+		close (*sockfd);
+	}
+
+	if (rp == NULL)
+	{
+		perror("Could not bind\n");
+	}
+
+	freeaddrinfo (result);
+}
+
+int set_non_block(int sockfd)
+{
+	int flags, retval;
+
+	flags = fcntl (sockfd, F_GETFL, 0);
+	if (flags == -1)
+	{
+		perror ("fcntl");
+		return -1;
+	}
+
+	flags |= O_NONBLOCK;
+	retval = fcntl (sockfd, F_SETFL, flags);
+	if (retval == -1)
+	{
+		perror ("fcntl");
+		return -1;
+	}
+	return 0;
+}
+
+void open_channels(struct eNB_conn_info * eNB, struct epoll_event *ev, int *efd)
+{
+	init_channel((*&eNB).broadcast, ev, efd);
+	init_channel((*&eNB).prach, ev, efd);
+	init_channel((*&eNB).dl_sch, ev, efd);
+	init_channel(&eNB.ul_sch, ev, efd);
+	init_channel(&eNB.pdcch, ev, efd);
+	init_channel(&eNB.pucch, ev, efd);
+}
+
+void init_channel(struct int_pair *channel, struct epoll_event *ev, int *efd)
+{
+	set_up_socket(&channel->sock, channel->port);
+	set_non_block(channel->sock);
+	add_socket_epoll(ev, efd, (*channel).sock);
+
+}
+
+void add_socket_epoll(struct epoll_event *ev, int *efd, int to_watch)
+{
+	(*ev).events = EPOLLIN;
+	(*ev).data.fd = to_watch;
+	if (epoll_ctl(*efd, EPOLL_CTL_ADD, to_watch, ev) == -1) {
+		perror("epoll_ctl: xd");
+		exit(EXIT_FAILURE);
+	}
+}
+
+void handletraffic(struct MIB_MESSAGE init_msg)
+{
+	struct eNB_conn_info connection_information;//Ideally it would be an array, information about multiple eNB
+
+	connection_information.broadcast.port = init_msg.broadcast_port;
+	connection_information.broadcast.sock = 0;
+	connection_information.prach.port = init_msg.prach_port;
+	connection_information.prach.sock = 0;
+	connection_information.dl_sch.port = init_msg.dl_sch_port;
+	connection_information.dl_sch.sock = 0;
+	connection_information.ul_sch.port = init_msg.ul_sch_port;
+	connection_information.ul_sch.port = 0;
+	connection_information.pdcch.port = init_msg.pdcch_port;
+	connection_information.pdcch.sock = 0;
+	connection_information.pucch.port = init_msg.pucch_port;
+	connection_information.pucch.sock = 0;
+
+	int efd;
+	const int max_epoll_events = 6;
+	struct epoll_event ev, events[max_epoll_events];
+
+	void open_channels(&connection_information, &ev, &efd)
 }

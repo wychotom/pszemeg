@@ -2,14 +2,43 @@
 
 int main(int argc, char ** argv)
 {
-	printf("Uniq name = %s\n", getUniqueName());
+	printf("Uniq name = %d\n", get_unique_name());
 
 	int waiting_for_broadcast = 0;
+	struct MIB_MESSAGE ports;//broadcast only
+	struct eNB_conn_info connection_information;//Ideally it would be an array, information about multiple eNB
 
 	while(!waiting_for_broadcast)
 	{
-		receive_broadcast_msg(&waiting_for_broadcast);
+		receive_broadcast_msg(&waiting_for_broadcast, &ports);
+		if(waiting_for_broadcast)
+		{
+			connection_information.broadcast.port = ports.broadcast_port;
+			connection_information.broadcast.sock = 0;
+
+			connection_information.prach.port = ports.prach_port;
+			connection_information.prach.sock = 0;
+
+			connection_information.dl_sch.port = ports.dl_sch_port;
+			connection_information.dl_sch.sock = 0;
+
+			connection_information.ul_sch.port = ports.ul_sch_port;
+			connection_information.ul_sch.port = 0;
+
+			connection_information.pdcch.port = ports.pdcch_port;
+			connection_information.pdcch.sock = 0;
+
+			connection_information.pucch.port = ports.pucch_port;
+			connection_information.pucch.sock = 0;
+		}
 	}
+
+
+
+	printf("\nBROADCAST = %d\nPRACH = %d\nDL_SCH = %d\nUL_SCH = %d\nPDDCH = %d\nPUCCH = %d\n",
+			ports.broadcast_port, ports.prach_port, ports.dl_sch_port,
+			ports.ul_sch_port, ports.pdcch_port, ports.pucch_port);
+
 
 
 	/*

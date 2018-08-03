@@ -8,7 +8,6 @@
 #include <string.h> /* memset() */
 #include <sys/time.h> /* select() */ 
 
-//for Mac OS X
 #include <stdlib.h>
 
 #define REMOTE_SERVER_PORT 20700
