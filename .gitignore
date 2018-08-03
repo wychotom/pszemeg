@@ -4,3 +4,9 @@
 *.out
 *.o
 CMakeLists.txt
+CMakeCache.txt
+**/CMakeFiles/**
+Makefile
+cmake_install.cmake
+pszemeg.cbp
+

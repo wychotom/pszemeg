@@ -67,5 +67,4 @@ void PBCH::send_MIB()
         throw std::string("sendto fail");
     }
 
-    std::cout << "sent" <<std::endl;
 }
