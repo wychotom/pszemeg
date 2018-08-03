@@ -1,12 +1,13 @@
 #include "eNodeB.h"
 #include <vector>
+#include <iostream>
 
-eNodeB::eNodeB()
+eNodeB::eNodeB() : pbch(27019)
 {
-    this->channels.push_back(new Channel(27000));
-    this->channels.push_back(new Channel(27001));
-    this->channels.push_back(new Channel(27002));
-    this->channels.push_back(new Channel(27003));
+    this->channels.push_back(new Channel(27020));
+    this->channels.push_back(new Channel(27021));
+    this->channels.push_back(new Channel(27022));
+    this->channels.push_back(new Channel(27023));
 }
 
 eNodeB::~eNodeB()
@@ -19,8 +20,18 @@ eNodeB::~eNodeB()
 
 void eNodeB::start()
 {
+    int MIB_iterator = 0;
+
     while(true)
     {
+        MIB_iterator++;
+
+        if(MIB_iterator%1000000)
+        {
+            MIB_iterator = 0;
+            this->pbch.send_MIB();
+        }
+
         for(auto channel : this->channels)
         {
             channel->handle_connections();
