@@ -2,8 +2,6 @@
 #define SERVER_PDCCH_H
 
 #include "Channel.h"
-#include "UE.h"
-#include <vector>
 
 class PDCCH : public Channel
 {
@@ -14,7 +12,7 @@ class PDCCH : public Channel
     private:
         bool cqi_request;
 
-        void send_message(int socket_fd);
+        void send_message(int socket_fd) override;
         int recv_message(int event_fd) override;
 };
 

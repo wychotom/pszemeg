@@ -1,43 +1,43 @@
 #include "eNodeB.h"
-#include "channels_struct.h"
-#include "Channel.h"
 #include <vector>
 #include <iostream>
 
-eNodeB::eNodeB() :
-pdcch(PORTS::pdcch_port, 0xFFFF),
-pbch(PORTS::broadcast_port, 0xFFFFFF),
-pdsch(PORTS::dl_sch_port, &this->ue_queue)
+eNodeB::eNodeB() : pdcch(20703, 0xFFFFFF), pbch(20700)
 {
-    Channel::clients = &this->clients;
+//    this->channels.push_back(new Channel(27000));
+//    this->channels.push_back(new Channel(27001));
+//    this->channels.push_back(new Channel(27002));
+//    this->channels.push_back(new Channel(27003));
+
+}
+
+eNodeB::~eNodeB()
+{
+//    for(auto channel : this->channels)
+//    {
+//        delete channel;
+//    }
 }
 
 void eNodeB::start()
 {
+    int MIB_iterator = 0;
+
     while(true)
     {
-        // PBCH
-        if(this->pbch.getCounter() == 0)
-        {
-            this->pbch.send_mib();
-        }
-        // -----
+        MIB_iterator++;
 
-        // PDCCH
+        if(MIB_iterator == 10000000)
+        {
+            MIB_iterator = 0;
+            this->pbch.send_MIB();
+        }
+
         this->pdcch.handle_connections();
 
         if(this->pdcch.getCounter() == 0)
         {
             this->pdcch.send_dci_to_all(true);
         }
-        // -----
-
-        // PDSCH
-        this->pdsch.handle_connections();
-//        queue
-//        {
-//            this->pdsch.send_random_access_response(UE ue);
-//        }
-        // -----
     }
 }
