@@ -1,19 +1,13 @@
 #ifndef SERVER_PDCCH_H
 #define SERVER_PDCCH_H
 
-#include "Channel.h"
+#include "Uplink_channel.h"
 
-class PDCCH : public Channel
+class PDCCH : public Uplink_channel
 {
     public:
         PDCCH(int port, size_t counter_reset);
-        void send_dci_to_all(bool cqi_request);
-
-    private:
-        bool cqi_request;
-
-        void send_message(int socket_fd) override;
-        int recv_message(int event_fd) override;
+        void send_dci(bool cqi_request);
 };
 
 
