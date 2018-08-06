@@ -1,20 +1,21 @@
-#ifndef PSZEMEG_PRACH_H
-#define PSZEMEG_PRACH_H
+#ifndef SERVER_PRACH_H
+#define SERVER_PRACH_H
 
-#include "Channel.h"
+#include "Downlink_channel.h"
 
-class PRACH
+class PRACH : public Downlink_channel
 {
     public:
         PRACH(int port);
-        void receive_message(bool *receive_again, struct RANDOM_ACCESS_PREAMBLE *new_message);
+        void receive_message() override;
+    //void receive_message(bool *receive_again, struct RANDOM_ACCESS_PREAMBLE *new_message);
 
-    private:
-        int port;
-        int socket_fd;
-        struct sockaddr_in server_addr, client_addr;
 
+//    private:
+//        int port;
+//        int socket_fd;
+//        struct sockaddr_in server_addr, client_addr;
 };
 
 
-#endif //PSZEMEG_PRACH_H
+#endif //SERVER_PRACH_H

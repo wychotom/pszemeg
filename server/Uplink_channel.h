@@ -8,6 +8,7 @@ class Uplink_channel
 {
     public:
         Uplink_channel(int port, size_t counter_reset);
+        ~Uplink_channel();
         void send_message(void *message, size_t size);
         size_t get_counter();
 

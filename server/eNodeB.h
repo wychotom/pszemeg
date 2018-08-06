@@ -6,6 +6,7 @@
 #include "PDCCH.h"
 #include "PBCH.h"
 #include "PDSCH.h"
+#include "PRACH.h"
 #include "UE.h"
 
 class eNodeB
@@ -18,6 +19,7 @@ class eNodeB
         PDCCH pdcch;
         PBCH pbch;
         PDSCH pdsch;
+        PRACH prach;
         std::queue<UE*> ue_queue;
 };
 

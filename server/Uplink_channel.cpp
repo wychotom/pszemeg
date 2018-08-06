@@ -68,3 +68,8 @@ size_t Uplink_channel::get_counter()
 
     return this->counter;
 }
+
+Uplink_channel::~Uplink_channel()
+{
+    close(this->socket_fd);
+}

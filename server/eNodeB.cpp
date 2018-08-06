@@ -5,9 +5,10 @@
 #include <iostream>
 
 eNodeB::eNodeB() :
-pbch(Ports::pbch_port, 0x7FFFFFF),
-pdcch(Ports::pdcch_port, 0xFFFFFFF),
-pdsch(Ports::dl_sch_port)
+pbch(Ports::pbch_port, 0x7FFF),
+pdcch(Ports::pdcch_port, 0xFFFF),
+pdsch(Ports::dl_sch_port),
+prach(Ports::prach_port)
 {
 }
 
@@ -26,5 +27,7 @@ void eNodeB::start()
         }
 
         this->pdsch.handle_queue(this->ue_queue);
+
+        this->prach.receive_message();
     }
 }
