@@ -1,3 +1,6 @@
+#ifndef CHANNELS_STRUCT_H
+#define CHANNELS_STRUCT_H
+
 enum Ports
 {
     pbch_port = 20700,
@@ -34,3 +37,13 @@ struct DCI_MESSAGE
     int cyclic_shift;
     unsigned char cqi_request;
 };
+
+struct RANDOM_ACCESS_RESPONSE_MESSAGE
+{
+    int ra_rnti;
+    int timing_advance;
+    int uplink_resource_grant;
+    int temporary_c_rnti;
+};
+
+#endif

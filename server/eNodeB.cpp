@@ -6,7 +6,8 @@
 
 eNodeB::eNodeB() :
 pbch(Ports::pbch_port, 0x7FFFFFF),
-pdcch(Ports::pdcch_port, 0xFFFFFFF)
+pdcch(Ports::pdcch_port, 0xFFFFFFF),
+pdsch(Ports::dl_sch_port)
 {
 }
 
@@ -23,5 +24,7 @@ void eNodeB::start()
         {
             this->pdcch.send_dci(true);
         }
+
+        this->pdsch.handle_queue(this->ue_queue);
     }
 }

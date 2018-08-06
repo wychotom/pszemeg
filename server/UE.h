@@ -7,13 +7,11 @@ class UE
 {
     public:
         UE(Channel_flags flag);
-        void set_RA_RNTI(int RA_RNTI);
-        void set_C_RNTI(int C_RNTI);
+        int RA_RNTI;
+        int C_RNTI;
         Channel_flags get_flag();
 
     private:
-        int RA_RNTI;
-        int C_RNTI;
         Channel_flags flag;
 };
 
