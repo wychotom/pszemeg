@@ -1,8 +1,9 @@
 #include "UE.h"
+#include "channels_struct.h"
 
-UE::UE(int socket_fd)
+UE::UE(Channel_flags flag)
 {
-    this->socket_fd = socket_fd;
+    this->flag = flag;
 }
 
 void UE::set_RA_RNTI(int RA_RNTI)
@@ -15,7 +16,7 @@ void UE::set_C_RNTI(int C_RNTI)
     this->C_RNTI = C_RNTI;
 }
 
-int UE::get_socket_fd()
+int UE::get_flag()
 {
-    return this->socket_fd;
+    return this->flag;
 }

@@ -1,21 +1,21 @@
-#ifndef PSZEMEG_UE_H
-#define PSZEMEG_UE_H
+#ifndef SERVER_UE_H
+#define SERVER_UE_H
 
-//enum channel_flags;
+#include "channels_struct.h"
 
 class UE
 {
     public:
-        UE(int socket_fd);
+        UE(Channel_flags flag);
         void set_RA_RNTI(int RA_RNTI);
         void set_C_RNTI(int C_RNTI);
-        int get_socket_fd();
+        Channel_flags get_flag();
 
     private:
         int RA_RNTI;
         int C_RNTI;
-        int socket_fd;
+        Channel_flags flag;
 };
 
 
-#endif //PSZEMEG_UE_H
+#endif //SERVER_UE_H

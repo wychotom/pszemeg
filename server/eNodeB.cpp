@@ -5,8 +5,8 @@
 #include <iostream>
 
 eNodeB::eNodeB() :
-pbch(PORTS::pbch_port, 0x7FFFFFF),
-pdcch(PORTS::pdcch_port, 0xFFFFFFF)
+pbch(Ports::pbch_port, 0x7FFFFFF),
+pdcch(Ports::pdcch_port, 0xFFFFFFF)
 {
 }
 
