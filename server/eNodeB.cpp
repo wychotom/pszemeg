@@ -1,8 +1,12 @@
 #include "eNodeB.h"
+#include "channels_struct.h"
+
 #include <vector>
 #include <iostream>
 
-eNodeB::eNodeB() : pbch(20700, 0xFFFFFFF)
+eNodeB::eNodeB() :
+pbch(PORTS::pbch_port, 0x7FFFFFF),
+pdcch(PORTS::pdcch_port, 0xFFFFFFF)
 {
 }
 
@@ -15,11 +19,9 @@ void eNodeB::start()
             this->pbch.send_mib();
         }
 
-//        this->pdcch.handle_connections();
-//
-//        if(this->pdcch.getCounter() == 0)
-//        {
-//            this->pdcch.send_dci_to_all(true);
-//        }
+        if(this->pdcch.get_counter() == 0)
+        {
+            this->pdcch.send_dci(true);
+        }
     }
 }

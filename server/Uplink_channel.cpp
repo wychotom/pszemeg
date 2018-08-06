@@ -12,9 +12,10 @@
 #include <unistd.h>
 #include <netdb.h>
 
-Uplink_channel::Uplink_channel(int port)
+Uplink_channel::Uplink_channel(int port, size_t counter_reset) : counter(1)
 {
     this->port = port;
+    this->counter_reset = counter_reset;
 
     int broadcast = 1;
 
@@ -56,4 +57,14 @@ void Uplink_channel::send_message(void *message, size_t size)
         perror("ERROR: ");
         throw std::string("sendto fail");
     }
+}
+
+size_t Uplink_channel::get_counter()
+{
+    if(++this->counter >= this->counter_reset)
+    {
+        this->counter = 0;
+    }
+
+    return this->counter;
 }

@@ -1,3 +1,13 @@
+enum PORTS
+{
+    pbch_port = 20700,
+    dl_sch_port = 20701,
+    ul_sch_port = 20702,
+    pdcch_port = 20703,
+    pucch_port = 20704,
+    prach_port = 20705
+};
+
 struct MIB_MESSAGE
 {
     int prach_port;

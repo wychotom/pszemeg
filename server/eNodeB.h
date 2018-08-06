@@ -13,7 +13,7 @@ class eNodeB
         void start();
 
     private:
-        //PDCCH pdcch;
+        PDCCH pdcch;
         PBCH pbch;
 };
 
