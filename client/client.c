@@ -4,14 +4,14 @@ int main(int argc, char ** argv)
 {
 	printf("Uniq name = %d\n", get_unique_name());
 
-	int waiting_for_broadcast = 0;
+	int is_sock_created = 0;
 	struct MIB_MESSAGE ports;//broadcast only
 	struct eNB_conn_info connection_information;//Ideally it would be an array, information about multiple eNB
 
-	while(!waiting_for_broadcast)
+	while(!is_sock_created)
 	{
-		receive_broadcast_msg(&waiting_for_broadcast, &ports);
-		if(waiting_for_broadcast)
+		receive_broadcast_msg(&is_sock_created, &ports);
+		if(is_sock_created)
 		{
 			// connection_information.broadcast.port = ports.broadcast_port;
 			// connection_information.broadcast.sock = 0;
@@ -30,17 +30,15 @@ int main(int argc, char ** argv)
 
 			// connection_information.pucch.port = ports.pucch_port;
 			// connection_information.pucch.sock = 0;
-			printf("BC: sock = %d\t port = %d\n", 0, ports.prach_port);
+			//printf("BC: sock = %d\t port = %d\n", 0, ports.prach_port);
 			
-			handletraffic(&ports);
+			handletraffic(&ports, is_sock_created);
 		}
 	}
 
 
 
-	printf("\nBROADCAST = %d\nPRACH = %d\nDL_SCH = %d\nUL_SCH = %d\nPDDCH = %d\nPUCCH = %d\n",
-			ports.broadcast_port, ports.prach_port, ports.dl_sch_port,
-			ports.ul_sch_port, ports.pdcch_port, ports.pucch_port);
+	
 
 
 
