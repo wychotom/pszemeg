@@ -24,6 +24,7 @@ struct MIB_MESSAGE
     int ul_sch_port;
     int pdcch_port;
     int pucch_port;
+    long checksum;
 };
 
 struct DCI_MESSAGE
@@ -36,6 +37,7 @@ struct DCI_MESSAGE
     int tpc;
     int cyclic_shift;
     unsigned char cqi_request;
+    long checksum;
 };
 
 struct RANDOM_ACCESS_RESPONSE_MESSAGE
@@ -44,6 +46,7 @@ struct RANDOM_ACCESS_RESPONSE_MESSAGE
     int timing_advance;
     int uplink_resource_grant;
     int temporary_c_rnti;
+    long checksum;
 };
 
 #endif
