@@ -1,53 +1,36 @@
 #include "PDSCH.h"
 #include "channels_struct.h"
-#include <iostream>
-#include <queue>
+#include "Uplink_channel.h"
 #include "UE.h"
 
-PDSCH::PDSCH(int port, std::queue<UE&> &ue_queue) : Channel(port, 0)
+#include <iostream>
+#include <queue>
+
+PDSCH::PDSCH(int port) : Uplink_channel(port, 0)
 {
-    this->ue_queue = ue_queue;
 }
 
-int PDSCH::recv_message(int event_fd)
-{
-    char c;
-    int bytes_count = recv(event_fd, &c, 1, 0);
-
-    if(bytes_count > 0)
-    {
-        throw std::string("PDSCH is not UL channel");
-    }
-
-    return bytes_count;
-}
-
-void PDSCH::send_random_access_response(int ra_rnti, int socket_fd)
+void PDSCH::send_random_access_response(UE &ue)
 {
     struct RANDOM_ACCESS_RESPONSE_MESSAGE rar_message;
-    rar_message.ra_rnti = ra_rnti;
-    rar_message.temporary_c_rnti = rand() * 100 * ra_rnti;
+    rar_message.ra_rnti = ue.RA_RNTI;
+    rar_message.temporary_c_rnti = ue.C_RNTI;
     rar_message.timing_advance = 34;
     rar_message.uplink_resource_grant = 523;
 
-    if(send(socket_fd, &rar_message, sizeof(struct RANDOM_ACCESS_RESPONSE_MESSAGE), 0) < 0)
-    {
-        perror("ERROR: ");
-        throw std::string("RAR send fail");
-    }
+    send_message((void*) &rar_message, sizeof(struct RANDOM_ACCESS_RESPONSE_MESSAGE));
 
-    std::cout << "RAR sent to " << clients_fds[socket_fd] << std::endl;
+    std::cout << "RAR sent to" << std::endl;
 }
 
-void PDSCH::handle_queue()
+void PDSCH::handle_queue(std::queue<UE*> &ue_queue)
 {
-    while(!this->ue_queue.empty())
+    while(!ue_queue.empty())
     {
-        int ue = this->ue_queue.front();
-        this->ue_queue.pop();
+        UE *ue = ue_queue.front();
+        ue_queue.pop();
 
-        //Generate c_rnti
-
-        //send_random_access_response(UE);
+        ue->C_RNTI = rand() * 100 * ue->RA_RNTI;
+        send_random_access_response(*ue);
     }
 }

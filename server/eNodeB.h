@@ -1,10 +1,12 @@
 #ifndef _ENB
 #define _ENB
 
-#include "Channel.h"
+#include <queue>
+
 #include "PDCCH.h"
 #include "PBCH.h"
-#include <vector>
+#include "PDSCH.h"
+#include "UE.h"
 
 class eNodeB
 {
@@ -15,6 +17,8 @@ class eNodeB
     private:
         PDCCH pdcch;
         PBCH pbch;
+        PDSCH pdsch;
+        std::queue<UE*> ue_queue;
 };
 
 #endif
