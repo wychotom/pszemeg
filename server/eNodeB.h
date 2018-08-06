@@ -8,15 +8,13 @@
 
 class eNodeB
 {
-public:
-    eNodeB();
-    ~eNodeB();
-    void start();
+    public:
+        eNodeB();
+        void start();
 
-private:
-    //std::vector<Channel*> channels;
-    PDCCH pdcch;
-    PBCH pbch;
+    private:
+        //PDCCH pdcch;
+        PBCH pbch;
 };
 
 #endif

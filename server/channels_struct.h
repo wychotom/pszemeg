@@ -19,3 +19,10 @@ struct DCI_MESSAGE
     int cyclic_shift;
     unsigned char cqi_request;
 };
+
+struct RANDOM_ACCESS_PREAMBLE
+{
+    short int preamble; //505245414d424c45
+    int RA_RNTI;
+    long checksum;
+};

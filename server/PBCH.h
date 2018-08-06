@@ -1,19 +1,18 @@
 #ifndef PSZEMEG_PBCH_H
 #define PSZEMEG_PBCH_H
 
-#include <netinet/in.h>
-#include <sys/epoll.h>
+#include "Uplink_channel.h"
 
-class PBCH
+class PBCH : public Uplink_channel
 {
-public:
-    PBCH(int port);
-    void send_MIB();
+    public:
+        PBCH(int port, size_t counter_reset);
+        void send_mib();
+        size_t get_counter();
 
-private:
-    int port;
-    int socket_fd;
-    struct sockaddr_in server_addr, client_addr;
+    private:
+        size_t counter;
+        size_t counter_reset;
 };
 
 
