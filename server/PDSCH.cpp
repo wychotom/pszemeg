@@ -1,9 +1,11 @@
 #include "PDSCH.h"
 #include "channels_struct.h"
 #include <iostream>
+#include <queue>
 
-PDSCH::PDSCH(int port) : Channel(port, 0)
+PDSCH::PDSCH(int port, std::queue<int> &ue_queue) : Channel(port, 0)
 {
+    this->ue_queue = ue_queue;
 }
 
 int PDSCH::recv_message(int event_fd)
@@ -34,4 +36,17 @@ void PDSCH::send_random_access_response(int ra_rnti, int socket_fd)
     }
 
     std::cout << "RAR sent to " << clients_fds[socket_fd] << std::endl;
+}
+
+void PDSCH::handle_queue()
+{
+    while(!this->ue_queue.empty())
+    {
+        int ue = this->ue_queue.front();
+        this->ue_queue.pop();
+
+        //Generate c_rnti
+
+        //send_random_access_response(UE);
+    }
 }

@@ -6,6 +6,7 @@
 #include "PBCH.h"
 #include "PDSCH.h"
 #include <vector>
+#include <queue>
 
 class eNodeB
 {
@@ -17,6 +18,7 @@ class eNodeB
         PDCCH pdcch;
         PBCH pbch;
         PDSCH pdsch;
+        std::queue<int> ue_queue;
 };
 
 #endif
