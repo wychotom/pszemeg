@@ -104,7 +104,7 @@ void add_socket_epoll(struct epoll_event *ev, int *efd, int *to_watch)
 	}
 }
 
-void handletraffic(struct MIB_MESSAGE * init_msg, int broadcast_sock)
+void handletraffic(struct MIB_MESSAGE *init_msg, int broadcast_sock)
 {
 	struct eNB_conn_info connection_information = //Ideally it would be an array, information about multiple eNB
 	{
@@ -131,18 +131,9 @@ void handletraffic(struct MIB_MESSAGE * init_msg, int broadcast_sock)
 			connection_information.broadcast.port, init_msg->prach_port, init_msg->dl_sch_port,
 			init_msg->ul_sch_port, init_msg->pdcch_port, init_msg->pucch_port);
 
-	int RNTI = get_unique_name();
+	struct UE_INFO my_states;
 
-	struct UE_INFO my_states = 
-	{
-		.UE_state = 1,
-		.RNTI = RNTI,
-		.timing_advance = 0,
-		.uplink_resource_grant = 0,
-		.uplink_power_control = 0,
-		.ul_sch_config = 0,
-		.srb_identity = 0
-	};
+	setup_ue(&my_states);
 
 	int efd;
 	const int max_epoll_events = 6;
@@ -188,3 +179,14 @@ void handletraffic(struct MIB_MESSAGE * init_msg, int broadcast_sock)
 	}
 }
 
+void setup_ue(struct UE_INFO *init_states)
+{
+	int RNTI = get_unique_name();
+	init_states->UE_state = 1;
+	init_states->RNTI = RNTI;
+	init_states->timing_advance = 0;
+	init_states->uplink_resource_grant = 0;
+	init_states->uplink_power_control = 0;
+	init_states->ul_sch_config = 0;
+	init_states->srb_identity = 0;
+}

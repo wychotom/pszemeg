@@ -74,6 +74,15 @@ struct RANDOM_ACCESS_PREAMBLE
     long checksum;
 };
 
+struct RANDOM_ACCESS_RESPONSE
+{
+    int RA_RNTI;
+    int timing_advance;
+    int uplink_resource_grant;
+    int temporary_c_rnti;
+    long checksum;
+};
+
 struct DCI_MESSAGE
 {
     unsigned char format0_a_flag;
@@ -96,6 +105,7 @@ void set_up_socket(int *, int);
 int set_non_block();
 int get_unique_name();
 
+void setup_ue(struct UE_INFO *);
 
 //messages.c
 void receive_init_broadcast_msg(int *, struct MIB_MESSAGE *);
