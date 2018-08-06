@@ -10,17 +10,16 @@ void set_up_socket(int * sockfd, int port)
 {
 	int errflag;
 
-	//printf("SUS port = %d\n", port);
-
 	struct sockaddr_in sa;
 
-	*sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	*sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 	//setsockopt(*sockfd, SOL_SOCKET, SO_REUSEADDR, &errflag, sizeof(errflag));
 	sa.sin_family = AF_INET;
 	sa.sin_addr.s_addr = INADDR_ANY;
 	sa.sin_port = htons(port);
 
-	errflag = connect(*sockfd, (struct sockaddr *)&sa, sizeof(sa));
+	//errflag = connect(*sockfd, (struct sockaddr *)&sa, sizeof(sa)); // TU COS ZMIENILEM NIE WIEM CO XD
+    errflag = bind(*sockfd, (struct sockaddr *)&sa, sizeof(struct sockaddr));
 
 	if (errflag == -1)
 	{
@@ -30,7 +29,6 @@ void set_up_socket(int * sockfd, int port)
 		}
 		else
 			perror("connect err");
-		//return -1;
 	}
 	
 }
