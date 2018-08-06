@@ -2,6 +2,7 @@
 #define _ENB
 
 #include "Channel.h"
+#include "UE.h"
 #include "PDCCH.h"
 #include "PBCH.h"
 #include "PDSCH.h"
@@ -19,6 +20,7 @@ class eNodeB
         PBCH pbch;
         PDSCH pdsch;
         std::queue<int> ue_queue;
+        std::vector<UE> clients;
 };
 
 #endif

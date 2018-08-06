@@ -1,28 +1,33 @@
 #include "eNodeB.h"
 #include "channels_struct.h"
+#include "Channel.h"
 #include <vector>
 #include <iostream>
 
 eNodeB::eNodeB() :
 pdcch(PORTS::pdcch_port, 0xFFFF),
-pbch(PORTS::broadcast_port),
+pbch(PORTS::broadcast_port, 0xFFFFFF),
 pdsch(PORTS::dl_sch_port)
 {
+    Channel::clients = this->clients;
+}
+
+eNodeB::~eNodeB()
+{
+//    for(auto channel : this->channels)
+//    {
+//        delete channel;
+//    }
 }
 
 void eNodeB::start()
 {
-    int MIB_iterator = 0;
-
     while(true)
     {
         // PBCH
-        MIB_iterator++;
-
-        if(MIB_iterator%1000000)
+        if(this->pbch.getCounter() == 0)
         {
-            MIB_iterator = 0;
-            this->pbch.send_MIB();
+            this->pbch.send_mib();
         }
         // -----
 

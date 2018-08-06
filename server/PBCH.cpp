@@ -13,8 +13,10 @@
 #include <unistd.h>
 #include <netdb.h>
 
-PBCH::PBCH(int port)
+PBCH::PBCH(int port, size_t counter_reset) : counter(1)
 {
+    this->counter_reset = counter_reset;
+
     this->port = port;
 
     int broadcast = 1;
@@ -49,7 +51,7 @@ PBCH::PBCH(int port)
     }
 }
 
-void PBCH::send_MIB()
+void PBCH::send_mib()
 {
     struct MIB_MESSAGE new_message;
 
@@ -67,4 +69,14 @@ void PBCH::send_MIB()
         throw std::string("sendto fail");
     }
 
+    if(++counter >= this->counter_reset)
+    {
+        counter = 0;
+    }
+
+}
+
+size_t PBCH::getCounter()
+{
+    return counter;
 }

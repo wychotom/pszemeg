@@ -2,6 +2,8 @@
 #define SERVER_PDCCH_H
 
 #include "Channel.h"
+#include "UE.h"
+#include <vector>
 
 class PDCCH : public Channel
 {
