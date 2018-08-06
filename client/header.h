@@ -17,9 +17,27 @@
 #include <assert.h>
 #include <errno.h>
 
-#define HEADER_LENGTH   6
-#define BUFFER_LENGTH   1024
-#define BROADCAST_PORT  20700
+#define BROADCAST_PORT 20700
+
+// States
+// 0 - Before MIB_MESSAGE
+// 1 - Sending PRACH
+// 2 - awaiting prach response
+// 3 - RRC connection request
+// 4 - awaiting connection setup
+// 5 - send rrc connection complete
+
+struct UE_INFO
+{
+    int UE_state;
+    int RNTI;
+    int timing_advance;
+    int uplink_resource_grant;
+    int uplink_power_control;
+    int ul_sch_config;
+    int srb_identity;
+};
+
 
 struct conn_pair
 {
@@ -51,7 +69,7 @@ struct MIB_MESSAGE
 
 struct RANDOM_ACCESS_PREAMBLE
 {
-    short int preamble; //505245414d424c45
+    short int preamble; //1337
     int RA_RNTI;
     long checksum;
 };
@@ -69,18 +87,20 @@ struct DCI_MESSAGE
     long checksum;
 };
 
-
+//uefuncs.c
 void open_channels(struct eNB_conn_info * eNB, struct epoll_event *ev, int *efd);
 void init_channel(struct conn_pair * channel, struct epoll_event * ev, int * efd);
 void add_socket_epoll(struct epoll_event * ev, int * efd, int * to_watch);
 void handletraffic(struct MIB_MESSAGE *init_msg, int);
-
 void set_up_socket(int *, int);
-
 int set_non_block();
 int get_unique_name();
 
-void receive_broadcast_msg(int *, struct MIB_MESSAGE *);
 
+//messages.c
+void receive_init_broadcast_msg(int *, struct MIB_MESSAGE *);
+void receive_broadcast(int fd, int * new_enb);
+void receive_dci(int fd, int * state);
+void send_random_access_preamble(int fd, struct UE_INFO *);
 
 #endif

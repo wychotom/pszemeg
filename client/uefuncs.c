@@ -1,67 +1,5 @@
 #include "header.h"
 
-void receive_broadcast_msg(int * flag, struct MIB_MESSAGE * return_MIB)
-{
-	int broadcast_socket = socket(AF_INET, SOCK_DGRAM, 0);
-
-    assert(broadcast_socket != -1);
-
-	int broadcast = 1;
-    unsigned int ca_len;
-	int retval = setsockopt(broadcast_socket, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast));
-    if(retval == -1)
-	{
-		perror("Failed on setsockopt\n");
-	}
-
-	struct sockaddr_in socketConfig, clientConfig;
-    memset(&socketConfig, 0, sizeof(socketConfig));
-
-    socketConfig.sin_family = AF_INET;
-	socketConfig.sin_port = htons(BROADCAST_PORT);
-	socketConfig.sin_addr.s_addr = htonl(INADDR_ANY);
-
-    retval = bind(broadcast_socket, (struct sockaddr *)&socketConfig, sizeof(struct sockaddr));
-    if(retval == -1)
-	{
-		perror("Failed on bind\n");
-	}
-
-	int recvbytes;
-	//struct MIB_MESSAGE *msg_from_enb = (struct MIB_MESSAGE *)calloc(sizeof(struct MIB_MESSAGE), 1);
-
-	ca_len = sizeof(clientConfig);
-    recvbytes = recvfrom(broadcast_socket, return_MIB, sizeof(struct MIB_MESSAGE), 0,
-						(struct sockaddr *)&clientConfig, &ca_len);
-
-	if(recvbytes > 0)
-	{
-		if (recvbytes > BUFFER_LENGTH)
-		{
-			//free(msg_from_enb);
-			//shutdown(broadcast_socket, SHUT_WR);
-			return;
-		}
-		else
-		{
-			*flag = broadcast_socket;
-			//*return_MIB = *msg_from_enb;
-			return;
-		}
-	}
-	if(recvbytes == 0)
-    {
-        perror("Server dropped connection.\n");
-        exit(EXIT_SUCCESS);
-    }
-	//if(!flag)
-	//	free(msg_from_enb);
-
-	//shutdown(broadcast_socket, SHUT_WR);
-	//free(msg_from_enb);
-    return;
-}
-
 int get_unique_name()
 {
 	srand(time(NULL));
@@ -172,68 +110,46 @@ void handletraffic(struct MIB_MESSAGE * init_msg, int broadcast_sock)
 	{
 		.broadcast.port = init_msg->broadcast_port,
 		.broadcast.sock = broadcast_sock,
-		//connection_information.broadcast.type = 0;
 
 		.prach.port = init_msg->prach_port,
 		.prach.sock = 0,
-		//connection_information.prach.type = 1;
 
 		.dl_sch.port = init_msg->dl_sch_port,
 		.dl_sch.sock = 0,
-		//connection_information.dl_sch.type = 0;
 
 		.ul_sch.port = init_msg->ul_sch_port,
 		.ul_sch.port = 0,
-		//connection_information.ul_sch.type = 1;
 
 		.pdcch.port = init_msg->pdcch_port,
 		.pdcch.sock = 0,
-		//connection_information.pdcch.type = 0;
 		
 		.pucch.port = init_msg->pucch_port,
 		.pucch.sock = 0
 	};
 
-	// connection_information.broadcast.port = init_msg->broadcast_port;
-	// connection_information.broadcast.sock = broadcast_sock;
-	// //connection_information.broadcast.type = 0;
-
-	// connection_information.prach.port = init_msg->prach_port;
-	// connection_information.prach.sock = 0;
-	// //connection_information.prach.type = 1;
-
-	// connection_information.dl_sch.port = init_msg->dl_sch_port;
-	// connection_information.dl_sch.sock = 0;
-	// //connection_information.dl_sch.type = 0;
-
-	// connection_information.ul_sch.port = init_msg->ul_sch_port;
-	// connection_information.ul_sch.port = 0;
-	// //connection_information.ul_sch.type = 1;
-
-	// connection_information.pdcch.port = init_msg->pdcch_port;
-	// connection_information.pdcch.sock = 0;
-	// //connection_information.pdcch.type = 0;
-	
-	// connection_information.pucch.port = init_msg->pucch_port;
-	// connection_information.pucch.sock = 0;
-	//connection_information.pucch.type = 1;
-	//free(init_msg);
-
 	printf("\nBROADCAST = %d\nPRACH = %d\nDL_SCH = %d\nUL_SCH = %d\nPDDCH = %d\nPUCCH = %d\n",
 			connection_information.broadcast.port, init_msg->prach_port, init_msg->dl_sch_port,
 			init_msg->ul_sch_port, init_msg->pdcch_port, init_msg->pucch_port);
+
+	int RNTI = get_unique_name();
+
+	struct UE_INFO my_states = 
+	{
+		.UE_state = 1,
+		.RNTI = RNTI,
+		.timing_advance = 0,
+		.uplink_resource_grant = 0,
+		.uplink_power_control = 0,
+		.ul_sch_config = 0,
+		.srb_identity = 0
+	};
 
 	int efd;
 	const int max_epoll_events = 6;
 	struct epoll_event ev, events[max_epoll_events];
 
-	//printf("HT: sock = %d\t port = %d\n", connection_information.prach.sock, connection_information.prach.port);
 	efd = epoll_create(1);
 
-	//int listen_socket;
-	//add_socket_epoll(&ev, &efd, &listen_socket);
-
-	//ev.events = EPOLL
 	open_channels(&connection_information, &ev, &efd);
 
 	int ewait_flag, i;
@@ -248,90 +164,27 @@ void handletraffic(struct MIB_MESSAGE * init_msg, int broadcast_sock)
 		}
 		for(i = 0; i < ewait_flag; i++)
 		{
-			if(events[i].events & EPOLLOUT)
+			if(my_states.UE_state == 1)
 			{
-				
+				//printf("im trying nigga.\n");
+				//send_random_access_preamble(connection_information.prach.sock, &my_states);
 			}
 
 			if(events[i].events & EPOLLIN)
 			{
 				if(events[i].data.fd == connection_information.pdcch.sock)
 				{
-					//struct DCI_MESSAGE *killme= (struct DCI_MESSAGE *)calloc(sizeof(struct DCI_MESSAGE), 1);
-					struct DCI_MESSAGE killme;
-
-					struct sockaddr_in clientConfig;
-					int recvbytes;
-
-					unsigned int ca_len = sizeof(clientConfig);
-					recvbytes = recvfrom(events[i].data.fd, &killme, sizeof(struct DCI_MESSAGE), 0,
-										(struct sockaddr *)&clientConfig, &ca_len);
-
-					int calc_check_sum = 0;
-
-					calc_check_sum += killme.format0_a_flag;
-					calc_check_sum += killme.freqency_hooping;
-					calc_check_sum += killme.riv;
-					calc_check_sum += killme.mcs;
-					calc_check_sum += killme.ndi;
-					calc_check_sum += killme.tpc;
-					calc_check_sum += killme.cyclic_shift;
-					calc_check_sum += killme.cqi_request;//tbi
-
-					if(recvbytes > 0)
-					{
-						if (recvbytes > BUFFER_LENGTH)
-						{
-							//free(killme);
-							return;
-						}
-						else
-						{
-							// printf("\nformat_0 = %u\nfreq_hop = %u\nriv = %d\nmcs = %d\nndi = %u\n"
-							// 		"tpc = %d\ncyclic shift = %d\ncqi_request = %u\n",
-							// 		killme->format0_a_flag, killme->freqency_hooping, killme->riv, killme->mcs,
-							// 		killme->ndi, killme->tpc, killme->cyclic_shift, killme->cqi_request);
-							printf("\nformat_0 = %u\nfreq_hop = %u\nriv = %d\nmcs = %d\nndi = %u\n"
-							 		"tpc = %d\ncyclic shift = %d\ncqi_request = %u\n",
-							 		killme.format0_a_flag, killme.freqency_hooping, killme.riv, killme.mcs,
-							 		killme.ndi, killme.tpc, killme.cyclic_shift, killme.cqi_request);
-						}
-					}
-					//free(killme);
+					int flag = 0;
+					receive_dci(events[i].data.fd, &flag);
 				}
 				if(events[i].data.fd == connection_information.broadcast.sock)
 				{
-					//struct MIB_MESSAGE *killme= (struct MIB_MESSAGE *)calloc(sizeof(struct DCI_MESSAGE), 1);
-					struct MIB_MESSAGE killme;
-					struct sockaddr_in clientConfig;
-					int recvbytes;
-
-					unsigned int ca_len = sizeof(clientConfig);
-					recvbytes = recvfrom(events[i].data.fd, &killme, sizeof(struct MIB_MESSAGE), 0,
-										(struct sockaddr *)&clientConfig, &ca_len);
-
-					if(recvbytes > 0)
-					{
-						if (recvbytes > BUFFER_LENGTH)
-						{
-							//free(msg_from_enb);
-							//free(killme);
-							return;
-						}
-						else
-						{
-							// printf("\nBROADCAST = %d\nPRACH = %d\nDL_SCH = %d\nUL_SCH = %d\nPDDCH = %d\nPUCCH = %d\n",
-							// 		init_msg->broadcast_port, init_msg->prach_port, init_msg->dl_sch_port,
-							// 		init_msg->ul_sch_port, init_msg->pdcch_port, init_msg->pucch_port);
-							printf("\nBROADCAST = %d\nPRACH = %d\nDL_SCH = %d\nUL_SCH = %d\nPDDCH = %d\nPUCCH = %d\n",
-									killme.broadcast_port, killme.prach_port, killme.dl_sch_port,
-									killme.ul_sch_port, killme.pdcch_port, killme.pucch_port);
-						}
-					}
-					//free(killme);
+					int flag = 0;
+					receive_broadcast(events[i].data.fd, &flag);
 				}
 				
 			}
 		}
 	}
 }
+
