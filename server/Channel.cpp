@@ -10,7 +10,10 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <netdb.h>
-#include <map>
+#include <vector>
+#include <algorithm>
+
+std::vector<UE>& Channel::clients = NULL;
 
 Channel::Channel(int port, size_t counter_reset) : max_number_of_events(255), counter(1)
 {
@@ -95,7 +98,19 @@ void Channel::handle_connections()
         }
         else
         {
-            clients_fds.erase(this->events[i].events);
+            //delete client form vector
+            auto it = std::find_if(Channel::clients.begin(), Channel::clients.end(), [this](UE& client)
+            {
+                return client.get_socket_fd() == this->socket_fd;
+            });
+
+
+            if (it != clients.end())
+            {
+                auto index = std::distance(clients.begin(), it);
+                clients.erase(clients.begin() + index);
+            }
+
             close(this->events[i].events);
         }
     }
@@ -121,7 +136,9 @@ void Channel::accept_new_connection()
 
         set_socket_non_blocking(new_client_fd);
 
-        clients_fds.insert(std::pair<int,int>(new_client_fd, clients_fds.size()));
+        UE new_client(new_client_fd);
+        clients.push_back(new_client);
+
         send_data(new_client_fd, "HELLO");
 
         event.data.fd = new_client_fd;
@@ -148,7 +165,20 @@ void Channel::read_incoming_data(int event_fd)
     else if(bytes_count == 0)
     {
         std::cout << event_fd << " has disconnected" << std::endl;
-        clients_fds.erase(event_fd);
+
+        //delete client form vector
+        auto it = std::find_if(clients.begin(), clients.end(), [this](UE& obj)
+        {
+            return obj.get_socket_fd() == this->socket_fd;
+        });
+
+
+        if (it != clients.end())
+        {
+            auto index = std::distance(clients.begin(), it);
+            clients.erase(clients.begin() + index);
+        }
+
         close(event_fd);
     }
 }

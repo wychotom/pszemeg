@@ -1,9 +1,10 @@
 #ifndef _CHANNEL
 #define _CHANNEL
 
+#include "UE.h"
 #include <netinet/in.h>
 #include <sys/epoll.h>
-#include <map>
+#include <vector>
 
 class Channel
 {
@@ -12,6 +13,7 @@ class Channel
         ~Channel();
         void handle_connections();
         size_t getCounter();
+        static std::vector<UE> &clients;
 
     private:
         void set_socket_non_blocking(int socket_fd);
@@ -32,7 +34,6 @@ class Channel
 
     protected:
         size_t counter_reset;
-        std::map<int, int> clients_fds; //First - fds, Second - ID
 };
 
 #endif
