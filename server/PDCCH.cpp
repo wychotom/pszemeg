@@ -25,7 +25,7 @@ void PDCCH::send_message(int socket_fd)
         throw std::string("Send fail");
     }
 
-    //std::cout << "DCI sent to " << clients_fds[socket_fd] << std::endl;
+    std::cout << "DCI sent to " << clients_fds[socket_fd] << std::endl;
 }
 
 int PDCCH::recv_message(int event_fd)
@@ -45,9 +45,9 @@ void PDCCH::send_dci_to_all(bool cqi_request)
 {
     this->cqi_request = cqi_request;
 
-    for (auto& client : clients)
+    for (auto const& client : clients_fds)
     {
-        send_message(client.get_socket_fd());
+        send_message(client.first);
     }
 }
 

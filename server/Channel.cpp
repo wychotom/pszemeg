@@ -10,10 +10,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <netdb.h>
-#include <vector>
-#include <algorithm>
-
-std::vector<UE> Channel::clients;
+#include <map>
 
 Channel::Channel(int port, size_t counter_reset) : max_number_of_events(255), counter(1)
 {
@@ -98,19 +95,7 @@ void Channel::handle_connections()
         }
         else
         {
-            //delete client form vector
-            auto it = std::find_if(Channel::clients.begin(), Channel::clients.end(), [this](UE& client)
-            {
-                return client.get_socket_fd() == this->socket_fd;
-            });
-
-
-            if (it != clients.end())
-            {
-                auto index = std::distance(clients.begin(), it);
-                clients.erase(clients.begin() + index);
-            }
-
+            clients_fds.erase(this->events[i].events);
             close(this->events[i].events);
         }
     }
@@ -126,9 +111,9 @@ void Channel::accept_new_connection()
         socklen_t addrlen;
         char hostname_buffer[NI_MAXHOST], service_buffer[NI_MAXSERV];
 
-        if (getnameinfo(&client, client_socket_length, 
-                        hostname_buffer, sizeof(hostname_buffer), 
-                        service_buffer, sizeof(service_buffer), 
+        if (getnameinfo(&client, client_socket_length,
+                        hostname_buffer, sizeof(hostname_buffer),
+                        service_buffer, sizeof(service_buffer),
                         NI_NUMERICHOST | NI_NUMERICSERV) == 0)
         {
             std::cout << "Hostname: [" << hostname_buffer << "] Service: [" << service_buffer << "]" << std::endl;
@@ -136,9 +121,7 @@ void Channel::accept_new_connection()
 
         set_socket_non_blocking(new_client_fd);
 
-        UE new_client(new_client_fd);
-        clients.push_back(new_client);
-
+        clients_fds.insert(std::pair<int,int>(new_client_fd, clients_fds.size()));
         send_data(new_client_fd, "HELLO");
 
         event.data.fd = new_client_fd;
@@ -149,6 +132,7 @@ void Channel::accept_new_connection()
             perror("ERROR: ");
             throw std::string("Epoll ctl fail");
         }
+
     }
 }
 
@@ -164,20 +148,7 @@ void Channel::read_incoming_data(int event_fd)
     else if(bytes_count == 0)
     {
         std::cout << event_fd << " has disconnected" << std::endl;
-
-        //delete client form vector
-        auto it = std::find_if(clients.begin(), clients.end(), [this](UE& obj)
-        {
-            return obj.get_socket_fd() == this->socket_fd;
-        });
-
-
-        if (it != clients.end())
-        {
-            auto index = std::distance(clients.begin(), it);
-            clients.erase(clients.begin() + index);
-        }
-
+        clients_fds.erase(event_fd);
         close(event_fd);
     }
 }

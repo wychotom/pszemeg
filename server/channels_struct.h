@@ -1,11 +1,11 @@
 struct MIB_MESSAGE
 {
-    uint16_t prach_port;
-    uint16_t broadcast_port;
-    uint16_t dl_sch_port;
-    uint16_t ul_sch_port;
-    uint16_t pdcch_port;
-    uint16_t pucch_port;
+    int prach_port;
+    int broadcast_port;
+    int dl_sch_port;
+    int ul_sch_port;
+    int pdcch_port;
+    int pucch_port;
 };
 
 struct DCI_MESSAGE

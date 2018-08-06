@@ -2,23 +2,21 @@
 #define _ENB
 
 #include "Channel.h"
-#include "UE.h"
 #include "PDCCH.h"
 #include "PBCH.h"
 #include <vector>
 
 class eNodeB
 {
-    public:
-        eNodeB();
-        ~eNodeB();
-        void start();
+public:
+    eNodeB();
+    ~eNodeB();
+    void start();
 
-    private:
-        //std::vector<Channel*> channels;
-        PDCCH pdcch;
-        PBCH pbch;
-        std::vector<UE> clients;
+private:
+    //std::vector<Channel*> channels;
+    PDCCH pdcch;
+    PBCH pbch;
 };
 
 #endif
