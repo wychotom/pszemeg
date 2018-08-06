@@ -2,21 +2,16 @@
 #include <vector>
 #include <iostream>
 
-eNodeB::eNodeB() : pbch(20700)
+eNodeB::eNodeB() : pbch(20700, 0xFFFFFFF)
 {
 }
 
 void eNodeB::start()
 {
-    int MIB_iterator = 0;
-
     while(true)
     {
-        MIB_iterator++;
-
-        if(MIB_iterator == 10000000)
+        if(this->pbch.get_counter() == 0)
         {
-            MIB_iterator = 0;
             this->pbch.send_mib();
         }
 

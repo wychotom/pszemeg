@@ -2,8 +2,9 @@
 #include "channels_struct.h"
 #include "Uplink_channel.h"
 
-PBCH::PBCH(int port) : Uplink_channel(port)
+PBCH::PBCH(int port, size_t counter_reset) : Uplink_channel(port), counter(1)
 {
+    this->counter_reset = counter_reset;
 }
 
 void PBCH::send_mib()
@@ -17,5 +18,15 @@ void PBCH::send_mib()
     new_message.pucch_port = 20704;
     new_message.prach_port = 20705;
 
-    send_message((void*)new_message, sizeof(struct MIB_MESSAGE));
+    send_message((void*) &new_message, sizeof(struct MIB_MESSAGE));
+}
+
+size_t PBCH::get_counter()
+{
+    if(++this->counter >= this->counter_reset)
+    {
+        this->counter = 0;
+    }
+
+    return this->counter;
 }
