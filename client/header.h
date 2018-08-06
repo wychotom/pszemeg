@@ -25,7 +25,6 @@ struct conn_pair
 {
     int sock;
     int port;
-    int type;//0 downlink 1 uplink
 };
 
 struct eNB_conn_info
@@ -44,16 +43,17 @@ struct MIB_MESSAGE
     int prach_port;
     int broadcast_port;
     int dl_sch_port;
-    int ul_sch_port;
+    int ul_sch_port; 
     int pdcch_port;
     int pucch_port;
-    int checksum;
+    long checksum;
 };
 
 struct RANDOM_ACCESS_PREAMBLE
 {
     short int preamble; //505245414d424c45
     int RA_RNTI;
+    long checksum;
 };
 
 struct DCI_MESSAGE
@@ -66,13 +66,14 @@ struct DCI_MESSAGE
     int tpc;
     int cyclic_shift;
     unsigned char cqi_request;
+    long checksum;
 };
 
 
 void open_channels(struct eNB_conn_info * eNB, struct epoll_event *ev, int *efd);
 void init_channel(struct conn_pair * channel, struct epoll_event * ev, int * efd);
-void add_socket_epoll(struct epoll_event * ev, int * efd, int to_watch);
-void handletraffic(struct MIB_MESSAGE *init_msg);
+void add_socket_epoll(struct epoll_event * ev, int * efd, int * to_watch);
+void handletraffic(struct MIB_MESSAGE *init_msg, int);
 
 void set_up_socket(int *, int);
 
