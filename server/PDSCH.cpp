@@ -2,8 +2,9 @@
 #include "channels_struct.h"
 #include <iostream>
 #include <queue>
+#include "UE.h"
 
-PDSCH::PDSCH(int port, std::queue<int> &ue_queue) : Channel(port, 0)
+PDSCH::PDSCH(int port, std::queue<UE&> &ue_queue) : Channel(port, 0)
 {
     this->ue_queue = ue_queue;
 }

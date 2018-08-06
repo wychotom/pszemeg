@@ -7,17 +7,9 @@
 eNodeB::eNodeB() :
 pdcch(PORTS::pdcch_port, 0xFFFF),
 pbch(PORTS::broadcast_port, 0xFFFFFF),
-pdsch(PORTS::dl_sch_port)
+pdsch(PORTS::dl_sch_port, &this->ue_queue)
 {
-    Channel::clients = this->clients;
-}
-
-eNodeB::~eNodeB()
-{
-//    for(auto channel : this->channels)
-//    {
-//        delete channel;
-//    }
+    Channel::clients = &this->clients;
 }
 
 void eNodeB::start()

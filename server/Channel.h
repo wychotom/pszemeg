@@ -13,7 +13,7 @@ class Channel
         ~Channel();
         void handle_connections();
         size_t getCounter();
-        static std::vector<UE> &clients;
+        static std::vector<UE*> *clients;
 
     private:
         void set_socket_non_blocking(int socket_fd);

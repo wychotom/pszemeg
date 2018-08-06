@@ -19,8 +19,8 @@ class eNodeB
         PDCCH pdcch;
         PBCH pbch;
         PDSCH pdsch;
-        std::queue<int> ue_queue;
-        std::vector<UE> clients;
+        std::queue<UE*> ue_queue;
+        std::vector<UE*> clients;
 };
 
 #endif

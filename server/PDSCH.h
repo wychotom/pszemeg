@@ -2,12 +2,13 @@
 #define SERVER_PDSCH_H
 
 #include "Channel.h"
+#include "UE.h"
 #include <queue>
 
 class PDSCH : public Channel
 {
     public:
-        PDSCH(int port, std::queue<int> &ue_queue);
+        PDSCH(int port, std::queue<UE> *ue_queue);
         void handle_queue();
 
     private:
