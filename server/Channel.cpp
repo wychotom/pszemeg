@@ -13,7 +13,7 @@
 #include <vector>
 #include <algorithm>
 
-std::vector<UE>& Channel::clients = NULL;
+std::vector<UE> Channel::clients;
 
 Channel::Channel(int port, size_t counter_reset) : max_number_of_events(255), counter(1)
 {
@@ -149,7 +149,6 @@ void Channel::accept_new_connection()
             perror("ERROR: ");
             throw std::string("Epoll ctl fail");
         }
-
     }
 }
 

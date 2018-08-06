@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include <netdb.h>
 
-PBCH::PBCH(int port, size_t counter_reset) : counter(1)
+PBCH::PBCH(uint16_t port, size_t counter_reset) : counter(1)
 {
     this->counter_reset = counter_reset;
 
@@ -33,7 +33,7 @@ PBCH::PBCH(int port, size_t counter_reset) : counter(1)
         throw std::string("socket fail");
     }
 
-    if (setsockopt(this->socket_fd, SOL_SOCKET, SO_BROADCAST, &broadcast,sizeof broadcast) == -1)
+    if (setsockopt(this->socket_fd, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof broadcast) == -1)
     {
         perror("ERROR: ");
         throw std::string("setsockopt fail");
@@ -49,6 +49,7 @@ PBCH::PBCH(int port, size_t counter_reset) : counter(1)
         perror("ERROR: ");
         throw std::string("bind fail");
     }
+
 }
 
 void PBCH::send_mib()
@@ -68,15 +69,14 @@ void PBCH::send_mib()
         perror("ERROR: ");
         throw std::string("sendto fail");
     }
+}
 
+size_t PBCH::getCounter()
+{
     if(++counter >= this->counter_reset)
     {
         counter = 0;
     }
 
-}
-
-size_t PBCH::getCounter()
-{
     return counter;
 }

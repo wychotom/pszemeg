@@ -7,7 +7,7 @@
 class PBCH
 {
     public:
-        PBCH(int port, size_t counter_reset);
+        PBCH(uint16_t port, size_t counter_reset);
         void send_mib();
 
         size_t getCounter();
@@ -16,7 +16,7 @@ class PBCH
         size_t counter_reset;
 
     private:
-        int port;
+        uint16_t port;
         int socket_fd;
         struct sockaddr_in server_addr, client_addr;
 
