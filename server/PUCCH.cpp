@@ -1,4 +1,4 @@
-#include "PUSCH.h"
+#include "PUCCH.h"
 #include "channels_struct.h"
 #include "Downlink_channel.h"
 
@@ -6,11 +6,11 @@
 #include <sys/socket.h>
 #include <iostream>
 
-PUSCH::PUSCH(int port) : Downlink_channel(port)
+PUCCH::PUCCH(int port) : Downlink_channel(port)
 {
 }
 
-void PUSCH::receive_message()
+void PUCCH::receive_message()
 {
     struct UPLINK_CONTROL_INFORMATION uci = {};
 
