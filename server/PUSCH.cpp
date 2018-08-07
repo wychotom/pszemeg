@@ -10,14 +10,16 @@ PUSCH::PUSCH(int port) : Downlink_channel(port)
 {
 }
 
-void PUSCH::receive_message()
+ssize_t PUSCH::receive_message(int event_fd)
 {
     struct UPLINK_CONTROL_INFORMATION uci = {};
 
-    ssize_t received_bytes = recvfrom(this->socket_fd, &uci, sizeof(struct UPLINK_CONTROL_INFORMATION), 0, nullptr, nullptr);
+    ssize_t received_bytes = recv(event_fd, &uci, sizeof(struct UPLINK_CONTROL_INFORMATION), 0);
 
     if(received_bytes > 0)
     {
-        std::cout << "received UCI " << uci.ue.RNTI << std::endl;
+        std::cout << "received UCI " << uci.ue_info.RNTI << std::endl;
     }
+
+    return received_bytes;
 }

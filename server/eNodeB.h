@@ -9,6 +9,7 @@
 #include "PDSCH.h"
 #include "PRACH.h"
 #include "PUSCH.h"
+#include "PUCCH.h"
 #include "UE.h"
 
 class eNodeB
@@ -24,6 +25,7 @@ class eNodeB
         PDSCH pdsch;
         PRACH prach;
         PUSCH pusch;
+        PUCCH pucch;
         std::queue<UE*> ue_queue;
 };
 

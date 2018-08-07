@@ -12,6 +12,13 @@ class UE
         int C_RNTI;
         Channel_flags get_flag();
 
+        void setUE_state(int UE_state);
+        void setTiming_advance(int timing_advance);
+        void setUplink_resource_grant(int uplink_resource_grant);
+        void setUplink_power_control(int uplink_power_control);
+        void setUl_sch_config(int ul_sch_config);
+        void setSrb_identity(int srb_identity);
+
     private:
         Channel_flags flag;
         int UE_state;

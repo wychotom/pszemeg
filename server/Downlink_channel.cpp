@@ -15,7 +15,7 @@
 Downlink_channel::Downlink_channel(int port) : max_number_of_events(255)
 {
     this->port = port;
-    this->socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+    this->socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
 
     this->addr.sin_family = AF_INET;
     this->addr.sin_port = htons(this->port);
