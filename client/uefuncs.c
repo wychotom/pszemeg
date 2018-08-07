@@ -8,12 +8,12 @@ int get_unique_name()
 
 void set_up_socket(int * sockfd, int port)
 {
-	int errflag;
+	int errflag = 1;
 
 	struct sockaddr_in sa;
 
 	*sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-	//setsockopt(*sockfd, SOL_SOCKET, SO_REUSEADDR, &errflag, sizeof(errflag));
+	setsockopt(*sockfd, SOL_SOCKET, SO_REUSEADDR, &errflag, sizeof(errflag));
 	sa.sin_family = AF_INET;
 	sa.sin_addr.s_addr = INADDR_ANY;
 	sa.sin_port = htons(port);
@@ -57,18 +57,14 @@ int set_non_block(int sockfd)
 void open_channels(struct eNB_conn_info * eNB, struct epoll_event *ev, int *efd)
 {
 	printf("broadcast\n");
-	//init_channel(&eNB->broadcast, ev, efd);	
 	add_socket_epoll(ev, efd, &eNB->broadcast.sock);
 
 	printf("pdcch\n");
-	//printf("OC: sock = %d\t port = %d\n", eNB->prach.sock ,eNB->prach.port);
 	init_channel(&eNB->pdcch, ev, efd);
 
 
 	printf("prach\n");
-	// //printf("OC: sock = %d\t port = %d\n", eNB->prach.sock ,eNB->prach.port);
 	init_channel(&eNB->prach, ev, efd);
-	// //printf("wot\n");
 	
 
 	printf("dl_sch\n");
@@ -156,7 +152,7 @@ void handletraffic(struct MIB_MESSAGE *init_msg, int broadcast_sock)
 			if(my_states.UE_state == 1)
 			{
 				//printf("im trying nigga.\n");
-				//send_random_access_preamble(connection_information.prach.sock, &my_states);
+				send_random_access_preamble(connection_information.prach.sock, &my_states);
 			}
 
 			if(events[i].events & EPOLLIN)

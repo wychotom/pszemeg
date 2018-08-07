@@ -121,13 +121,20 @@ void send_random_access_preamble(int fd, struct UE_INFO * info)
     struct RANDOM_ACCESS_PREAMBLE message;
     const short int preamble_identifier = 1337;
 
+	struct sockaddr_in other;
+	unsigned int otherlen = sizeof(other);
+
+	other.sin_family = AF_INET;
+	other.sin_addr.s_addr = htonl(INADDR_ANY);
+	other.sin_port = htons(20705);
+
     info->UE_state = 1; // sending rap all the time
 
     message.preamble = preamble_identifier;
     message.RA_RNTI = info->RNTI;
     message.checksum = preamble_identifier + info->RNTI;
 
-    if(send(fd, &message, sizeof(struct RANDOM_ACCESS_PREAMBLE), 0) == -1)
+    if(sendto(fd, &message, sizeof(struct RANDOM_ACCESS_PREAMBLE), 0, (struct sockaddr *)&other, otherlen) == -1)
     {
         perror("Random access preamble error: ");
     };
