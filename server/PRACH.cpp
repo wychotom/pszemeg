@@ -15,11 +15,11 @@ PRACH::PRACH(int port, std::queue<UE*> &ue_queue, std::vector<UE*> &clients) : D
 {
 }
 
-void PRACH::receive_message()
+ssize_t PRACH::receive_message(int event_fd)
 {
     struct RANDOM_ACCESS_PREAMBLE rap = {};
 
-    ssize_t received_bytes = recvfrom(this->socket_fd, &rap, sizeof(struct RANDOM_ACCESS_PREAMBLE), 0, nullptr, nullptr);
+    ssize_t received_bytes = recv(event_fd, &rap, sizeof(struct RANDOM_ACCESS_PREAMBLE), 0);
 
     if(received_bytes > 0)
     {
@@ -36,4 +36,6 @@ void PRACH::receive_message()
             ue_queue.push(new_client);
         }
     }
+
+    return received_bytes;
 }

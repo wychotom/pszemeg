@@ -1,5 +1,9 @@
 #include "eNodeB.h"
 #include "channels_struct.h"
+#include "PBCH.h"
+#include "PDSCH.h"
+#include "PDSCH.h"
+#include "PRACH.h"
 
 #include <vector>
 #include <iostream>
@@ -22,14 +26,14 @@ void eNodeB::start()
             this->pbch.send_mib();
         }
 
-        if(this->pdcch.get_counter() == 0)
-        {
-            this->pdcch.send_dci(true);
-        }
+//        if(this->pdcch.get_counter() == 0)
+//        {
+//            this->pdcch.send_dci(true);
+//        }
+
+        this->prach.handle_connections();
 
         this->pdsch.handle_queue(this->ue_queue);
-
-        this->prach.receive_message();
 
         this->pusch.receive_message();
     }
