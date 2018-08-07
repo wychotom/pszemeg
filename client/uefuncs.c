@@ -151,7 +151,8 @@ void handletraffic(struct MIB_MESSAGE *init_msg, int broadcast_sock)
 		{
 			if(my_states.UE_state == 1)
 			{
-				//printf("im trying nigga.\n");
+				printf("I TRIED SO HARD AND GOT SO FAR\nBUT IN THE END IT JUST END UP BLOCKED\n");
+
 				send_random_access_preamble(connection_information.prach.sock, &my_states);
 			}
 
@@ -159,13 +160,18 @@ void handletraffic(struct MIB_MESSAGE *init_msg, int broadcast_sock)
 			{
 				if(events[i].data.fd == connection_information.pdcch.sock)
 				{
-					int flag = 0;
-					receive_dci(events[i].data.fd, &flag);
+					receive_dci(events[i].data.fd, &my_states);
 				}
 				if(events[i].data.fd == connection_information.broadcast.sock)
 				{
-					int flag = 0;
-					receive_broadcast(events[i].data.fd, &flag);
+					receive_broadcast(events[i].data.fd, &my_states);
+				}
+
+				if((events[i].data.fd == connection_information.dl_sch.sock) 
+					&& (my_states.UE_state == 1))
+				{
+					printf("I TRIED SO HARD AND GOT SO FAR\nBUT IN THE END IT JUST END UP BLOCKED\n");
+					receive_random_access_response(events[i].data.fd, &my_states);
 				}
 				
 			}
@@ -176,6 +182,9 @@ void handletraffic(struct MIB_MESSAGE *init_msg, int broadcast_sock)
 void setup_ue(struct UE_INFO *init_states)
 {
 	int RNTI = get_unique_name();
+
+	printf("Uniq name = %d\n", RNTI);
+
 	init_states->UE_state = 1;
 	init_states->RNTI = RNTI;
 	init_states->timing_advance = 0;

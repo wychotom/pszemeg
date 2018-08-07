@@ -2,7 +2,7 @@
 
 int main(int argc, char ** argv)
 {
-	printf("Uniq name = %d\n", get_unique_name());
+	//printf("Uniq name = %d\n", get_unique_name());
 
 	int is_sock_created = 0;
 	struct MIB_MESSAGE ports;//broadcast only

@@ -69,8 +69,8 @@ struct MIB_MESSAGE
 
 struct RANDOM_ACCESS_PREAMBLE
 {
-    short int preamble; //1337
     int RA_RNTI;
+    short int preamble; //1337
     long checksum;
 };
 
@@ -85,6 +85,7 @@ struct RANDOM_ACCESS_RESPONSE
 
 struct DCI_MESSAGE
 {
+    //int RA_RNTI;//might suggest them this
     unsigned char format0_a_flag;
     unsigned char freqency_hooping;
     int riv;
@@ -94,6 +95,14 @@ struct DCI_MESSAGE
     int cyclic_shift;
     unsigned char cqi_request;
     long checksum;
+};
+
+struct UCI_MESSAGE
+{
+    int RA_RNTI;
+    int scheduling_request;
+    int harq_ack;
+    int cqi;
 };
 
 //uefuncs.c
@@ -109,8 +118,12 @@ void setup_ue(struct UE_INFO *);
 
 //messages.c
 void receive_init_broadcast_msg(int *, struct MIB_MESSAGE *);
-void receive_broadcast(int fd, int * new_enb);
-void receive_dci(int fd, int * state);
+void receive_broadcast(int fd, struct UE_INFO *info);
+
 void send_random_access_preamble(int fd, struct UE_INFO *);
+void receive_random_access_response(int fd, struct UE_INFO *info);
+
+void send_uci(int fd, struct UE_INFO *);
+void receive_dci(int fd, struct UE_INFO *info);
 
 #endif

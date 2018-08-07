@@ -1,6 +1,6 @@
 #include "header.h"
 
-void receive_init_broadcast_msg(int * flag, struct MIB_MESSAGE * return_MIB)
+void receive_init_broadcast_msg(int *flag, struct MIB_MESSAGE *return_MIB)
 {
 	int broadcast_socket = socket(AF_INET, SOCK_DGRAM, 0);
 
@@ -13,6 +13,14 @@ void receive_init_broadcast_msg(int * flag, struct MIB_MESSAGE * return_MIB)
 	{
 		perror("Failed on setsockopt\n");
 	}
+	broadcast = 1;
+
+	retval = setsockopt(broadcast_socket, SOL_SOCKET, SO_REUSEADDR, &broadcast, sizeof(broadcast));
+	if(retval == -1)
+	{
+		perror("Failed on so_reuseaddr\n");
+	}
+
 
 	struct sockaddr_in socketConfig, clientConfig;
     memset(&socketConfig, 0, sizeof(socketConfig));
@@ -53,7 +61,7 @@ void receive_init_broadcast_msg(int * flag, struct MIB_MESSAGE * return_MIB)
     return;
 }
 
-void receive_broadcast(int fd, int * new_enb)
+void receive_broadcast(int fd, struct UE_INFO *info)
 {
 	struct MIB_MESSAGE killme;
 	struct sockaddr_in clientConfig;
@@ -78,27 +86,27 @@ void receive_broadcast(int fd, int * new_enb)
 	}
 }
 
-void receive_dci(int fd, int * state)
+void receive_dci(int fd, struct UE_INFO *info)
 {
-	struct DCI_MESSAGE killme;
+	struct DCI_MESSAGE dci_msg;
 
 	struct sockaddr_in clientConfig;
 	int recvbytes;
 
 	unsigned int ca_len = sizeof(clientConfig);
-	recvbytes = recvfrom(fd, &killme, sizeof(struct DCI_MESSAGE), 0,
+	recvbytes = recvfrom(fd, &dci_msg, sizeof(struct DCI_MESSAGE), 0,
 				(struct sockaddr *)&clientConfig, &ca_len);
 
 	int calc_check_sum = 0;
 
-	calc_check_sum += killme.format0_a_flag;
-	calc_check_sum += killme.freqency_hooping;
-	calc_check_sum += killme.riv;
-	calc_check_sum += killme.mcs;
-	calc_check_sum += killme.ndi;
-	calc_check_sum += killme.tpc;
-	calc_check_sum += killme.cyclic_shift;
-	calc_check_sum += killme.cqi_request;//tbi
+	calc_check_sum += dci_msg.format0_a_flag;
+	calc_check_sum += dci_msg.freqency_hooping;
+	calc_check_sum += dci_msg.riv;
+	calc_check_sum += dci_msg.mcs;
+	calc_check_sum += dci_msg.ndi;
+	calc_check_sum += dci_msg.tpc;
+	calc_check_sum += dci_msg.cyclic_shift;
+	calc_check_sum += dci_msg.cqi_request;//tbi
 
 	if(recvbytes > 0)
 	{
@@ -110,13 +118,13 @@ void receive_dci(int fd, int * state)
 		{
 			printf("\nformat_0 = %u\nfreq_hop = %u\nriv = %d\nmcs = %d\nndi = %u\n"
 					"tpc = %d\ncyclic shift = %d\ncqi_request = %u\n",
-					killme.format0_a_flag, killme.freqency_hooping, killme.riv, killme.mcs,
-					killme.ndi, killme.tpc, killme.cyclic_shift, killme.cqi_request);
+					dci_msg.format0_a_flag, dci_msg.freqency_hooping, dci_msg.riv, dci_msg.mcs,
+					dci_msg.ndi, dci_msg.tpc, dci_msg.cyclic_shift, dci_msg.cqi_request);
 		}
 	}
 }
 
-void send_random_access_preamble(int fd, struct UE_INFO * info)
+void send_random_access_preamble(int fd, struct UE_INFO *info)
 {
     struct RANDOM_ACCESS_PREAMBLE message;
     const short int preamble_identifier = 1337;
@@ -137,10 +145,64 @@ void send_random_access_preamble(int fd, struct UE_INFO * info)
     if(sendto(fd, &message, sizeof(struct RANDOM_ACCESS_PREAMBLE), 0, (struct sockaddr *)&other, otherlen) == -1)
     {
         perror("Random access preamble error: ");
-    };
+    }
 }
 
-void receive_random_access_response()
+void receive_random_access_response(int fd, struct UE_INFO *info)
 {
+	struct RANDOM_ACCESS_RESPONSE rar_msg;
 
+	struct sockaddr_in clientConfig;
+	int recvbytes;
+
+	unsigned int ca_len = sizeof(clientConfig);
+	recvbytes = recvfrom(fd, &rar_msg, sizeof(struct RANDOM_ACCESS_RESPONSE), 0,
+				(struct sockaddr *)&clientConfig, &ca_len);
+
+	int calc_check_sum = 0;
+
+	calc_check_sum += rar_msg.timing_advance;
+	calc_check_sum += rar_msg.uplink_resource_grant;
+	calc_check_sum += rar_msg.temporary_c_rnti;
+
+
+	if(recvbytes > 0)
+	{
+		if (recvbytes > sizeof(struct DCI_MESSAGE))
+		{
+			return;
+		}
+		else
+		{
+			printf("\ntim_adv = %d urg = %d, temp_rnti = %d, checksum = %ld\n",
+					rar_msg.timing_advance, rar_msg.uplink_resource_grant,
+					rar_msg.temporary_c_rnti, rar_msg.checksum);
+
+			info->UE_state = 2;
+		}
+	}
+}
+
+void send_uci(int fd, struct UE_INFO *info)
+{
+	struct RANDOM_ACCESS_PREAMBLE message;
+    const short int preamble_identifier = 1337;
+
+	struct sockaddr_in other;
+	unsigned int otherlen = sizeof(other);
+
+	other.sin_family = AF_INET;
+	other.sin_addr.s_addr = htonl(INADDR_ANY);
+	other.sin_port = htons(20705);
+
+    info->UE_state = 1; // sending rap all the time
+
+    message.preamble = preamble_identifier;
+    message.RA_RNTI = info->RNTI;
+    message.checksum = preamble_identifier + info->RNTI;
+
+    if(sendto(fd, &message, sizeof(struct RANDOM_ACCESS_PREAMBLE), 0, (struct sockaddr *)&other, otherlen) == -1)
+    {
+        perror("Random access preamble error: ");
+    };
 }
