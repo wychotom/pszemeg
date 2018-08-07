@@ -9,8 +9,8 @@
 #include <iostream>
 
 eNodeB::eNodeB() :
-pbch(Ports::pbch_port, 0x7FFFF),
-pdcch(Ports::pdcch_port, 0x5FFFFF),
+pbch(Ports::pbch_port, 0x3FFFFF),
+pdcch(Ports::pdcch_port, 0xFFFFFF),
 pdsch(Ports::pdsch_port),
 prach(Ports::prach_port, ue_queue, clients),
 pusch(Ports::pusch_port),

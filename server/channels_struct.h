@@ -51,8 +51,8 @@ struct RANDOM_ACCESS_RESPONSE_MESSAGE
 
 struct RANDOM_ACCESS_PREAMBLE
 {
-    short int preamble; //505245414d424c45
     int RA_RNTI;
+    short int preamble;
     long checksum;
 };
 

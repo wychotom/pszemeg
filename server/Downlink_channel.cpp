@@ -29,12 +29,6 @@ Downlink_channel::Downlink_channel(int port) : max_number_of_events(255)
 
     set_socket_non_blocking(this->socket_fd);
 
-    if(listen(this->socket_fd, 5) == -1)
-    {
-        perror("ERROR: ");
-        throw std::string("Listen fail");
-    }
-
     if((this->epoll_fd = epoll_create(max_number_of_events)) == -1)
     {
         perror("ERROR: ");
@@ -72,54 +66,12 @@ void Downlink_channel::handle_connections()
     int number_of_incoming_events;
     number_of_incoming_events = epoll_wait(this->epoll_fd, this->events, max_number_of_events, 0);
 
+    if(number_of_incoming_events != 0)
+        std::cout << number_of_incoming_events << std::endl;
+
     for(int i = 0; i < number_of_incoming_events; i++)
     {
-        if(this->events[i].events & EPOLLIN)
-        {
-            if (this->socket_fd == this->events[i].data.fd)
-            {
-                accept_new_connection();
-            }
-            else
-            {
-                read_incoming_data(this->events[i].data.fd);
-            }
-        }
-        else
-        {
-            close(this->events[i].events);
-        }
-    }
-}
-
-void Downlink_channel::accept_new_connection()
-{
-    socklen_t client_socket_length = sizeof(client);
-    int new_client_fd;
-
-    while((new_client_fd = accept(this->socket_fd, &client, &client_socket_length)) != -1)
-    {
-        char hostname_buffer[NI_MAXHOST], service_buffer[NI_MAXSERV];
-
-        if (getnameinfo(&client, client_socket_length,
-                        hostname_buffer, sizeof(hostname_buffer),
-                        service_buffer, sizeof(service_buffer),
-                        NI_NUMERICHOST | NI_NUMERICSERV) == 0)
-        {
-            std::cout << "Hostname: [" << hostname_buffer << "] Service: [" << service_buffer << "]" << std::endl;
-        }
-
-        set_socket_non_blocking(new_client_fd);
-
-        event.data.fd = new_client_fd;
-        event.events = EPOLLIN | EPOLLET;
-
-        if(epoll_ctl(this->epoll_fd, EPOLL_CTL_ADD, new_client_fd, &event) == -1)
-        {
-            perror("ERROR: ");
-            throw std::string("Epoll ctl fail");
-        }
-
+        read_incoming_data(this->events[i].data.fd);
     }
 }
 
@@ -131,10 +83,5 @@ void Downlink_channel::read_incoming_data(int event_fd)
     {
         perror("ERROR: ");
         throw std::string("Read fail");
-    }
-    else if(bytes_count == 0)
-    {
-        std::cout << event_fd << " has disconnected" << std::endl;
-        close(event_fd);
     }
 }

@@ -14,7 +14,6 @@ class Downlink_channel
 
     private:
         void set_socket_non_blocking(int socket_fd);
-        void accept_new_connection();
         void read_incoming_data(int event_fd);
 
         int port;
