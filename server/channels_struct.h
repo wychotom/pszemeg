@@ -4,8 +4,8 @@
 enum Ports
 {
     pbch_port = 20700,
-    dl_sch_port = 20701,
-    ul_sch_port = 20702,
+    pdsch_port = 20701,
+    pusch_port = 20702,
     pdcch_port = 20703,
     pucch_port = 20704,
     prach_port = 20705
@@ -54,6 +54,21 @@ struct RANDOM_ACCESS_PREAMBLE
     short int preamble; //505245414d424c45
     int RA_RNTI;
     long checksum;
+};
+
+struct UE_INFO
+{
+    int UE_state;
+    int RNTI;
+    int timing_advance;
+    int uplink_resource_grant;
+    int uplink_power_control;
+    int ul_sch_config;
+    int srb_identity;
+};
+
+struct UPLINK_CONTROL_INFORMATION{
+    struct UE_INFO ue;
 };
 
 #endif

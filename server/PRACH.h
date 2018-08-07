@@ -2,19 +2,20 @@
 #define SERVER_PRACH_H
 
 #include "Downlink_channel.h"
+#include "UE.h"
+
+#include <vector>
+#include <queue>
 
 class PRACH : public Downlink_channel
 {
     public:
-        PRACH(int port);
+        PRACH(int port, std::queue<UE*> &ue_queue, std::vector<UE*> &clients);
         void receive_message() override;
-    //void receive_message(bool *receive_again, struct RANDOM_ACCESS_PREAMBLE *new_message);
 
-
-//    private:
-//        int port;
-//        int socket_fd;
-//        struct sockaddr_in server_addr, client_addr;
+    private:
+        std::queue<UE*> &ue_queue;
+        std::vector<UE*> &clients;
 };
 
 

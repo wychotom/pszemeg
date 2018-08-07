@@ -1,40 +1,18 @@
 #include "PRACH.h"
 #include "channels_struct.h"
 #include "Downlink_channel.h"
+#include "UE.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <iostream>
 
-PRACH::PRACH(int port) : Downlink_channel(port)
+#include <vector>
+#include <queue>
+#include <algorithm>
+
+PRACH::PRACH(int port, std::queue<UE*> &ue_queue, std::vector<UE*> &clients) : Downlink_channel(port), ue_queue(ue_queue), clients(clients)
 {
-//    this->port = port;
-//
-//    this->socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
-//
-//    if(this->socket_fd  == -1)
-//    {
-//        perror("ERROR: ");
-//        throw std::string("socket fail");
-//    }
-//
-//    int broadcast = 1;
-//
-//    if(setsockopt(this->socket_fd , SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast)) == -1)
-//    {
-//        perror("ERROR: ");
-//        throw std::string("setsockopt fail");
-//    }
-//
-//    server_addr.sin_family = AF_INET;
-//    server_addr.sin_port = htons(this->port);
-//    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-//
-//    if(bind(this->socket_fd , (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == -1)
-//    {
-//        perror("ERROR: ");
-//        throw std::string("bind fail");
-//    }
 }
 
 void PRACH::receive_message()
@@ -46,37 +24,16 @@ void PRACH::receive_message()
     if(received_bytes > 0)
     {
         std::cout << "RAP " << rap.RA_RNTI << std::endl;
+
+        auto it = std::find_if(clients.begin(), clients.end(), [this, &rap]( UE* client) {
+            return client->RA_RNTI == rap.RA_RNTI;
+        });
+
+        if (it == clients.end())
+        {
+            UE *new_client = new UE(rap.RA_RNTI);
+            clients.push_back(new_client);
+            ue_queue.push(new_client);
+        }
     }
 }
-
-//void PRACH::receive_message(bool *receive_again, struct RANDOM_ACCESS_PREAMBLE *new_message)
-//{
-//    socklen_t client_addr_len = sizeof(this->client_addr);
-//
-//    int received_bytes = recvfrom(this->socket_fd, new_message, sizeof(struct RANDOM_ACCESS_PREAMBLE), 0,
-//                                  (struct sockaddr*) &this->client_addr, &client_addr_len);
-//
-//    if(received_bytes > 0)
-//    {
-//        if (received_bytes > 1024)
-//        {
-//            *receive_again = true;
-//            return;
-//        }
-//        else
-//        {
-//            *receive_again = false;
-//            return;
-//        }
-//    }
-//    else if(received_bytes == 0)
-//    {
-//        perror("Server dropped connection.\n");
-//        exit(EXIT_SUCCESS);
-//    }
-//    else if(received_bytes == -1)
-//    {
-//        perror("ERROR: ");
-//        throw std::string("recvfrom fail");
-//    }
-//}

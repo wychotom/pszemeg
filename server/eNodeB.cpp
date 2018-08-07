@@ -7,8 +7,9 @@
 eNodeB::eNodeB() :
 pbch(Ports::pbch_port, 0x75FFFF),
 pdcch(Ports::pdcch_port, 0x5FFFFF),
-pdsch(Ports::dl_sch_port),
-prach(Ports::prach_port)
+pdsch(Ports::pdsch_port),
+prach(Ports::prach_port, ue_queue, clients),
+pusch(Ports::pusch_port)
 {
 }
 
@@ -29,5 +30,7 @@ void eNodeB::start()
         this->pdsch.handle_queue(this->ue_queue);
 
         this->prach.receive_message();
+
+        this->pusch.receive_message();
     }
 }
