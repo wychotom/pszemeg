@@ -27,18 +27,6 @@
 // 4 - awaiting connection setup
 // 5 - send rrc connection complete
 
-struct UE_INFO
-{
-    int UE_state;
-    int RNTI;
-    int timing_advance;
-    int uplink_resource_grant;
-    int uplink_power_control;
-    int ul_sch_config;
-    int srb_identity;
-};
-
-
 struct conn_pair
 {
     int sock;
@@ -97,8 +85,19 @@ struct DCI_MESSAGE
     long checksum;
 };
 
-struct UCI_MESSAGE
+struct UE_INFO
 {
+    int UE_state;
+    int RNTI;
+    int timing_advance;
+    int uplink_resource_grant;
+    int uplink_power_control;
+    int ul_sch_config;
+    int srb_identity;
+};
+
+struct UCI_MESSAGE{
+    struct UE_INFO info;
     int RA_RNTI;
     int scheduling_request;
     int harq_ack;
