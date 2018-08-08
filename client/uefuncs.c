@@ -13,9 +13,9 @@ void set_up_socket(int * sockfd, int port)
 	struct sockaddr_in sa;
 
 	*sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-	setsockopt(*sockfd, SOL_SOCKET, SO_REUSEADDR, &errflag, sizeof(errflag));
+	setsockopt(*sockfd, SOL_SOCKET, SO_BROADCAST, &errflag, sizeof(errflag));
 	sa.sin_family = AF_INET;
-	sa.sin_addr.s_addr = INADDR_ANY;
+	sa.sin_addr.s_addr = htons(INADDR_ANY);
 	sa.sin_port = htons(port);
 
 	//errflag = connect(*sockfd, (struct sockaddr *)&sa, sizeof(sa)); // TU COS ZMIENILEM NIE WIEM CO XD
@@ -142,7 +142,6 @@ void handletraffic(struct MIB_MESSAGE *init_msg, int broadcast_sock)
 	while(1)
 	{
 		ewait_flag = epoll_wait(efd, events, max_epoll_events, -1);
-		printf("%d\n", ewait_flag);
 
 		if(ewait_flag == -1)
 		{
