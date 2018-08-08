@@ -99,11 +99,11 @@ struct DCI_MESSAGE
 
 struct UCI_MESSAGE
 {
-    //int RA_RNTI;
-    //int scheduling_request;
-    //int harq_ack;
-    //int cqi;
     struct UE_INFO info;
+    int RA_RNTI;
+    int scheduling_request;
+    int harq_ack;
+    int cqi;
 };
 
 //uefuncs.c
@@ -121,10 +121,10 @@ void setup_ue(struct UE_INFO *);
 void receive_init_broadcast_msg(int *, struct MIB_MESSAGE *);
 void receive_broadcast(int fd, struct UE_INFO *info);
 
-void send_random_access_preamble(int fd, struct UE_INFO *);
+void send_random_access_preamble(int fd, int port, struct UE_INFO *);
 void receive_random_access_response(int fd, struct UE_INFO *info);
 
-void send_uci(int fd, struct UE_INFO *);
+void send_uci(int fd, int port, struct UE_INFO *);
 void receive_dci(int fd, struct UE_INFO *info);
 
 #endif
