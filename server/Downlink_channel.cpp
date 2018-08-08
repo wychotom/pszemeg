@@ -19,7 +19,7 @@ Downlink_channel::Downlink_channel(int port) : max_number_of_events(255)
 
     this->addr.sin_family = AF_INET;
     this->addr.sin_port = htons(this->port);
-    this->addr.sin_addr.s_addr = INADDR_ANY;
+    this->addr.sin_addr.s_addr = htons(INADDR_ANY);
 
     if(bind(this->socket_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
     {

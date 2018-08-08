@@ -21,7 +21,6 @@ void receive_init_broadcast_msg(int *flag, struct MIB_MESSAGE *return_MIB)
 		perror("Failed on so_reuseaddr\n");
 	}
 
-
 	struct sockaddr_in socketConfig, clientConfig;
     memset(&socketConfig, 0, sizeof(socketConfig));
 
@@ -133,7 +132,8 @@ void send_random_access_preamble(int fd, struct UE_INFO *info)
 	unsigned int otherlen = sizeof(other);
 
 	other.sin_family = AF_INET;
-	other.sin_addr.s_addr = inet_addr("192.168.40.255");
+	//other.sin_addr.s_addr = inet_addr("192.168.40.255");
+	other.sin_addr.s_addr = htonl(INADDR_ANY);
 	other.sin_port = htons(20705);
 
     info->UE_state = 1; // sending rap all the time
