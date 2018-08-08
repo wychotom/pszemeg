@@ -30,7 +30,6 @@ void set_up_socket(int * sockfd, int port)
 		else
 			perror("connect err");
 	}
-	
 }
 
 int set_non_block(int sockfd)
@@ -62,17 +61,14 @@ void open_channels(struct eNB_conn_info * eNB, struct epoll_event *ev, int *efd)
 	printf("pdcch\n");
 	init_channel(&eNB->pdcch, ev, efd);
 
-
 	printf("prach\n");
 	init_channel(&eNB->prach, ev, efd);
-	
 
 	printf("dl_sch\n");
 	init_channel(&eNB->dl_sch, ev, efd);
 
 	printf("ul_sch\n");
 	init_channel(&eNB->ul_sch, ev, efd);
-
 	
 	printf("pucch\n");
 	init_channel(&eNB->pucch, ev, efd);
@@ -80,7 +76,6 @@ void open_channels(struct eNB_conn_info * eNB, struct epoll_event *ev, int *efd)
 
 void init_channel(struct conn_pair *channel, struct epoll_event *ev, int *efd)
 {
-	//printf("SUS: sock = %d\t port = %d\n", channel->sock ,channel->port);
 	set_up_socket(&channel->sock, channel->port);
 	set_non_block(channel->sock);
 	add_socket_epoll(ev, efd, &channel->sock);
@@ -141,14 +136,14 @@ void handletraffic(struct MIB_MESSAGE *init_msg, int broadcast_sock)
 
 	while(1)
 	{
-		if(my_states.UE_state == 1)
-		{
-			send_random_access_preamble(connection_information.prach.sock, &my_states);
-		}
-
-		send_uci(connection_information.pucch.sock, &my_states);
-
 		ewait_flag = epoll_wait(efd, events, max_epoll_events, -1);
+
+        if(my_states.UE_state == 1)
+        {
+            send_random_access_preamble(connection_information.prach.sock, connection_information.prach.port,&my_states);
+        }
+
+        send_uci(connection_information.pucch.sock, connection_information.pucch.port, &my_states);
 
 		if(ewait_flag == -1)
 		{
@@ -174,7 +169,6 @@ void handletraffic(struct MIB_MESSAGE *init_msg, int broadcast_sock)
 					printf("receive_random_access_response\n");
 					receive_random_access_response(events[i].data.fd, &my_states);
 				}
-				
 			}
 		}
 	}

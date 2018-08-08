@@ -26,7 +26,7 @@ void PDSCH::send_random_access_response(UE &ue)
 
     send_message((void*) &rar_message, sizeof(struct RANDOM_ACCESS_RESPONSE_MESSAGE));
 
-    std::cout << "RAR sent to " << ue.RA_RNTI << std::endl;
+    std::cout << "[PDSCH] RAR sent to " << ue.RA_RNTI << std::endl;
 }
 
 void PDSCH::handle_queue(std::queue<UE*> &ue_queue)

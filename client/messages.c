@@ -123,7 +123,7 @@ void receive_dci(int fd, struct UE_INFO *info)
 	}
 }
 
-void send_random_access_preamble(int fd, struct UE_INFO *info)
+void send_random_access_preamble(int fd, int port, struct UE_INFO * info)
 {
     struct RANDOM_ACCESS_PREAMBLE rap_msg;
     const short int preamble_identifier = 1337;
@@ -134,7 +134,7 @@ void send_random_access_preamble(int fd, struct UE_INFO *info)
 	other.sin_family = AF_INET;
 	//other.sin_addr.s_addr = inet_addr("192.168.40.255");
 	other.sin_addr.s_addr = htonl(INADDR_ANY);
-	other.sin_port = htons(20705);
+	other.sin_port = htons(port);
 
     info->UE_state = 1; // sending rap all the time
 
@@ -160,9 +160,6 @@ void receive_random_access_response(int fd, struct UE_INFO *info)
 				(struct sockaddr *)&clientConfig, &ca_len);
 
 	int calc_check_sum = 0;
-
-	
-
 
 	if(recvbytes > 0)
 	{
@@ -190,7 +187,7 @@ void receive_random_access_response(int fd, struct UE_INFO *info)
 	}
 }
 
-void send_uci(int fd, struct UE_INFO *info)
+void send_uci(int fd, int port, struct UE_INFO *info)
 {
 	struct UCI_MESSAGE uci_msg;
 
@@ -199,14 +196,19 @@ void send_uci(int fd, struct UE_INFO *info)
 
 	other.sin_family = AF_INET;
 	other.sin_addr.s_addr = htonl(INADDR_ANY);
-	other.sin_port = htons(20704);
+	other.sin_port = htons(port);
 
 	//info->UE_state = 1; // sending rap all the time
 
 	uci_msg.info = *info;
+	uci_msg.RA_RNTI = info->RNTI;
+	uci_msg.harq_ack = 1;
+	uci_msg.cqi = 1;
+	uci_msg.scheduling_request = 1;
 
     if(sendto(fd, &uci_msg, sizeof(struct UCI_MESSAGE), 0, (struct sockaddr *)&other, otherlen) == -1)
     {
         perror("UCI send error: ");
-    };
+    }
+
 }

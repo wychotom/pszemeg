@@ -28,5 +28,5 @@ void PBCH::send_mib()
 
     send_message((void*) &mib_message, sizeof(struct MIB_MESSAGE));
 
-    std::cout << "MIB sent" << std::endl;
+    std::cout << "[PBCH]  MIB sent" << std::endl;
 }

@@ -18,7 +18,7 @@ ssize_t PUSCH::receive_message(int event_fd)
 
     if(received_bytes > 0)
     {
-        std::cout << "received UCI " << uci.ue_info.RNTI << std::endl;
+        std::cout << "[PUSCH] received UCI " << uci.ue_info.RNTI << std::endl;
     }
 
     return received_bytes;

@@ -21,7 +21,7 @@ ssize_t PUCCH::receive_message(int event_fd)
 
     if(received_bytes > 0)
     {
-        std::cout << "received UCI " << uci.ue_info.RNTI << std::endl;
+        std::cout << "[PUCCH] received UCI form " << uci.ue_info.RNTI << std::endl;
 
         auto it = std::find_if(clients.begin(), clients.end(), [this, &uci]( UE* client) {
             return client->RA_RNTI == uci.RA_RNTI;
