@@ -1,67 +1,6 @@
 #include "header.h"
 
-void receive_init_broadcast_msg(int *flag, struct MIB_MESSAGE *return_MIB)
-{
-	int broadcast_socket = socket(AF_INET, SOCK_DGRAM, 0);
-
-    assert(broadcast_socket != -1);
-
-	int broadcast = 1;
-    unsigned int ca_len;
-	int retval = setsockopt(broadcast_socket, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast));
-    if(retval == -1)
-	{
-		perror("Failed on setsockopt\n");
-	}
-	broadcast = 1;
-
-	retval = setsockopt(broadcast_socket, SOL_SOCKET, SO_REUSEADDR, &broadcast, sizeof(broadcast));
-	if(retval == -1)
-	{
-		perror("Failed on so_reuseaddr\n");
-	}
-
-
-	struct sockaddr_in socketConfig, clientConfig;
-    memset(&socketConfig, 0, sizeof(socketConfig));
-
-    socketConfig.sin_family = AF_INET;
-	socketConfig.sin_port = htons(BROADCAST_PORT);
-	socketConfig.sin_addr.s_addr = htonl(INADDR_ANY);
-
-    retval = bind(broadcast_socket, (struct sockaddr *)&socketConfig, sizeof(struct sockaddr));
-    if(retval == -1)
-	{
-		perror("Failed on bind\n");
-	}
-
-	int recvbytes;
-
-	ca_len = sizeof(clientConfig);
-    recvbytes = recvfrom(broadcast_socket, return_MIB, sizeof(struct MIB_MESSAGE), 0,
-						(struct sockaddr *)&clientConfig, &ca_len);
-
-	if(recvbytes > 0)
-	{
-		if (recvbytes > sizeof(struct MIB_MESSAGE))
-		{
-			return;
-		}
-		else
-		{
-			*flag = broadcast_socket;
-			return;
-		}
-	}
-	if(recvbytes == 0)
-    {
-        perror("Server dropped connection.\n");
-        exit(EXIT_SUCCESS);
-    }
-    return;
-}
-
-void receive_broadcast(int fd, struct UE_INFO *info)
+void receive_broadcast(int fd, struct UE_INFO *info, struct MIB_MESSAGE *mib_ret)
 {
 	struct MIB_MESSAGE mib_msg;
 	struct sockaddr_in clientConfig;
@@ -70,7 +9,6 @@ void receive_broadcast(int fd, struct UE_INFO *info)
 	unsigned int ca_len = sizeof(clientConfig);
 	recvbytes = recvfrom(fd, &mib_msg, sizeof(struct MIB_MESSAGE), 0,
 						(struct sockaddr *)&clientConfig, &ca_len);
-
 	if(recvbytes > 0)
 	{
 		if (recvbytes > sizeof(struct MIB_MESSAGE))
@@ -79,9 +17,22 @@ void receive_broadcast(int fd, struct UE_INFO *info)
 		}
 		else
 		{
+
+			if(info->UE_state == 0)
+				info->UE_state = 1;
+
+			mib_ret->broadcast_port = mib_msg.broadcast_port;
+			mib_ret->prach_port = mib_msg.prach_port;
+			mib_ret->dl_sch_port = mib_msg.dl_sch_port;
+			mib_ret->ul_sch_port = mib_msg.ul_sch_port;
+			mib_ret->pdcch_port = mib_msg.pdcch_port;
+			mib_ret->pucch_port = mib_msg.pucch_port;
+			#ifdef DEBUG
 			printf("\nBROADCAST = %d\nPRACH = %d\nDL_SCH = %d\nUL_SCH = %d\nPDDCH = %d\nPUCCH = %d\n",
 					mib_msg.broadcast_port, mib_msg.prach_port, mib_msg.dl_sch_port,
 					mib_msg.ul_sch_port, mib_msg.pdcch_port, mib_msg.pucch_port);
+			#endif
+			
 		}
 	}
 }
@@ -116,10 +67,13 @@ void receive_dci(int fd, struct UE_INFO *info)
 		}
 		else
 		{
+			#ifdef DEBUG
 			printf("\nformat_0 = %u\nfreq_hop = %u\nriv = %d\nmcs = %d\nndi = %u\n"
 					"tpc = %d\ncyclic shift = %d\ncqi_request = %u\n",
 					dci_msg.format0_a_flag, dci_msg.freqency_hooping, dci_msg.riv, dci_msg.mcs,
 					dci_msg.ndi, dci_msg.tpc, dci_msg.cyclic_shift, dci_msg.cqi_request);
+			#endif
+			
 		}
 	}
 }
@@ -175,9 +129,12 @@ void receive_random_access_response(int fd, struct UE_INFO *info)
 
 			//if(calc_check_sum == rar_msg.checksum)
 			//{
+				#ifdef DEBUG
 				printf("\ntim_adv = %d urg = %d, temp_rnti = %d, checksum = %ld\n",
 					rar_msg.timing_advance, rar_msg.uplink_resource_grant,
 					rar_msg.temporary_c_rnti, rar_msg.checksum);
+				#endif
+				
 
 				info->UE_state = 2;
 			//}
