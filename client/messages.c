@@ -63,12 +63,12 @@ void receive_init_broadcast_msg(int *flag, struct MIB_MESSAGE *return_MIB)
 
 void receive_broadcast(int fd, struct UE_INFO *info)
 {
-	struct MIB_MESSAGE killme;
+	struct MIB_MESSAGE mib_msg;
 	struct sockaddr_in clientConfig;
 	int recvbytes;
 
 	unsigned int ca_len = sizeof(clientConfig);
-	recvbytes = recvfrom(fd, &killme, sizeof(struct MIB_MESSAGE), 0,
+	recvbytes = recvfrom(fd, &mib_msg, sizeof(struct MIB_MESSAGE), 0,
 						(struct sockaddr *)&clientConfig, &ca_len);
 
 	if(recvbytes > 0)
@@ -80,8 +80,8 @@ void receive_broadcast(int fd, struct UE_INFO *info)
 		else
 		{
 			printf("\nBROADCAST = %d\nPRACH = %d\nDL_SCH = %d\nUL_SCH = %d\nPDDCH = %d\nPUCCH = %d\n",
-					killme.broadcast_port, killme.prach_port, killme.dl_sch_port,
-					killme.ul_sch_port, killme.pdcch_port, killme.pucch_port);
+					mib_msg.broadcast_port, mib_msg.prach_port, mib_msg.dl_sch_port,
+					mib_msg.ul_sch_port, mib_msg.pdcch_port, mib_msg.pucch_port);
 		}
 	}
 }
@@ -126,7 +126,7 @@ void receive_dci(int fd, struct UE_INFO *info)
 
 void send_random_access_preamble(int fd, struct UE_INFO *info)
 {
-    struct RANDOM_ACCESS_PREAMBLE message;
+    struct RANDOM_ACCESS_PREAMBLE rap_msg;
     const short int preamble_identifier = 1337;
 
 	struct sockaddr_in other;
@@ -138,11 +138,11 @@ void send_random_access_preamble(int fd, struct UE_INFO *info)
 
     info->UE_state = 1; // sending rap all the time
 
-    message.preamble = preamble_identifier;
-    message.RA_RNTI = info->RNTI;
-    message.checksum = preamble_identifier + info->RNTI;
+    rap_msg.preamble = preamble_identifier;
+    rap_msg.RA_RNTI = info->RNTI;
+    rap_msg.checksum = preamble_identifier + info->RNTI;
 
-    if(sendto(fd, &message, sizeof(struct RANDOM_ACCESS_PREAMBLE), 0, (struct sockaddr *)&other, otherlen) == -1)
+    if(sendto(fd, &rap_msg, sizeof(struct RANDOM_ACCESS_PREAMBLE), 0, (struct sockaddr *)&other, otherlen) == -1)
     {
         perror("Random access preamble error: ");
     }
@@ -161,9 +161,7 @@ void receive_random_access_response(int fd, struct UE_INFO *info)
 
 	int calc_check_sum = 0;
 
-	calc_check_sum += rar_msg.timing_advance;
-	calc_check_sum += rar_msg.uplink_resource_grant;
-	calc_check_sum += rar_msg.temporary_c_rnti;
+	
 
 
 	if(recvbytes > 0)
@@ -174,19 +172,27 @@ void receive_random_access_response(int fd, struct UE_INFO *info)
 		}
 		else
 		{
-			printf("\ntim_adv = %d urg = %d, temp_rnti = %d, checksum = %ld\n",
+			calc_check_sum += rar_msg.timing_advance;
+			calc_check_sum += rar_msg.uplink_resource_grant;
+			calc_check_sum += rar_msg.temporary_c_rnti;
+
+			//if(calc_check_sum == rar_msg.checksum)
+			//{
+				printf("\ntim_adv = %d urg = %d, temp_rnti = %d, checksum = %ld\n",
 					rar_msg.timing_advance, rar_msg.uplink_resource_grant,
 					rar_msg.temporary_c_rnti, rar_msg.checksum);
 
-			info->UE_state = 2;
+				info->UE_state = 2;
+			//}
+
+			
 		}
 	}
 }
 
 void send_uci(int fd, struct UE_INFO *info)
 {
-	struct RANDOM_ACCESS_PREAMBLE message;
-    const short int preamble_identifier = 1337;
+	struct UCI_MESSAGE uci_msg;
 
 	struct sockaddr_in other;
 	unsigned int otherlen = sizeof(other);
@@ -195,14 +201,13 @@ void send_uci(int fd, struct UE_INFO *info)
 	other.sin_addr.s_addr = htonl(INADDR_ANY);
 	other.sin_port = htons(20705);
 
-    info->UE_state = 1; // sending rap all the time
+	//info->UE_state = 1; // sending rap all the time
 
-    message.preamble = preamble_identifier;
-    message.RA_RNTI = info->RNTI;
-    message.checksum = preamble_identifier + info->RNTI;
+	uci_msg.info = *info;
 
-    if(sendto(fd, &message, sizeof(struct RANDOM_ACCESS_PREAMBLE), 0, (struct sockaddr *)&other, otherlen) == -1)
+    if(sendto(fd, &uci_msg, sizeof(struct UCI_MESSAGE), 0, (struct sockaddr *)&other, otherlen) == -1)
     {
-        perror("Random access preamble error: ");
+        perror("UCI send error: ");
     };
+
 }

@@ -99,6 +99,7 @@ struct DCI_MESSAGE
 
 struct UCI_MESSAGE
 {
+    struct UE_INFO info;
     int RA_RNTI;
     int scheduling_request;
     int harq_ack;

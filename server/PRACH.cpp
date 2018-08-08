@@ -23,7 +23,7 @@ ssize_t PRACH::receive_message(int event_fd)
 
     if(received_bytes > 0)
     {
-        std::cout << "RAP " << rap.RA_RNTI << std::endl;
+        std::cout << "received RAP " << rap.RA_RNTI << std::endl;
 
         auto it = std::find_if(clients.begin(), clients.end(), [this, &rap]( UE* client) {
             return client->RA_RNTI == rap.RA_RNTI;
