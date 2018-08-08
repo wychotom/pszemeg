@@ -99,10 +99,11 @@ struct DCI_MESSAGE
 
 struct UCI_MESSAGE
 {
-    int RA_RNTI;
-    int scheduling_request;
-    int harq_ack;
-    int cqi;
+    //int RA_RNTI;
+    //int scheduling_request;
+    //int harq_ack;
+    //int cqi;
+    struct UE_INFO info;
 };
 
 //uefuncs.c
