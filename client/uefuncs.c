@@ -141,12 +141,9 @@ void handletraffic(struct MIB_MESSAGE *init_msg, int broadcast_sock)
 
 	while(1)
 	{
-		if(my_states.UE_state == 1)
-		{
-			send_random_access_preamble(connection_information.prach.sock, &my_states);
-		}
+		
 
-		send_uci(connection_information.pucch.sock, &my_states);
+		//
 
 		ewait_flag = epoll_wait(efd, events, max_epoll_events, -1);
 		if(ewait_flag == -1)
@@ -158,6 +155,13 @@ void handletraffic(struct MIB_MESSAGE *init_msg, int broadcast_sock)
 		{
 			if(events[i].events & EPOLLIN)
 			{
+                if(my_states.UE_state == 1)
+                {
+                    send_random_access_preamble(connection_information.prach.sock, &my_states);
+                }
+
+                //send_uci(connection_information.pucch.sock, &my_states);
+
 				if(events[i].data.fd == connection_information.pdcch.sock)
 				{
 					receive_dci(events[i].data.fd, &my_states);
