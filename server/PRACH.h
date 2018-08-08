@@ -11,7 +11,7 @@ class PRACH : public Downlink_channel
 {
     public:
         PRACH(int port, std::queue<UE*> &ue_queue, std::vector<UE*> &clients);
-        void receive_message() override;
+        ssize_t receive_message(int event_fd) override;
 
     private:
         std::queue<UE*> &ue_queue;

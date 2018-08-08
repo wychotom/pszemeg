@@ -146,6 +146,8 @@ void handletraffic(struct MIB_MESSAGE *init_msg, int broadcast_sock)
 		//
 
 		ewait_flag = epoll_wait(efd, events, max_epoll_events, -1);
+		printf("%d\n", ewait_flag);
+
 		if(ewait_flag == -1)
 		{
 			perror("epoll wait ");
@@ -174,7 +176,7 @@ void handletraffic(struct MIB_MESSAGE *init_msg, int broadcast_sock)
 				if((events[i].data.fd == connection_information.dl_sch.sock) 
 					&& (my_states.UE_state == 1))
 				{
-					printf("I TRIED SO HARD AND GOT SO FAR\nBUT IN THE END IT JUST END UP BLOCKED\n");
+					printf("receive_random_access_response\n");
 					receive_random_access_response(events[i].data.fd, &my_states);
 				}
 				

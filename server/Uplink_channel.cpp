@@ -11,6 +11,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <netdb.h>
+#include <arpa/inet.h>
 
 Uplink_channel::Uplink_channel(int port, size_t counter_reset) : counter(1)
 {
@@ -21,7 +22,8 @@ Uplink_channel::Uplink_channel(int port, size_t counter_reset) : counter(1)
 
     this->server_addr.sin_family = AF_INET;
     this->server_addr.sin_port = htons(this->port);
-    this->server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    //this->server_addr.sin_addr.s_addr = inet_addr("192.168.106.255");
+    this->server_addr.sin_addr.s_addr = htons(INADDR_ANY);
 
     /* socket creation */
     this->socket_fd = socket(AF_INET, SOCK_DGRAM, 0);

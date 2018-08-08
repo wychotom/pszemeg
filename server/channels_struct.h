@@ -51,8 +51,8 @@ struct RANDOM_ACCESS_RESPONSE_MESSAGE
 
 struct RANDOM_ACCESS_PREAMBLE
 {
-    short int preamble; //505245414d424c45
     int RA_RNTI;
+    short int preamble;
     long checksum;
 };
 
@@ -68,7 +68,11 @@ struct UE_INFO
 };
 
 struct UPLINK_CONTROL_INFORMATION{
-    struct UE_INFO ue;
+    struct UE_INFO ue_info;
+    int RA_RNTI;
+    int scheduling_request;
+    int harq_ack;
+    int cqi;
 };
 
 #endif
