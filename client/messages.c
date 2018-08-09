@@ -140,7 +140,22 @@ void receive_rrc_setup(int fd, struct UE_INFO *info)
 
 void send_rrc_setup_complete(struct conn_pair connection, struct UE_INFO *info)
 {
+	struct RRC_CONN_SETUP_COMPLETE rrc_msg;
 
+	rrc_msg.C_RNTI = info->RNTI;
+    rrc_msg.PLMN_identity = 2137;
+    rrc_msg.old_tai = 1337;
+    rrc_msg.old_gummei = 14;
+    rrc_msg.old_guti = 88;
+    rrc_msg.ul_sch_config = 15;
+    rrc_msg.phr_config = 16;
+    rrc_msg.uplink_power_control = 17;
+
+	int retval = send_msg(connection, &rrc_msg, sizeof(struct RRC_CONN_SETUP_COMPLETE));
+	if(retval == 0)
+	{
+		info->UE_state = 6;
+	}
 }
 
 int receive_msg(int fd, void *buffer, size_t buffer_size)

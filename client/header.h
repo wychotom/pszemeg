@@ -66,5 +66,6 @@ void receive_dci(int, struct UE_INFO *);
 
 void send_rrc_req(struct conn_pair, struct UE_INFO *);
 void receive_rrc_setup(int, struct UE_INFO *);
+void send_rrc_setup_complete(struct conn_pair, struct UE_INFO *);
 
 #endif
