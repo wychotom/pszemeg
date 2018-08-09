@@ -52,6 +52,9 @@ void setup_broadcast_socket();
 void add_socket_epoll(struct epoll_event *, int *, int *);
 
 //messages.c
+int receive_msg(int, void *, size_t);
+int send_msg(struct conn_pair, void *, size_t);
+
 void receive_broadcast(int, struct UE_INFO *, struct MIB_MESSAGE *);
 
 void send_random_access_preamble(struct conn_pair, struct UE_INFO *);
