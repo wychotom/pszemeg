@@ -32,7 +32,7 @@ void PDCCH::send_dci(bool cqi_request)
 
     send_message((void*) &dci_message, sizeof(struct DCI_MESSAGE));
 
-    std::cout << "DCI sent" << std::endl;
+    std::cout << "[PDCCH] DCI sent" << std::endl;
 }
 
 

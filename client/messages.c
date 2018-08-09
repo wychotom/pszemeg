@@ -87,6 +87,7 @@ void send_random_access_preamble(int fd, int port, struct UE_INFO * info)
 	unsigned int otherlen = sizeof(other);
 
 	other.sin_family = AF_INET;
+	//other.sin_addr.s_addr = inet_addr("192.168.40.255");
 	other.sin_addr.s_addr = htonl(INADDR_ANY);
 	other.sin_port = htons(port);
 
@@ -167,5 +168,5 @@ void send_uci(int fd, int port, struct UE_INFO *info)
     {
         perror("UCI send error: ");
     }
-	
+
 }

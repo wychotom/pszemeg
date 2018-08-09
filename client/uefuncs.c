@@ -86,6 +86,13 @@ void handletraffic()
 	{
 		ewait_flag = epoll_wait(efd, events, max_epoll_events, -1);
 
+        if(my_states.UE_state == 1)
+        {
+            send_random_access_preamble(connection_information.prach.sock, connection_information.prach.port,&my_states);
+        }
+
+        send_uci(connection_information.pucch.sock, connection_information.pucch.port, &my_states);
+
 		if(ewait_flag == -1)
 		{
 			perror("epoll wait ");

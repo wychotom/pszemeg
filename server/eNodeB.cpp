@@ -27,10 +27,10 @@ void eNodeB::start()
             this->pbch.send_mib();
         }
 
-//        if(this->pdcch.get_counter() == 0)
-//        {
-//            this->pdcch.send_dci(true);
-//        }
+        if(this->pdcch.get_counter() == 0)
+        {
+            this->pdcch.send_dci(true);
+        }
 
         this->prach.handle_connections();
 
