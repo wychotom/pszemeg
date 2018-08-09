@@ -3,7 +3,8 @@
 
 enum Channel_flags
 {
-    random_access_response
+    random_access_response,
+    rrc_connection_response
 };
 
 class UE
@@ -21,9 +22,11 @@ class UE
         void setUplink_power_control(int uplink_power_control);
         void setUl_sch_config(int ul_sch_config);
         void setSrb_identity(int srb_identity);
+        void set_flag(Channel_flags flag);
 
     private:
         Channel_flags flag;
+
         int UE_state;
         int timing_advance;
         int uplink_resource_grant;

@@ -39,7 +39,7 @@ class eNodeB
         PUSCH pusch;
         PUCCH pucch;
         SRB srb;
-        std::queue<UE*> ue_queue;
+        std::vector<UE*> ue_to_handle;
 };
 
 #endif

@@ -5,16 +5,15 @@
 #include "UE.h"
 
 #include <vector>
-#include <queue>
 
 class PRACH : public Downlink_channel
 {
     public:
-        PRACH(int port, std::queue<UE*> &ue_queue, std::vector<UE*> &clients);
+        PRACH(int port, std::vector<UE*> &ue_to_handle, std::vector<UE*> &clients);
         ssize_t receive_message(int event_fd) override;
 
     private:
-        std::queue<UE*> &ue_queue;
+        std::vector<UE*> &ue_to_handle;
         std::vector<UE*> &clients;
 };
 

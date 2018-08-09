@@ -44,3 +44,8 @@ void UE::setSrb_identity(int srb_identity)
 {
     UE::srb_identity = srb_identity;
 }
+
+void UE::set_flag(Channel_flags flag)
+{
+    UE::flag = flag;
+}

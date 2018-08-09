@@ -1,24 +1,39 @@
 #include "PUSCH.h"
 #include "../common_header.h"
 #include "Downlink_channel.h"
+#include "UE.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <iostream>
 
-PUSCH::PUSCH(int port) : Downlink_channel(port)
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+PUSCH::PUSCH(int port, std::vector<UE*> &ue_to_handle, std::vector<UE*> &clients) : Downlink_channel(port), ue_to_handle(ue_to_handle), clients(clients)
 {
 }
 
 ssize_t PUSCH::receive_message(int event_fd)
 {
-    std::string message(1024, 0);
+    RRC_CONN_REQUEST rcr = {};
 
-    ssize_t received_bytes = recv(event_fd, &message, message.size(), 0);
+    ssize_t received_bytes = recv(event_fd, &rcr, sizeof(RRC_CONN_REQUEST), 0);
 
     if(received_bytes > 0)
     {
-        std::cout << "\033[1;33m[PUSCH]\033[0m received data: " << message << std::endl;
+        std::cout << "\033[1;33m[PUSCH]\033[0m received RRC Request from " << rcr.C_RNTI << ", casue: " << rcr.establishment_cause << std::endl;
+
+        auto first_client_occurence_iterator = std::find_if(clients.begin(), clients.end(), [this, &rcr](UE* client) {
+            return client->C_RNTI == rcr.C_RNTI;
+        });
+
+        if (first_client_occurence_iterator == clients.end())
+        {
+            (*first_client_occurence_iterator)->set_flag(Channel_flags::rrc_connection_response);
+            ue_to_handle.push_back(*first_client_occurence_iterator);
+        }
+
     }
 
     return received_bytes;

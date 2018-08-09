@@ -3,6 +3,7 @@
 #include "PDSCH.h"
 #include "PDSCH.h"
 #include "PRACH.h"
+#include "SRB.h"
 
 #include <vector>
 #include <iostream>
@@ -11,7 +12,7 @@ eNodeB::eNodeB() :
 pbch(Ports::pbch_port, 0x3FFFFF),
 pdcch(Ports::pdcch_port, 0xFFFFFF),
 pdsch(Ports::pdsch_port),
-prach(Ports::prach_port, ue_queue, clients),
+prach(Ports::prach_port, ue_to_handle, clients),
 pusch(Ports::pusch_port),
 pucch(Ports::pucch_port, clients),
 srb(Ports::srb_port)

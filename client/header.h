@@ -52,13 +52,15 @@ void setup_broadcast_socket();
 void add_socket_epoll(struct epoll_event *, int *, int *);
 
 //messages.c
-void receive_init_broadcast_msg(struct MIB_MESSAGE *);
 void receive_broadcast(int, struct UE_INFO *, struct MIB_MESSAGE *);
 
-void send_random_access_preamble(int, int, struct UE_INFO *);
+void send_random_access_preamble(struct conn_pair, struct UE_INFO *);
 void receive_random_access_response(int, struct UE_INFO *);
 
-void send_uci(int, int, struct UE_INFO *);
+void send_uci(struct conn_pair, struct UE_INFO *);
 void receive_dci(int, struct UE_INFO *);
+
+void send_rrc_req(struct conn_pair, struct UE_INFO *);
+void receive_rrc_setup(int, struct UE_INFO *);
 
 #endif
