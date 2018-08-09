@@ -90,6 +90,7 @@ struct RRC_CONN_SETUP//dl-sch
 
 struct RRC_CONN_SETUP_COMPLETE//dl-sch
 {
+    int C_RNTI;
     int PLMN_identity;
     int old_tai;
     int old_gummei;

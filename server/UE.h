@@ -1,16 +1,20 @@
 #ifndef SERVER_UE_H
 #define SERVER_UE_H
 
-#include "channels_struct.h"
+enum Action_to_perform
+{
+    random_access_response,
+    rrc_connection_response
+};
 
 class UE
 {
     public:
-        UE(Channel_flags flag);
+        UE(Action_to_perform flag);
         UE(int RA_RNTI);
         int RA_RNTI;
         int C_RNTI;
-        Channel_flags get_flag();
+        Action_to_perform get_flag();
 
         void setUE_state(int UE_state);
         void setTiming_advance(int timing_advance);
@@ -18,9 +22,11 @@ class UE
         void setUplink_power_control(int uplink_power_control);
         void setUl_sch_config(int ul_sch_config);
         void setSrb_identity(int srb_identity);
+        void set_flag(Action_to_perform flag);
 
     private:
-        Channel_flags flag;
+        Action_to_perform flag;
+
         int UE_state;
         int timing_advance;
         int uplink_resource_grant;

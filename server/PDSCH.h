@@ -3,16 +3,18 @@
 
 #include "Uplink_channel.h"
 #include "UE.h"
-#include <queue>
+#include <vector>
 
 class PDSCH : public Uplink_channel
 {
     public:
         PDSCH(int port);
-        void handle_queue(std::queue<UE*> &ue_queue);
+        void handle_queue(std::vector<UE*> &ue_vector);
 
     private:
         void send_random_access_response(UE &ue);
+        void send_rrc_connection_response(UE &ue);
+        UE* get_next_ue(std::vector<UE*> &ue_vector, Action_to_perform action);
 };
 
 

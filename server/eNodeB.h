@@ -1,7 +1,6 @@
 #ifndef _ENB
 #define _ENB
 
-#include <queue>
 #include <vector>
 
 #include "PDCCH.h"
@@ -10,6 +9,7 @@
 #include "PRACH.h"
 #include "PUSCH.h"
 #include "PUCCH.h"
+#include "SRB.h"
 #include "UE.h"
 
 class eNodeB
@@ -26,7 +26,8 @@ class eNodeB
         PRACH prach;
         PUSCH pusch;
         PUCCH pucch;
-        std::queue<UE*> ue_queue;
+        SRB srb;
+        std::vector<UE*> ue_to_handle;
 };
 
 #endif
