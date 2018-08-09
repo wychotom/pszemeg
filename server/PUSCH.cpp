@@ -1,5 +1,5 @@
 #include "PUSCH.h"
-#include "channels_struct.h"
+#include "../common_header.h"
 #include "Downlink_channel.h"
 
 #include <sys/types.h>
@@ -18,7 +18,7 @@ ssize_t PUSCH::receive_message(int event_fd)
 
     if(received_bytes > 0)
     {
-        std::cout << "[PUSCH] received data: " << message << std::endl;
+        std::cout << "\033[1;33m[PUSCH]\033[0m received data: " << message << std::endl;
     }
 
     return received_bytes;

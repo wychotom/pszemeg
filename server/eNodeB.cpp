@@ -1,5 +1,4 @@
 #include "eNodeB.h"
-#include "channels_struct.h"
 #include "PBCH.h"
 #include "PDSCH.h"
 #include "PDSCH.h"

@@ -1,5 +1,5 @@
 #include "PDCCH.h"
-#include "channels_struct.h"
+#include "../common_header.h"
 #include "Uplink_channel.h"
 
 #include <iostream>
@@ -32,7 +32,7 @@ void PDCCH::send_dci(bool cqi_request)
 
     send_message((void*) &dci_message, sizeof(struct DCI_MESSAGE));
 
-    std::cout << "[PDCCH] DCI sent" << std::endl;
+    std::cout << "\033[1;33m[PDCCH]\033[0m DCI sent" << std::endl;
 }
 
 

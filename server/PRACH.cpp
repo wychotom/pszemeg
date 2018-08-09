@@ -1,5 +1,5 @@
 #include "PRACH.h"
-#include "channels_struct.h"
+#include "../common_header.h"
 #include "Downlink_channel.h"
 #include "UE.h"
 
@@ -23,7 +23,7 @@ ssize_t PRACH::receive_message(int event_fd)
 
     if(received_bytes > 0)
     {
-        std::cout << "[PRACH] received RAP from " << rap.RA_RNTI << std::endl;
+        std::cout << "\033[1;33m[PRACH]\033[0m received RAP from " << rap.RA_RNTI << std::endl;
 
         auto it = std::find_if(clients.begin(), clients.end(), [this, &rap]( UE* client) {
             return client->RA_RNTI == rap.RA_RNTI;

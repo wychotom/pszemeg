@@ -1,5 +1,4 @@
 #include "UE.h"
-#include "channels_struct.h"
 
 UE::UE(int RA_RNTI)
 {

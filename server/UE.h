@@ -1,7 +1,10 @@
 #ifndef SERVER_UE_H
 #define SERVER_UE_H
 
-#include "channels_struct.h"
+enum Channel_flags
+{
+    random_access_response
+};
 
 class UE
 {
