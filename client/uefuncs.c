@@ -49,7 +49,7 @@ void open_channels(struct eNB_conn_info * eNB, struct epoll_event *ev, int *efd)
 
 void init_channel(struct conn_pair *channel, struct epoll_event *ev, int *efd)
 {
-	setup_socket(&channel->sock, channel->port);
+	setup_socket(&channel->sock, channel->port, SOCK_DGRAM);
 	set_non_block(channel->sock);
 	add_socket_epoll(ev, efd, &channel->sock);
 }
@@ -72,10 +72,6 @@ void handletraffic()
 	setup_connection_information(&connection_information, init_mib_msg);
 	connection_information.broadcast.sock = broadcast_sock;
 
-	printf("CONN INFO ULSCH PORT = %d\n", connection_information.ul_sch.port);
-	printf("CONN INFO BROAD PORT = %d\n", connection_information.broadcast.port);
-
-
 	int efd;
 	const int max_epoll_events = 6;
 	struct epoll_event ev, events[max_epoll_events];
@@ -97,12 +93,34 @@ void handletraffic()
 
 		if(my_states.UE_state == 1)
 		{
+			#ifdef DEBUG
+			printf("send_random_access_preamble\n");
+			#endif
 			send_random_access_preamble(connection_information.prach, &my_states);
 		}
 
 		if(my_states.UE_state == 2)
 		{
+			#ifdef DEBUG
+			printf("send_rrc_req\n");
+			#endif
 			send_rrc_req(connection_information.ul_sch, &my_states);
+		}
+
+		if(my_states.UE_state == 4)
+		{
+			connection_information.srb.port = my_states.srb_identity;
+			if(setup_socket(&connection_information.srb.sock, connection_information.srb.port, SOCK_STREAM) == -1)
+			{
+				printf("CANT DO SHIT\n");
+				exit(EXIT_FAILURE);
+			}
+			my_states.UE_state = 5;
+		}
+
+		if(my_states.UE_state == 5)
+		{
+			send_rrc_setup_complete(connection_information.srb, &my_states);
 		}
 
         send_uci(connection_information.pucch, &my_states);
@@ -116,21 +134,19 @@ void handletraffic()
 		{
 			if(events[i].events & EPOLLIN)
 			{
-				// if(my_states.UE_state == 1)
-				// {
-				// 	send_random_access_preamble(connection_information.prach, &my_states);
-				// 		for(int i = 0; i < 1000000; i++)
-				// 			Nop();
-				// }
-
-				//send_uci(connection_information.pucch, &my_states);
 
 				if(events[i].data.fd == connection_information.pdcch.sock)
 				{
+					#ifdef DEBUG
+					printf("receive_dci\n");
+					#endif
 					receive_dci(events[i].data.fd, &my_states);
 				}
 				if(events[i].data.fd == connection_information.broadcast.sock)
 				{
+					#ifdef DEBUG
+					printf("receive_broadcast\n");
+					#endif
 					receive_broadcast(events[i].data.fd, &my_states, &init_mib_msg);
 				}
 
@@ -147,7 +163,7 @@ void handletraffic()
 					&& (my_states.UE_state == 3))
 				{
 					#ifdef DEBUG
-					printf("receive_random_access_response\n");
+					printf("receive_rrc_setup\n");
 					#endif
 					receive_rrc_setup(events[i].data.fd, &my_states);
 				}
@@ -194,6 +210,9 @@ void setup_connection_information(struct eNB_conn_info *conn_info, struct MIB_ME
 	
 	conn_info->pucch.port = init_msg.pucch_port;
 	conn_info->pucch.sock = 0;
+
+	conn_info->srb.port = 0;
+	conn_info->srb.sock = 0;
 }
 
 void print_cell()
