@@ -1,7 +1,6 @@
 #ifndef _ENB
 #define _ENB
 
-#include <queue>
 #include <vector>
 
 #include "PDCCH.h"

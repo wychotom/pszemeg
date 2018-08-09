@@ -5,12 +5,12 @@ UE::UE(int RA_RNTI)
     this->RA_RNTI = RA_RNTI;
 }
 
-UE::UE(Channel_flags flag)
+UE::UE(Action_to_perform flag)
 {
     this->flag = flag;
 }
 
-Channel_flags UE::get_flag()
+Action_to_perform UE::get_flag()
 {
     return this->flag;
 }
@@ -45,7 +45,7 @@ void UE::setSrb_identity(int srb_identity)
     UE::srb_identity = srb_identity;
 }
 
-void UE::set_flag(Channel_flags flag)
+void UE::set_flag(Action_to_perform flag)
 {
     UE::flag = flag;
 }

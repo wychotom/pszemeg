@@ -30,7 +30,7 @@ ssize_t PUSCH::receive_message(int event_fd)
 
         if (first_client_occurence_iterator == clients.end())
         {
-            (*first_client_occurence_iterator)->set_flag(Channel_flags::rrc_connection_response);
+            (*first_client_occurence_iterator)->set_flag(Action_to_perform::rrc_connection_response);
             ue_to_handle.push_back(*first_client_occurence_iterator);
         }
 

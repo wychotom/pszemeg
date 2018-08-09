@@ -32,7 +32,7 @@ ssize_t PRACH::receive_message(int event_fd)
         if (first_occurence_iterator == clients.end())
         {
             UE *new_client = new UE(rap.RA_RNTI);
-            new_client->set_flag(Channel_flags::random_access_response);
+            new_client->set_flag(Action_to_perform::random_access_response);
             clients.push_back(new_client);
             ue_to_handle.push_back(new_client);
         }

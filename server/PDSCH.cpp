@@ -4,7 +4,8 @@
 #include "UE.h"
 
 #include <iostream>
-#include <queue>
+#include <vector>
+#include <algorithm>
 
 PDSCH::PDSCH(int port) : Uplink_channel(port, 0)
 {
@@ -29,14 +30,29 @@ void PDSCH::send_random_access_response(UE &ue)
     std::cout << "\033[1;33m[PDSCH]\033[0m RAR sent to " << ue.RA_RNTI << std::endl;
 }
 
-void PDSCH::handle_queue(std::queue<UE*> &ue_queue)
+void PDSCH::handle_queue(std::vector<UE*> &ue_vector)
 {
-    while(!ue_queue.empty())
-    {
-        UE *ue = ue_queue.front();
-        ue_queue.pop();
+    UE *ue;
+    Action_to_perform rar_action = Action_to_perform::random_access_response;
 
+    while((ue = get_next_ue(ue_vector, rar_action)) != nullptr)
+    {
         ue->C_RNTI = 100 * ue->RA_RNTI;
         send_random_access_response(*ue);
     }
+}
+
+UE* PDSCH::get_next_ue(const std::vector<UE*> &ue_vector, Action_to_perform action)
+{
+    auto it = std::find_if(ue_vector.cbegin(), ue_vector.cend(), [&action] (UE* client)
+    {
+        return client->get_flag() == action;
+    });
+
+    if(it == ue_vector.end())
+    {
+        return nullptr;
+    }
+
+    return *it;
 }

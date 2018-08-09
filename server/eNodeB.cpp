@@ -13,7 +13,7 @@ pbch(Ports::pbch_port, 0x3FFFFF),
 pdcch(Ports::pdcch_port, 0xFFFFFF),
 pdsch(Ports::pdsch_port),
 prach(Ports::prach_port, ue_to_handle, clients),
-pusch(Ports::pusch_port),
+pusch(Ports::pusch_port, ue_to_handle, clients),
 pucch(Ports::pucch_port, clients),
 srb(Ports::srb_port)
 {
@@ -35,9 +35,11 @@ void eNodeB::start()
 
         this->prach.handle_connections();
 
-        this->pdsch.handle_queue(this->ue_queue);
+        this->pdsch.handle_queue(this->ue_to_handle);
 
         this->pusch.handle_connections();
         this->pucch.handle_connections();
+
+        this->srb.handle_connections();
     }
 }
