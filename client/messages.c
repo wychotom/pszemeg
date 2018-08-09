@@ -78,7 +78,7 @@ void receive_dci(int fd, struct UE_INFO *info)
 	}
 }
 
-void send_random_access_preamble(int fd, int port, struct UE_INFO * info)
+void send_random_access_preamble(struct conn_pair connection, struct UE_INFO * info)
 {
     struct RANDOM_ACCESS_PREAMBLE rap_msg;
     const short int preamble_identifier = 1337;
@@ -89,18 +89,21 @@ void send_random_access_preamble(int fd, int port, struct UE_INFO * info)
 	other.sin_family = AF_INET;
 	//other.sin_addr.s_addr = inet_addr("192.168.40.255");
 	other.sin_addr.s_addr = htonl(INADDR_ANY);
-	other.sin_port = htons(port);
+	other.sin_port = htons(connection.port);
 
-    info->UE_state = 1; // sending rap all the time
 
     rap_msg.preamble = preamble_identifier;
     rap_msg.RA_RNTI = info->RNTI;
     rap_msg.checksum = preamble_identifier + info->RNTI;
 
-    if(sendto(fd, &rap_msg, sizeof(struct RANDOM_ACCESS_PREAMBLE), 0, (struct sockaddr *)&other, otherlen) == -1)
+    if(sendto(connection.sock, &rap_msg, sizeof(struct RANDOM_ACCESS_PREAMBLE), 0, (struct sockaddr *)&other, otherlen) == -1)
     {
         perror("Random access preamble error: ");
     }
+	else
+	{
+	    info->UE_state = 1; // sending rap all the time
+	}
 }
 
 void receive_random_access_response(int fd, struct UE_INFO *info)
@@ -128,6 +131,8 @@ void receive_random_access_response(int fd, struct UE_INFO *info)
 			calc_check_sum += rar_msg.uplink_resource_grant;
 			calc_check_sum += rar_msg.temporary_c_rnti;
 
+			info->RNTI = rar_msg.temporary_c_rnti;
+
 			//if(calc_check_sum == rar_msg.checksum)
 			//{
 				#ifdef DEBUG
@@ -145,7 +150,7 @@ void receive_random_access_response(int fd, struct UE_INFO *info)
 	}
 }
 
-void send_uci(int fd, int port, struct UE_INFO *info)
+void send_uci(struct conn_pair connection, struct UE_INFO *info)
 {
 	struct UPLINK_CONTROL_INFORMATION uci_msg;
 
@@ -154,19 +159,53 @@ void send_uci(int fd, int port, struct UE_INFO *info)
 
 	other.sin_family = AF_INET;
 	other.sin_addr.s_addr = htonl(INADDR_ANY);
-	other.sin_port = htons(port);
-
-	//info->UE_state = 1; // sending rap all the time
+	other.sin_port = htons(connection.port);
 
 	uci_msg.ue_info = *info;
-	uci_msg.RA_RNTI = info->RNTI;
+	uci_msg.C_RNTI = info->RNTI;
 	uci_msg.harq_ack = 1;
 	uci_msg.cqi = 1;
 	uci_msg.scheduling_request = 1;
 	
-    if(sendto(fd, &uci_msg, sizeof(struct UPLINK_CONTROL_INFORMATION), 0, (struct sockaddr *)&other, otherlen) == -1)
+    if(sendto(connection.sock, &uci_msg, sizeof(struct UPLINK_CONTROL_INFORMATION), 0, (struct sockaddr *)&other, otherlen) == -1)
     {
         perror("UCI send error: ");
     }
+
+}
+
+void send_rrc_req(struct conn_pair connection, struct UE_INFO *info)
+{
+	struct RRC_CONN_REQUEST rrc_msg;
+
+	struct sockaddr_in other;
+	unsigned int otherlen = sizeof(other);
+
+	other.sin_family = AF_INET;
+	other.sin_addr.s_addr = htonl(INADDR_ANY);
+	other.sin_port = htons(connection.port);
+
+	enum establishment_causes cause = mobile_originating_signaling;
+
+	printf("sock = %d\n", connection.sock);
+
+	rrc_msg.C_RNTI = info->RNTI;
+	rrc_msg.UE_identity = 3;//should be random from 0 to 2^40
+	rrc_msg.establishment_cause = cause;
+
+    if(sendto(connection.sock, &rrc_msg, sizeof(struct RRC_CONN_REQUEST),
+			0, (struct sockaddr *)&other, otherlen) == -1)
+    {
+        perror("RRC_req error: ");
+    }
+	else
+	{
+		info->UE_state = 3;
+		printf("NO ELO MORDO\n");
+	}
+}
+
+void receive_rrc_setup(int fd, struct UE_INFO *info)
+{
 
 }

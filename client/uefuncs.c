@@ -56,7 +56,7 @@ void init_channel(struct conn_pair *channel, struct epoll_event *ev, int *efd)
 
 void handletraffic()
 {
-	struct eNB_conn_info connection_information = {};//Ideally it would be an array, information about multiple eNB
+	struct eNB_conn_info connection_information;//Ideally it would be an array, information about multiple eNB
 
 	struct UE_INFO my_states;
 	struct MIB_MESSAGE init_mib_msg;
@@ -86,12 +86,28 @@ void handletraffic()
 	{
 		ewait_flag = epoll_wait(efd, events, max_epoll_events, -1);
 
-        if(my_states.UE_state == 1)
-        {
-            send_random_access_preamble(connection_information.prach.sock, connection_information.prach.port,&my_states);
-        }
+        // if(my_states.UE_state == 1)//this should be sent outside the EPOLLIN, because receiving doesnt affect the sending, rito?
+        // {
+        //     send_random_access_preamble(connection_information.prach, &my_states);
+        // }
 
-        send_uci(connection_information.pucch.sock, connection_information.pucch.port, &my_states);
+		if(my_states.UE_state == 1)
+		{
+			send_random_access_preamble(connection_information.prach, &my_states);
+
+			for(int i = 0; i < 1000000; i++)
+				Nop();
+		}
+
+		if(my_states.UE_state == 2)
+		{
+			send_rrc_req(connection_information.ul_sch, &my_states);
+
+			for(int i = 0; i < 1000000; i++)
+				Nop();
+		}
+
+        send_uci(connection_information.pucch, &my_states);
 
 		if(ewait_flag == -1)
 		{
@@ -102,16 +118,14 @@ void handletraffic()
 		{
 			if(events[i].events & EPOLLIN)
 			{
-				if(my_states.UE_state == 1)
-				{
-					send_random_access_preamble(connection_information.prach.sock, 
-						connection_information.prach.port,&my_states);
-						for(int i = 0; i < 1000000; i++)
-							Nop();
-				}
+				// if(my_states.UE_state == 1)
+				// {
+				// 	send_random_access_preamble(connection_information.prach, &my_states);
+				// 		for(int i = 0; i < 1000000; i++)
+				// 			Nop();
+				// }
 
-				send_uci(connection_information.pucch.sock,
-					connection_information.pucch.port, &my_states);
+				//send_uci(connection_information.pucch, &my_states);
 
 				if(events[i].data.fd == connection_information.pdcch.sock)
 				{
@@ -188,7 +202,7 @@ void print_cell()
 	"   |   ___                   |\n"
 	"   |  (_E_) E R I C S S O N  |\n"
 	"   | .---------------------. |\n"
-	"   | |                     | |\n"
+	"   | |                  99%%| |\n"//	"   | |                     | |\n"
 	"   | |                     | |\n"
 	"   | |                     | |\n"
 	"   | |                     | |\n"

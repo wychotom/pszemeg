@@ -1,6 +1,15 @@
 #ifndef COMMON_HEADER_H
 #define COMMON_HEADER_H
 
+enum establishment_causes
+{
+    emergency,
+    high_priority_access,
+    mobile_terminating_access,
+    mobile_originating_signaling,
+    mobile_originating_data
+};
+
 struct MIB_MESSAGE
 {
     int prach_port;
@@ -12,14 +21,14 @@ struct MIB_MESSAGE
     long checksum;
 };
 
-struct RANDOM_ACCESS_PREAMBLE
+struct RANDOM_ACCESS_PREAMBLE//prach
 {
     int RA_RNTI;
     short int preamble; //1337
     long checksum;
 };
 
-struct RANDOM_ACCESS_RESPONSE
+struct RANDOM_ACCESS_RESPONSE//dl-sch
 {
     int RA_RNTI;
     int timing_advance;
@@ -28,7 +37,7 @@ struct RANDOM_ACCESS_RESPONSE
     long checksum;
 };
 
-struct DCI_MESSAGE
+struct DCI_MESSAGE//pdcch
 {
     unsigned char format0_a_flag;
     unsigned char freqency_hooping;
@@ -52,12 +61,31 @@ struct UE_INFO
     int srb_identity;
 };
 
-struct UPLINK_CONTROL_INFORMATION{
+struct UPLINK_CONTROL_INFORMATION//pucch
+{
     struct UE_INFO ue_info;
-    int RA_RNTI;
+    int C_RNTI;
     int scheduling_request;
     int harq_ack;
     int cqi;
+};
+
+struct RRC_CONN_REQUEST//ul-sch
+{
+    int C_RNTI;
+    int UE_identity;
+    int establishment_cause;
+};
+
+struct RRC_CONN_SETUP//dl-sch
+{
+    int C_RNTI;
+    int srb_identity;
+    int dl_am_rlc;
+    int ul_am_rlc;
+    int ul_sch_config;
+    int phr_config;
+    int uplink_power_control;
 };
 
 #endif

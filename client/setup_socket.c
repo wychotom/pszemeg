@@ -29,7 +29,6 @@ void setup_broadcast_socket(int * fd)
 
 
 	struct sockaddr_in socketConfig;
-    //memset(&socketConfig, 0, sizeof(socketConfig));
 
     socketConfig.sin_family = AF_INET;
 	socketConfig.sin_port = htons(BROADCAST_PORT);
@@ -93,7 +92,7 @@ void add_socket_epoll(struct epoll_event *ev, int *efd, int *to_watch)
 	ev->events = EPOLLIN;
 	ev->data.fd = *to_watch;
 	if (epoll_ctl(*efd, EPOLL_CTL_ADD, *to_watch, ev) == -1) {
-		perror("epoll_ctl: xd");
+		perror("epoll_ctl");
 		exit(EXIT_FAILURE);
 	}
 }
