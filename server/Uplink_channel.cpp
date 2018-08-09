@@ -12,11 +12,12 @@
 #include <unistd.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <ctime>
 
-Uplink_channel::Uplink_channel(int port, size_t counter_reset) : counter(1)
+Uplink_channel::Uplink_channel(int port, double send_frequency) : last_event_time(clock())
 {
     this->port = port;
-    this->counter_reset = counter_reset;
+    this->send_frequency = send_frequency;
 
     int broadcast = 1;
 
@@ -61,17 +62,23 @@ void Uplink_channel::send_message(void *message, size_t size)
     }
 }
 
-size_t Uplink_channel::get_counter()
+void Uplink_channel::run_timer_job()
 {
-    if(++this->counter >= this->counter_reset)
-    {
-        this->counter = 0;
-    }
+    clock_t now = clock();
+    double elapsed_secs = double(now - this->last_event_time) / CLOCKS_PER_SEC;
 
-    return this->counter;
+    if(elapsed_secs >= this->send_frequency)
+    {
+        this->last_event_time = now;
+        timer_job();
+    }
 }
 
 Uplink_channel::~Uplink_channel()
 {
     close(this->socket_fd);
+}
+
+void Uplink_channel::timer_job()
+{
 }
