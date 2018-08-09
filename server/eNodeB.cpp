@@ -16,7 +16,7 @@ pdsch(Ports::pdsch_port),
 prach(Ports::prach_port, ue_to_handle, clients),
 pusch(Ports::pusch_port, ue_to_handle, clients),
 pucch(Ports::pucch_port, clients),
-srb(Ports::srb_port)
+srb(Ports::srb_port, clients)
 {
 }
 

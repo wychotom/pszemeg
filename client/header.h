@@ -15,8 +15,8 @@
 // 0 - Before MIB_MESSAGE
 // 1 - Sending PRACH
 // 2 - awaiting prach response
-// 3 - RRC connection request
-// 4 - awaiting connection setup
+// 3 - RRC connection request/response
+// 4 - connection setup and creating srb socket
 // 5 - send rrc connection complete
 
 struct conn_pair
@@ -33,6 +33,7 @@ struct eNB_conn_info
     struct conn_pair ul_sch;
     struct conn_pair pdcch;
     struct conn_pair pucch;
+    struct conn_pair srb;
 };
 
 
@@ -46,7 +47,7 @@ void open_channels(struct eNB_conn_info *, struct epoll_event *, int *);
 void print_cell();
 
 //setup_socket.c
-void setup_socket(int *, int);
+int setup_socket(int *, int, int);
 int set_non_block();
 void setup_broadcast_socket();
 void add_socket_epoll(struct epoll_event *, int *, int *);
@@ -65,5 +66,6 @@ void receive_dci(int, struct UE_INFO *);
 
 void send_rrc_req(struct conn_pair, struct UE_INFO *);
 void receive_rrc_setup(int, struct UE_INFO *);
+void send_rrc_setup_complete(struct conn_pair, struct UE_INFO *);
 
 #endif

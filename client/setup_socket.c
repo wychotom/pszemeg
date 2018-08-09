@@ -41,29 +41,48 @@ void setup_broadcast_socket(int * fd)
 	}
 }
 
-void setup_socket(int * sockfd, int port)
+int setup_socket(int * sockfd, int port, int type)
 {
 	int errflag = 1;
 
 	struct sockaddr_in sa;
 
-	*sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+	if(type == SOCK_DGRAM) 
+		*sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+	else 
+		*sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
 	setsockopt(*sockfd, SOL_SOCKET, SO_REUSEADDR, &errflag, sizeof(errflag));
+	
 	sa.sin_family = AF_INET;
 	sa.sin_addr.s_addr = INADDR_ANY;
 	sa.sin_port = htons(port);
 
-    errflag = bind(*sockfd, (struct sockaddr *)&sa, sizeof(struct sockaddr));
+    if(type == SOCK_DGRAM)
+		errflag = bind(*sockfd, (struct sockaddr *)&sa, sizeof(struct sockaddr));
+	else
+		errflag = connect(*sockfd, (struct sockaddr *)&sa, sizeof(sa));
 
 	if (errflag == -1)
 	{
 		if(errno == EINPROGRESS)
 		{
-			perror("bind in progress: ");
+			if(type == SOCK_DGRAM)
+				perror("bind in progress: ");
+			else
+				perror("connect in progress: ");
 		}
 		else
-			perror("bind err: ");
+		{
+			if(type == SOCK_DGRAM)
+				perror("bind err: ");
+			else
+				perror("connect err: ");
+			
+			return -1;
+		}
 	}
+	return 0;
 }
 
 int set_non_block(int sockfd)

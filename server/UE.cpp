@@ -49,3 +49,13 @@ void UE::set_flag(Action_to_perform flag)
 {
     UE::flag = flag;
 }
+
+void UE::set_socket_fd(int socket_fd)
+{
+    UE::socket_fd = socket_fd;
+}
+
+int UE::get_socket_fd() const
+{
+    return socket_fd;
+}
