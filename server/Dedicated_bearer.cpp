@@ -101,16 +101,6 @@ void Dedicated_bearer::accept_new_connection()
 
     while((new_client_fd = accept(this->socket_fd, &client, &client_socket_length)) != -1)
     {
-        char hostname_buffer[NI_MAXHOST], service_buffer[NI_MAXSERV];
-
-        if (getnameinfo(&client, client_socket_length,
-                        hostname_buffer, sizeof(hostname_buffer),
-                        service_buffer, sizeof(service_buffer),
-                        NI_NUMERICHOST | NI_NUMERICSERV) == 0)
-        {
-            std::cout << "Hostname: [" << hostname_buffer << "] Service: [" << service_buffer << "]" << std::endl;
-        }
-
         set_socket_non_blocking(new_client_fd);
 
         event.data.fd = new_client_fd;
@@ -136,7 +126,6 @@ void Dedicated_bearer::read_incoming_data(int event_fd)
     }
     else if(bytes_count == 0)
     {
-        std::cout << event_fd << " has disconnected" << std::endl;
         close(event_fd);
     }
 }
