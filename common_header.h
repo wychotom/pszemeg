@@ -60,4 +60,8 @@ struct UPLINK_CONTROL_INFORMATION{
     int cqi;
 };
 
+struct CONNECTION_SETUP_COMPLETE{
+    int C_RNTI;
+};
+
 #endif
