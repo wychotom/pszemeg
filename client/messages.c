@@ -68,8 +68,8 @@ void receive_random_access_response(int fd, struct UE_INFO *info)
 		// calc_check_sum += rar_msg.timing_advance;
 		// calc_check_sum += rar_msg.uplink_resource_grant;
 		// calc_check_sum += rar_msg.temporary_c_rnti;
-
-		info->RNTI = rar_msg.temporary_c_rnti;
+		if(rar_msg.RA_RNTI == info->RNTI)
+			info->RNTI = rar_msg.temporary_c_rnti;
 
 		#ifdef DEBUG
 		printf("\ntim_adv = %d urg = %d, temp_rnti = %d, checksum = %ld\n",
@@ -119,9 +119,22 @@ void receive_rrc_setup(int fd, struct UE_INFO *info)
 	struct RRC_CONN_SETUP rrc_msg;
 
 	int retval = receive_msg(fd, &rrc_msg, sizeof(struct RRC_CONN_SETUP));
+
 	if(retval == 0)
 	{
-		printf("TAMADA\n");
+		if(rrc_msg.C_RNTI == info->RNTI)
+		{
+			info->srb_identity = rrc_msg.srb_identity;
+			info->uplink_power_control = rrc_msg.uplink_power_control;
+			info->ul_sch_config = rrc_msg.ul_sch_config;
+			info->UE_state = 4;
+			
+			#ifdef DEBUG
+			printf("C_RNTI = %d\nC_RNTI = %d\nC_RNTI = %d\nC_RNTI = %d\nC_RNTI = %d\nC_RNTI = %d\nC_RNTI = %d\n"
+					,rrc_msg.C_RNTI, rrc_msg.srb_identity, rrc_msg.dl_am_rlc, rrc_msg.ul_am_rlc,
+					rrc_msg.ul_sch_config, rrc_msg.phr_config, rrc_msg.uplink_power_control);
+			#endif
+		}
 	}
 }
 
