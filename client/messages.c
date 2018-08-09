@@ -87,7 +87,6 @@ void send_random_access_preamble(struct conn_pair connection, struct UE_INFO * i
 	unsigned int otherlen = sizeof(other);
 
 	other.sin_family = AF_INET;
-	//other.sin_addr.s_addr = inet_addr("192.168.40.255");
 	other.sin_addr.s_addr = htonl(INADDR_ANY);
 	other.sin_port = htons(connection.port);
 
@@ -187,8 +186,6 @@ void send_rrc_req(struct conn_pair connection, struct UE_INFO *info)
 
 	enum establishment_causes cause = mobile_originating_signaling;
 
-	printf("sock = %d\n", connection.sock);
-
 	rrc_msg.C_RNTI = info->RNTI;
 	rrc_msg.UE_identity = 3;//should be random from 0 to 2^40
 	rrc_msg.establishment_cause = cause;
@@ -201,11 +198,43 @@ void send_rrc_req(struct conn_pair connection, struct UE_INFO *info)
 	else
 	{
 		info->UE_state = 3;
-		printf("NO ELO MORDO\n");
 	}
 }
 
 void receive_rrc_setup(int fd, struct UE_INFO *info)
 {
+	struct RRC_CONN_SETUP rrc_msg;
 
+	struct sockaddr_in clientConfig;
+	int recvbytes;
+
+	unsigned int ca_len = sizeof(clientConfig);
+	recvbytes = recvfrom(fd, &rrc_msg, sizeof(struct RANDOM_ACCESS_RESPONSE), 0,
+				(struct sockaddr *)&clientConfig, &ca_len);
+
+	int calc_check_sum = 0;
+
+	if(recvbytes > 0)
+	{
+		if (recvbytes > sizeof(struct DCI_MESSAGE))
+		{
+			return;
+		}
+		else
+		{
+			//if(calc_check_sum == rar_msg.checksum)
+			//{
+				#ifdef DEBUG
+				printf("\ntim_adv = %d urg = %d, temp_rnti = %d, checksum = %ld\n",
+					rar_msg.timing_advance, rar_msg.uplink_resource_grant,
+					rar_msg.temporary_c_rnti, rar_msg.checksum);
+				#endif
+				
+
+				info->UE_state = 4;
+			//}
+
+			
+		}
+	}
 }

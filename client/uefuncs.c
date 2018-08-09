@@ -72,6 +72,10 @@ void handletraffic()
 	setup_connection_information(&connection_information, init_mib_msg);
 	connection_information.broadcast.sock = broadcast_sock;
 
+	printf("CONN INFO ULSCH PORT = %d\n", connection_information.ul_sch.port);
+	printf("CONN INFO BROAD PORT = %d\n", connection_information.broadcast.port);
+
+
 	int efd;
 	const int max_epoll_events = 6;
 	struct epoll_event ev, events[max_epoll_events];
@@ -94,17 +98,11 @@ void handletraffic()
 		if(my_states.UE_state == 1)
 		{
 			send_random_access_preamble(connection_information.prach, &my_states);
-
-			for(int i = 0; i < 1000000; i++)
-				Nop();
 		}
 
-		if(my_states.UE_state == 2)
+		if(my_states.UE_state == 2 || my_states.UE_state == 3)
 		{
 			send_rrc_req(connection_information.ul_sch, &my_states);
-
-			for(int i = 0; i < 1000000; i++)
-				Nop();
 		}
 
         send_uci(connection_information.pucch, &my_states);
@@ -144,8 +142,19 @@ void handletraffic()
 					#endif
 					receive_random_access_response(events[i].data.fd, &my_states);
 				}
+
+				if((events[i].data.fd == connection_information.dl_sch.sock) 
+					&& (my_states.UE_state == 3))
+				{
+					#ifdef DEBUG
+					printf("receive_random_access_response\n");
+					#endif
+					receive_rrc_setup(events[i].data.fd, &my_states);
+				}
 			}
 		}
+		for(int i = 0; i < 1000000; i++)
+				Nop();
 	}
 }
 
@@ -178,7 +187,7 @@ void setup_connection_information(struct eNB_conn_info *conn_info, struct MIB_ME
 	conn_info->dl_sch.sock = 0;
 
 	conn_info->ul_sch.port = init_msg.ul_sch_port;
-	conn_info->ul_sch.port = 0;
+	conn_info->ul_sch.sock = 0;
 
 	conn_info->pdcch.port = init_msg.pdcch_port;
 	conn_info->pdcch.sock = 0;
