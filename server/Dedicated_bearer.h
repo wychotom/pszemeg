@@ -15,7 +15,7 @@ class Dedicated_bearer
         void set_socket_non_blocking(int socket_fd);
         void accept_new_connection();
         void read_incoming_data(int event_fd);
-        virtual int recv_message(int event_fd) = 0;
+        virtual ssize_t recv_message(int event_fd) = 0;
 
         int port;
         int socket_fd, epoll_fd;

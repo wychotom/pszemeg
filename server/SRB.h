@@ -1,15 +1,16 @@
-#ifndef PSZEMEG_SRB_H
-#define PSZEMEG_SRB_H
+#ifndef SERVER_SRB_H
+#define SERVER_SRB_H
 
 #include "Dedicated_bearer.h"
 
-class SRB
+class SRB : public Dedicated_bearer
 {
     public:
         SRB(int port);
-        ssize_t receive_message(int event_fd) override;
 
+    private:
+        ssize_t recv_message(int event_fd) override;
 };
 
 
-#endif //PSZEMEG_SRB_H
+#endif //SERVER_SRB_H

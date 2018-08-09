@@ -13,7 +13,8 @@ pdcch(Ports::pdcch_port, 0xFFFFFF),
 pdsch(Ports::pdsch_port),
 prach(Ports::prach_port, ue_queue, clients),
 pusch(Ports::pusch_port),
-pucch(Ports::pucch_port, clients)
+pucch(Ports::pucch_port, clients),
+srb(Ports::srb_port)
 {
 }
 

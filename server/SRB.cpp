@@ -1,17 +1,16 @@
 #include "SRB.h"
-#include "channels_struct.h"
 #include "../common_header.h"
-#include "Direct_bearer.h"
+#include "Dedicated_bearer.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <iostream>
 
-SRB::SRB(int port) : Direct_bearer(port)
+SRB::SRB(int port) : Dedicated_bearer(port)
 {
 }
 
-ssize_t SRB::receive_message(int event_fd)
+ssize_t SRB::recv_message(int event_fd)
 {
     struct CONNECTION_SETUP_COMPLETE csc = {};
 
@@ -19,7 +18,7 @@ ssize_t SRB::receive_message(int event_fd)
 
     if(received_bytes > 0)
     {
-        std::cout << "[SRB]   received CSC from " << csc.C_RNTI << std::endl;
+        std::cout << "  \033[1;33m[SRB]\033[0m received CSC from " << csc.C_RNTI << std::endl;
     }
 
     return received_bytes;
