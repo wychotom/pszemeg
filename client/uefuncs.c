@@ -165,3 +165,35 @@ void setup_connection_information(struct eNB_conn_info *conn_info, struct MIB_ME
 	conn_info->pucch.port = init_msg.pucch_port;
 	conn_info->pucch.sock = 0;
 }
+
+void print_cell()
+{
+	printf("	                  .--.\n"
+	"                          |  |\n"
+	"                          |  |\n"
+	"                          |  |\n"
+	"                          |  |\n"
+	"         _.-----------._  |  |\n"
+	"      .-'      __       `-.  |\n"
+	"    .'       .'  `.        `.|\n"
+	"   ;         :    :          ;\n"
+	"   |         `.__.'          |\n"
+	"   |   ___                   |\n"
+	"   |  (_E_) E R I C S S O N  |\n"
+	"   | .---------------------. |\n"
+	"   | |                     | |\n"
+	"   | |                     | |\n"
+	"   | |                     | |\n"
+	"   | |                     | |\n"
+	"   | |                     | |\n"
+	"   | |                     | |\n"
+	"   | |                     | |\n"
+	"   | `---------------------' |\n"
+	"   |                         |\n"
+	"   |                __       |\n"
+	"   |  ________  .-~~__~~-.   |\n"
+	"   | |___C___/ /  .'  `.  \\  |\n"
+	"   |  ______  ;   : OK :   ; |\n"
+	"   | |__A___| |  _`.__.'_  | |\n"
+	"   |  _______ ; \\< |  | >/ ; |\n");
+}

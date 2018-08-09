@@ -13,6 +13,7 @@ int main(int argc, char ** argv)
 	//	receive_init_broadcast_msg(&is_sock_created, &ports);
 	//	if(is_sock_created)
 	//	{			
+		print_cell();
 			handletraffic();
 	//	}
 	//}

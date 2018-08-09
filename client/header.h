@@ -8,7 +8,7 @@
 
 #define BROADCAST_PORT 20700
 
-#define DEBUG 1
+//#define DEBUG 1
 
 // States
 // 0 - Before MIB_MESSAGE
@@ -104,6 +104,7 @@ void setup_ue(struct UE_INFO *);
 void init_channel(struct conn_pair *, struct epoll_event *, int *);
 void setup_connection_information(struct eNB_conn_info *, struct MIB_MESSAGE);
 void open_channels(struct eNB_conn_info *, struct epoll_event *, int *);
+void print_cell();
 
 //setup_socket.c
 void setup_socket(int *, int);

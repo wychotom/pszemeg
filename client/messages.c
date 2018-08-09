@@ -162,7 +162,7 @@ void send_uci(int fd, int port, struct UE_INFO *info)
 	uci_msg.harq_ack = 1;
 	uci_msg.cqi = 1;
 	uci_msg.scheduling_request = 1;
-
+	
     if(sendto(fd, &uci_msg, sizeof(struct UCI_MESSAGE), 0, (struct sockaddr *)&other, otherlen) == -1)
     {
         perror("UCI send error: ");
