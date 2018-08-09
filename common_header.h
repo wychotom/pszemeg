@@ -88,4 +88,15 @@ struct RRC_CONN_SETUP//dl-sch
     int uplink_power_control;
 };
 
+struct RRC_CONN_SETUP_COMPLETE//dl-sch
+{
+    int PLMN_identity;
+    int old_tai;
+    int old_gummei;
+    int old_guti;
+    int ul_sch_config;
+    int phr_config;
+    int uplink_power_control;
+};
+
 #endif

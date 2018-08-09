@@ -100,7 +100,7 @@ void handletraffic()
 			send_random_access_preamble(connection_information.prach, &my_states);
 		}
 
-		if(my_states.UE_state == 2 || my_states.UE_state == 3)
+		if(my_states.UE_state == 2)
 		{
 			send_rrc_req(connection_information.ul_sch, &my_states);
 		}
