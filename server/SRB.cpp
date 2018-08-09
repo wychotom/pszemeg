@@ -12,9 +12,9 @@ SRB::SRB(int port) : Dedicated_bearer(port)
 
 ssize_t SRB::recv_message(int event_fd)
 {
-    struct CONNECTION_SETUP_COMPLETE csc = {};
+    struct RRC_CONN_SETUP_COMPLETE csc = {};
 
-    ssize_t received_bytes = recv(event_fd, &csc, sizeof(struct CONNECTION_SETUP_COMPLETE), 0);
+    ssize_t received_bytes = recv(event_fd, &csc, sizeof(struct RRC_CONN_SETUP_COMPLETE), 0);
 
     if(received_bytes > 0)
     {

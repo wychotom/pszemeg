@@ -22,13 +22,13 @@ ssize_t PUSCH::receive_message(int event_fd)
 
     if(received_bytes > 0)
     {
-        std::cout << "\033[1;33m[PUSCH]\033[0m received RRC Request from " << rcr.C_RNTI << ", casue: " << rcr.establishment_cause << std::endl;
+        std::cout << "\033[1;33m[PUSCH]\033[0m received \033[0;35mRRC\033[0m Request from " << rcr.C_RNTI << ", casue: " << rcr.establishment_cause << std::endl;
 
         auto first_client_occurence_iterator = std::find_if(clients.begin(), clients.end(), [this, &rcr](UE* client) {
             return client->C_RNTI == rcr.C_RNTI;
         });
 
-        if (first_client_occurence_iterator == clients.end())
+        if (first_client_occurence_iterator != clients.end())
         {
             (*first_client_occurence_iterator)->set_flag(Action_to_perform::rrc_connection_response);
             ue_to_handle.push_back(*first_client_occurence_iterator);

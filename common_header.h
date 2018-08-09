@@ -70,10 +70,6 @@ struct UPLINK_CONTROL_INFORMATION//pucch
     int cqi;
 };
 
-struct CONNECTION_SETUP_COMPLETE{
-    int C_RNTI;
-};
-
 struct RRC_CONN_REQUEST//ul-sch
 {
     int C_RNTI;
@@ -94,6 +90,7 @@ struct RRC_CONN_SETUP//dl-sch
 
 struct RRC_CONN_SETUP_COMPLETE//dl-sch
 {
+    int C_RNTI;
     int PLMN_identity;
     int old_tai;
     int old_gummei;

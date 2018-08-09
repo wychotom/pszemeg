@@ -2,6 +2,7 @@
 #include "../common_header.h"
 #include "Uplink_channel.h"
 #include "UE.h"
+#include "ports.h"
 
 #include <iostream>
 #include <vector>
@@ -27,7 +28,7 @@ void PDSCH::send_random_access_response(UE &ue)
 
     send_message((void*) &rar_message, sizeof(struct RANDOM_ACCESS_RESPONSE));
 
-    std::cout << "\033[1;33m[PDSCH]\033[0m RAR sent to " << ue.RA_RNTI << std::endl;
+    std::cout << "\033[1;33m[PDSCH]\033[0m \033[1;32mRAR\033[0m sent to " << ue.RA_RNTI << std::endl;
 }
 
 void PDSCH::send_rrc_connection_response(UE &ue)
@@ -37,14 +38,14 @@ void PDSCH::send_rrc_connection_response(UE &ue)
     rcr_message.C_RNTI = ue.C_RNTI;
     rcr_message.dl_am_rlc = 0;
     rcr_message.phr_config = 1;
-    rcr_message.srb_identity = 65536;
+    rcr_message.srb_identity = Ports::srb_port;
     rcr_message.ul_am_rlc = 1;
     rcr_message.ul_sch_config = 2;
     rcr_message.uplink_power_control = 3;
 
     send_message((void*) &rcr_message, sizeof(struct RRC_CONN_SETUP));
 
-    std::cout << "\033[1;33m[PDSCH]\033[0m RCR sent to " << ue.C_RNTI << std::endl;
+    std::cout << "\033[1;33m[PDSCH]\033[0m \033[0;35mRCR\033[0m sent to " << ue.C_RNTI << std::endl;
 }
 
 void PDSCH::handle_queue(std::vector<UE*> &ue_vector)
