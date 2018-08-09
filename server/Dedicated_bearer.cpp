@@ -1,4 +1,5 @@
 #include "Dedicated_bearer.h"
+#include "UE.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -11,8 +12,10 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <netdb.h>
+#include <algorithm>
+#include <vector>
 
-Dedicated_bearer::Dedicated_bearer(int port) : max_number_of_events(255)
+Dedicated_bearer::Dedicated_bearer(int port, std::vector<UE*> &clients) : max_number_of_events(255), clients(clients)
 {
     this->port = port;
     this->socket_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -126,6 +129,15 @@ void Dedicated_bearer::read_incoming_data(int event_fd)
     }
     else if(bytes_count == 0)
     {
+        auto first_client_occurence_iterator = std::find_if(clients.begin(), clients.end(), [this, &event_fd](UE* client) {
+            return client->get_socket_fd() == event_fd;
+        });
+
+        if (first_client_occurence_iterator != clients.end())
+        {
+            clients.erase(first_client_occurence_iterator);
+        }
+
         close(event_fd);
     }
 }
