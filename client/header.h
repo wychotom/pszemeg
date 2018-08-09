@@ -1,6 +1,7 @@
 #ifndef HEADER_H
 #define HEADER_H
 
+#include "../common_header.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <netinet/in.h>
@@ -34,66 +35,6 @@ struct eNB_conn_info
     struct conn_pair pucch;
 };
 
-
-struct MIB_MESSAGE
-{
-    int prach_port;
-    int broadcast_port;
-    int dl_sch_port;
-    int ul_sch_port; 
-    int pdcch_port;
-    int pucch_port;
-    long checksum;
-};
-
-struct RANDOM_ACCESS_PREAMBLE
-{
-    int RA_RNTI;
-    short int preamble; //1337
-    long checksum;
-};
-
-struct RANDOM_ACCESS_RESPONSE
-{
-    int RA_RNTI;
-    int timing_advance;
-    int uplink_resource_grant;
-    int temporary_c_rnti;
-    long checksum;
-};
-
-struct DCI_MESSAGE
-{
-    //int RA_RNTI;//might suggest them this
-    unsigned char format0_a_flag;
-    unsigned char freqency_hooping;
-    int riv;
-    int mcs;
-    unsigned char ndi;
-    int tpc;
-    int cyclic_shift;
-    unsigned char cqi_request;
-    long checksum;
-};
-
-struct UE_INFO
-{
-    int UE_state;
-    int RNTI;
-    int timing_advance;
-    int uplink_resource_grant;
-    int uplink_power_control;
-    int ul_sch_config;
-    int srb_identity;
-};
-
-struct UCI_MESSAGE{
-    struct UE_INFO info;
-    int RA_RNTI;
-    int scheduling_request;
-    int harq_ack;
-    int cqi;
-};
 
 //uefuncs.c
 int get_unique_name();

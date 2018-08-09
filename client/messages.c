@@ -147,7 +147,7 @@ void receive_random_access_response(int fd, struct UE_INFO *info)
 
 void send_uci(int fd, int port, struct UE_INFO *info)
 {
-	struct UCI_MESSAGE uci_msg;
+	struct UPLINK_CONTROL_INFORMATION uci_msg;
 
 	struct sockaddr_in other;
 	unsigned int otherlen = sizeof(other);
@@ -158,13 +158,13 @@ void send_uci(int fd, int port, struct UE_INFO *info)
 
 	//info->UE_state = 1; // sending rap all the time
 
-	uci_msg.info = *info;
+	uci_msg.ue_info = *info;
 	uci_msg.RA_RNTI = info->RNTI;
 	uci_msg.harq_ack = 1;
 	uci_msg.cqi = 1;
 	uci_msg.scheduling_request = 1;
 	
-    if(sendto(fd, &uci_msg, sizeof(struct UCI_MESSAGE), 0, (struct sockaddr *)&other, otherlen) == -1)
+    if(sendto(fd, &uci_msg, sizeof(struct UPLINK_CONTROL_INFORMATION), 0, (struct sockaddr *)&other, otherlen) == -1)
     {
         perror("UCI send error: ");
     }
