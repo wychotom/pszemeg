@@ -68,7 +68,7 @@ struct UE_INFO
     int RNTI;
     int timing_advance;
     int uplink_resource_grant;
-    int uplink_power_control;
+    struct DRX_CONFIG uplink_power_control;
     int ul_sch_config;
     int srb_identity;
     clock_t drx_cycle_start;

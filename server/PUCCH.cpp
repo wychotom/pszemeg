@@ -30,12 +30,12 @@ ssize_t PUCCH::receive_message(int event_fd)
         if (it != clients.end())
         {
             int index = (int)std::distance(clients.begin(), it);
-            clients[index]->setSrb_identity(uci.ue_info.srb_identity);
-            clients[index]->setTiming_advance(uci.ue_info.timing_advance);
-            clients[index]->setUE_state(uci.ue_info.UE_state);
-            clients[index]->setUl_sch_config(uci.ue_info.ul_sch_config);
-            clients[index]->setUplink_power_control(uci.ue_info.uplink_power_control);
-            clients[index]->setUplink_resource_grant(uci.ue_info.uplink_resource_grant);
+            clients[index]->set_srb_identity(uci.ue_info.srb_identity);
+            clients[index]->set_timing_advance(uci.ue_info.timing_advance);
+            clients[index]->set_UE_state(uci.ue_info.UE_state);
+            clients[index]->set_pusch_config(uci.ue_info.ul_sch_config);
+            clients[index]->set_uplink_power_control(uci.ue_info.uplink_power_control);
+            clients[index]->set_uplink_resource_grant(uci.ue_info.uplink_resource_grant);
             clients[index]->set_battery_life(uci.ue_info.battery_life);
         }
 
