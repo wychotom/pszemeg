@@ -2,6 +2,7 @@
 
 #include <sys/fcntl.h>
 #include <errno.h>
+#include <arpa/inet.h>
 
 void setup_broadcast_socket(int * fd)
 {
@@ -15,6 +16,7 @@ void setup_broadcast_socket(int * fd)
 
 	int broadcast = 1;
 	int retval = setsockopt(*fd, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast));
+
     if(retval == -1)
 	{
 		perror("Failed on setsockopt\n");
@@ -48,14 +50,19 @@ int setup_socket(int * sockfd, int port, int type)
 	struct sockaddr_in sa;
 
 	if(type == SOCK_DGRAM) 
+	{
 		*sockfd = socket(AF_INET, SOCK_DGRAM, 0);
-	else 
+		sa.sin_addr.s_addr = INADDR_ANY;
+	}
+	else
+	{
 		*sockfd = socket(AF_INET, SOCK_STREAM, 0);
+		sa.sin_addr.s_addr = inet_addr("192.168.40.129");
+	}
 
 	setsockopt(*sockfd, SOL_SOCKET, SO_REUSEADDR, &errflag, sizeof(errflag));
 	
 	sa.sin_family = AF_INET;
-	sa.sin_addr.s_addr = INADDR_ANY;
 	sa.sin_port = htons(port);
 
     if(type == SOCK_DGRAM)
