@@ -1,7 +1,19 @@
 #ifndef COMMON_HEADER_H
 #define COMMON_HEADER_H
 
-#include <time.h>
+//#include <time.h>
+
+typedef long int clock_t;
+struct MIB_MESSAGE;
+struct RANDOM_ACCESS_PREAMBLE;
+struct RANDOM_ACCESS_RESPONSE;
+struct DRX_CONFIG;
+struct DCI_MESSAGE;
+struct UE_INFO;
+struct UPLINK_CONTROL_INFORMATION;
+struct RRC_CONN_REQUEST;
+struct RRC_CONN_SETUP;
+struct RRC_CONN_SETUP_COMPLETE;
 
 enum establishment_causes
 {
@@ -68,7 +80,7 @@ struct UE_INFO
     int RNTI;
     int timing_advance;
     int uplink_resource_grant;
-    int uplink_power_control;
+    struct DRX_CONFIG uplink_power_control;
     int ul_sch_config;
     int srb_identity;
     clock_t drx_cycle_start;
