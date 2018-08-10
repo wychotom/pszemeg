@@ -37,6 +37,13 @@ struct RANDOM_ACCESS_RESPONSE//dl-sch
     long checksum;
 };
 
+struct DRX_CONFIG
+{
+    int on_duration_timer;
+    int short_drx_timer;
+    int long_drx_timer;
+};
+
 struct DCI_MESSAGE//pdcch
 {
     unsigned char format0_a_flag;
@@ -47,6 +54,7 @@ struct DCI_MESSAGE//pdcch
     int tpc;
     int cyclic_shift;
     unsigned char cqi_request;
+    struct DRX_CONFIG drx_config;
     long checksum;
 };
 
@@ -59,6 +67,7 @@ struct UE_INFO
     int uplink_power_control;
     int ul_sch_config;
     int srb_identity;
+    int phr_information;
 };
 
 struct UPLINK_CONTROL_INFORMATION//pucch
