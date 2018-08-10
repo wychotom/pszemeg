@@ -49,7 +49,7 @@ void open_channels(struct eNB_conn_info * eNB, struct epoll_event *ev, int *efd)
 
 void init_channel(struct conn_pair *channel, struct epoll_event *ev, int *efd)
 {
-	setup_socket(&channel->sock, channel->port, SOCK_DGRAM);
+	setup_socket(channel, SOCK_DGRAM);
 	set_non_block(channel->sock);
 	add_socket_epoll(ev, efd, &channel->sock);
 }
@@ -86,42 +86,7 @@ void handletraffic()
 	{
 		ewait_flag = epoll_wait(efd, events, max_epoll_events, -1);
 
-        // if(my_states.UE_state == 1)//this should be sent outside the EPOLLIN, because receiving doesnt affect the sending, rito?
-        // {
-        //     send_random_access_preamble(connection_information.prach, &my_states);
-        // }
-
-		if(my_states.UE_state == 1)
-		{
-			#ifdef DEBUG
-			printf("send_random_access_preamble\n");
-			#endif
-			send_random_access_preamble(connection_information.prach, &my_states);
-		}
-
-		if(my_states.UE_state == 2)
-		{
-			#ifdef DEBUG
-			printf("send_rrc_req\n");
-			#endif
-			send_rrc_req(connection_information.ul_sch, &my_states);
-		}
-
-		if(my_states.UE_state == 4)
-		{
-			connection_information.srb.port = my_states.srb_identity;
-			if(setup_socket(&connection_information.srb.sock, connection_information.srb.port, SOCK_STREAM) == -1)
-			{
-				printf("CANT DO SHIT\n");
-				exit(EXIT_FAILURE);
-			}
-			my_states.UE_state = 5;
-		}
-
-		if(my_states.UE_state == 5)
-		{
-			send_rrc_setup_complete(connection_information.srb, &my_states);
-		}
+		states_check(&connection_information, &my_states);
 
         send_uci(connection_information.pucch, &my_states);
 
@@ -169,8 +134,10 @@ void handletraffic()
 				}
 			}
 		}
-		for(int i = 0; i < 1000000; i++)
-				Nop();
+		#ifndef DEBUG
+		print_cell(my_states);
+		#endif
+		wait();
 	}
 }
 
@@ -215,34 +182,82 @@ void setup_connection_information(struct eNB_conn_info *conn_info, struct MIB_ME
 	conn_info->srb.sock = 0;
 }
 
-void print_cell()
+void states_check(struct eNB_conn_info *connections, struct UE_INFO *info)
 {
-	printf("	                  .--.\n"
-	"                          |  |\n"
-	"                          |  |\n"
-	"                          |  |\n"
-	"                          |  |\n"
-	"         _.-----------._  |  |\n"
-	"      .-'      __       `-.  |\n"
-	"    .'       .'  `.        `.|\n"
-	"   ;         :    :          ;\n"
-	"   |         `.__.'          |\n"
-	"   |   ___                   |\n"
-	"   |  (_E_) E R I C S S O N  |\n"
-	"   | .---------------------. |\n"
-	"   | |                  99%%| |\n"//	"   | |                     | |\n"
-	"   | |                     | |\n"
-	"   | |                     | |\n"
-	"   | |                     | |\n"
-	"   | |                     | |\n"
-	"   | |                     | |\n"
-	"   | |                     | |\n"
-	"   | `---------------------' |\n"
-	"   |                         |\n"
-	"   |                __       |\n"
-	"   |  ________  .-~~__~~-.   |\n"
-	"   | |___C___/ /  .'  `.  \\  |\n"
-	"   |  ______  ;   : OK :   ; |\n"
-	"   | |__A___| |  _`.__.'_  | |\n"
-	"   |  _______ ; \\< |  | >/ ; |\n");
+	if(info->UE_state == 1)
+	{
+		#ifdef DEBUG
+		printf("send_random_access_preamble\n");
+		#endif
+		send_random_access_preamble(connections->prach, info);
+	}
+
+	if(info->UE_state == 2)
+	{
+		#ifdef DEBUG
+		printf("send_rrc_req\n");
+		#endif
+		send_rrc_req(connections->ul_sch, info);
+	}
+
+	if(info->UE_state == 4)
+	{
+		connections->srb.port = info->srb_identity;
+		if(setup_socket(&connections->srb, SOCK_STREAM) == -1)
+		{
+			printf("Error on setup socket\n");
+			exit(EXIT_FAILURE);
+		}
+		info->UE_state = 5;
+	}
+
+	if(info->UE_state == 5)
+	{
+		send_rrc_setup_complete(connections->srb, info);
+	}
+}
+
+void print_cell(struct UE_INFO state)
+{
+	const int downward_arrow_pos = 21;
+	const int upward_arrow_pos = 22;
+	const int percent = 23;//23 24 25
+
+	const char cellphoneup[] = //I HOPE ITS BEAUTIFUL
+	"	                  "BLACK_BG".--."NORMAL_BG"\n"
+	"                          "BLACK_BG"|  |"NORMAL_BG"\n"
+	"                          "BLACK_BG"|  |"NORMAL_BG"\n"
+	"                          "BLACK_BG"|  |"NORMAL_BG"\n"
+	"                          "BLACK_BG"|  |"NORMAL_BG"\n"
+	"         "BLACK_BG"_.-----------._  |  |"NORMAL_BG"\n"
+	"      "BLACK_BG".-'      __       `-.  |"NORMAL_BG"\n"
+	"    "BLACK_BG".'       .'  `.        `.|"NORMAL_BG"\n"
+	"   "BLACK_BG";         :    :          ;"NORMAL_BG"\n"
+	"   "BLACK_BG"|         `.__.'          |"NORMAL_BG"\n"
+	"   "BLACK_BG"|   ___                   |"NORMAL_BG"\n"
+	"   "BLACK_BG"|  (_E_) E R I C S S O N  |"NORMAL_BG"\n"
+	"   "BLACK_BG"| "GREEN_BG".---------------------."BLACK_BG" |"NORMAL_BG"\n";
+	char cellphonedata[] = "   "BLACK_BG"| "GREEN_BG"|               ⇩⬆99%%|"BLACK_BG" |"NORMAL_BG"\n";//	"   | |                     | |\n" //▲△✈ ⬇⇩ ⇧⬆
+	const char cellphonedown[] = "   "BLACK_BG"| "GREEN_BG"|                     |"BLACK_BG" |"NORMAL_BG"\n"
+	"   "BLACK_BG"| "GREEN_BG"|                     |"BLACK_BG" |"NORMAL_BG"\n"
+	"   "BLACK_BG"| "GREEN_BG"|                     |"BLACK_BG" |"NORMAL_BG"\n"
+	"   "BLACK_BG"| "GREEN_BG"|                     |"BLACK_BG" |"NORMAL_BG"\n"
+	"   "BLACK_BG"| "GREEN_BG"|                     |"BLACK_BG" |"NORMAL_BG"\n"
+	"   "BLACK_BG"| "GREEN_BG"|                     |"BLACK_BG" |"NORMAL_BG"\n"
+	"   "BLACK_BG"| "GREEN_BG"`---------------------'"BLACK_BG" |"NORMAL_BG"\n"
+	"   "BLACK_BG"|                         |"NORMAL_BG"\n"
+	"   "BLACK_BG"|                __       |"NORMAL_BG"\n"
+	"   "BLACK_BG"|  ________  .-~~__~~-.   |"NORMAL_BG"\n"
+	"   "BLACK_BG"| |___C___/ /  .'  `.  \\  |"NORMAL_BG"\n"
+	"   "BLACK_BG"|  ______  ;   : OK :   ; |"NORMAL_BG"\n"
+	"   "BLACK_BG"| |__A___| |  _`.__.'_  | |"NORMAL_BG"\n"
+	"   "BLACK_BG"|  _______ ; \\< |  | >/ ; |"NORMAL_BG"\n";
+
+	printf("\e[s%s%s%s\e[u", cellphoneup, cellphonedata, cellphonedown);
+}
+
+inline void wait()
+{
+	for(int i = 0; i < 1000000; i++)
+		Nop();
 }
