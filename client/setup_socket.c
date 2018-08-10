@@ -1,7 +1,8 @@
 #include "header.h"
 
 #include <sys/fcntl.h>
-#include <errno.h>
+
+#define BROADCAST_PORT 20700
 
 void setup_broadcast_socket(int * fd)
 {
