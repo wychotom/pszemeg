@@ -41,7 +41,22 @@ void PDSCH::send_rrc_connection_response(UE &ue)
     rcr_message.srb_identity = Ports::srb_port;
     rcr_message.ul_am_rlc = 1;
     rcr_message.ul_sch_config = 2;
-    rcr_message.uplink_power_control = 3;
+
+    DRX_CONFIG drx_config = {};
+    drx_config.on_duration_timer = 2;
+    drx_config.short_drx_timer = 5;
+    drx_config.long_drx_timer = 10;
+
+    if(ue.get_battery_life() > 30)
+    {
+        drx_config.drx_cycle_type = 0;
+    }
+    else
+    {
+        drx_config.drx_cycle_type = 1;
+    }
+
+    rcr_message.uplink_power_control = drx_config;
 
     send_message((void*) &rcr_message, sizeof(struct RRC_CONN_SETUP));
 

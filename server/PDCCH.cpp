@@ -41,7 +41,7 @@ void PDCCH::timer_job()
         drx_config.short_drx_timer = 5;
         drx_config.long_drx_timer = 10;
 
-        if(client->get_scheduling_request() < 30)
+        if(client->get_battery_life() < 30)
         {
             drx_config.drx_cycle_type = 0; // short cycle
         }
@@ -59,9 +59,6 @@ void PDCCH::timer_job()
         send_message((void*) &dci_message, sizeof(struct DCI_MESSAGE));
         std::cout << "\033[1;33m[PDCCH]\033[0m DCI sent" << std::endl;
     }
-
-
-
 }
 
 
