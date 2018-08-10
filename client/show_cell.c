@@ -7,22 +7,22 @@
 
 void print_cell(struct UE_INFO state)//im just goofing pls no atacc
 {
-	const wchar_t white_arrow_up = '⬆';
-	const wchar_t white_arrow_down = '⬇';
-	const wchar_t black_arrow_up = '⇧';
-	const wchar_t black_arrow_down = '⇩';
+	// const wchar_t white_arrow_up = '⬆';
+	// const wchar_t white_arrow_down = '⬇';
+	// const wchar_t black_arrow_up = '⇧';
+	// const wchar_t black_arrow_down = '⇩';
 
-	const wchar_t connected = 'C';
-	const wchar_t not_connected = 'D';
+	// const wchar_t connected = 'C';
+	// const wchar_t not_connected = 'D';
 
-	const int downward_arrow_pos = 38;
-	const int upward_arrow_pos = 39;
+	// const int downward_arrow_pos = 38;
+	// const int upward_arrow_pos = 39;
 
-	const int connection_sign = 41;
+	// const int connection_sign = 41;
 
-	const int hundreds = 45;//23 24 25
-	const int decimals = 44;//23 24 25
-	const int ones = 43;//23 24 25
+	// const int hundreds = 45;//23 24 25
+	// const int decimals = 44;//23 24 25
+	// const int ones = 43;//23 24 25
 
 	const char cellphoneup[] = //I HOPE ITS BEAUTIFUL
 	"	                  "BLACK_BG".--."NORMAL_BG"\n"
@@ -43,14 +43,14 @@ void print_cell(struct UE_INFO state)//im just goofing pls no atacc
 
 
 	char cellphonedata[] = "   " BLACK_BG "| " GREEN_BG "|                  99%|"BLACK_BG" |"NORMAL_BG"\n";
-	cellphonedata[hundreds] = 'X';
-	cellphonedata[decimals] = 'Y';
-	cellphonedata[ones] = 'Z';
+	// cellphonedata[hundreds] = 'X';
+	// cellphonedata[decimals] = 'Y';
+	// cellphonedata[ones] = 'Z';
 
-	cellphonedata[downward_arrow_pos] = '^';
-	cellphonedata[upward_arrow_pos] = 'v';
+	// cellphonedata[downward_arrow_pos] = '^';
+	// cellphonedata[upward_arrow_pos] = 'v';
 
-	cellphonedata[connection_sign] = connected;
+	// cellphonedata[connection_sign] = connected;
 
 	//	"   | |                     | |\n" //▲△✈ ⬇⇩ ⇧⬆
 

@@ -8,9 +8,6 @@
 #include <sys/epoll.h>
 #include <errno.h>
 
-
-#define BROADCAST_PORT 20700
-
 //#define DEBUG 1
 
 // States
