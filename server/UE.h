@@ -23,10 +23,14 @@ class UE
         void setUl_sch_config(int ul_sch_config);
         void setSrb_identity(int srb_identity);
         void set_flag(Action_to_perform flag);
+        void set_socket_fd(int socket_fd);
+
+        int get_socket_fd() const;
 
     private:
         Action_to_perform flag;
 
+        int socket_fd;
         int UE_state;
         int timing_advance;
         int uplink_resource_grant;
