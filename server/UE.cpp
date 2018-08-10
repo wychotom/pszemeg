@@ -59,3 +59,13 @@ int UE::get_socket_fd() const
 {
     return socket_fd;
 }
+
+int UE::get_scheduling_request() const
+{
+    return drx_type_choice;
+}
+
+void UE::set_scheduling_request(int drx_type_choice)
+{
+    UE::drx_type_choice = drx_type_choice;
+}
