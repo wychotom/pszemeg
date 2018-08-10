@@ -99,9 +99,7 @@ struct RRC_CONN_SETUP//dl-sch
     int ul_am_rlc;
     int ul_sch_config;
     int phr_config;
-    int uplink_power_control;
-
-    struct DRX_CONFIG drx_config;
+    struct DRX_CONFIG uplink_power_control;
 };
 
 struct RRC_CONN_SETUP_COMPLETE//dl-sch
