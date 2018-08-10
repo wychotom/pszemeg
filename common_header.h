@@ -1,6 +1,8 @@
 #ifndef COMMON_HEADER_H
 #define COMMON_HEADER_H
 
+#include <time.h>
+
 enum establishment_causes
 {
     emergency,
@@ -46,6 +48,7 @@ struct DRX_CONFIG
 
 struct DCI_MESSAGE//pdcch
 {
+    int C_RNTI;
     unsigned char format0_a_flag;
     unsigned char freqency_hooping;
     int riv;
@@ -67,14 +70,14 @@ struct UE_INFO
     int uplink_power_control;
     int ul_sch_config;
     int srb_identity;
-    int phr_information;
+    clock_t drx_cycle_start;
 };
 
 struct UPLINK_CONTROL_INFORMATION//pucch
 {
     struct UE_INFO ue_info;
     int C_RNTI;
-    int scheduling_request;
+    int scheduling_request; //UE battery life
     int harq_ack;
     int cqi;
 };
