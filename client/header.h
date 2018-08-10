@@ -7,12 +7,6 @@
 #include <netinet/in.h>
 #include <sys/epoll.h>
 #include <errno.h>
-<<<<<<< HEAD
-=======
-
-
-#define BROADCAST_PORT 20700
->>>>>>> 5d65119037139208b9b112df5bb64e62f285530a
 
 //#define DEBUG 1
 
