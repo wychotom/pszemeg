@@ -6,11 +6,7 @@
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <sys/epoll.h>
-
-#define BROADCAST_PORT 20700
-#define BLACK_BG "\e[37m\e[40m"
-#define GREEN_BG "\e[37m\e[42m"
-#define NORMAL_BG "\e[0m"
+#include <errno.h>
 
 //#define DEBUG 1
 
@@ -40,17 +36,20 @@ struct eNB_conn_info
 };
 
 
-//uefuncs.c
+//ue_init.c
 int get_unique_name();
-void handletraffic();
 void setup_ue(struct UE_INFO *);
 void init_channel(struct conn_pair *, struct epoll_event *, int *);
 void setup_connection_information(struct eNB_conn_info *, struct MIB_MESSAGE);
 void open_channels(struct eNB_conn_info *, struct epoll_event *, int *);
+
+//ue_traffic.c
 void print_cell(struct UE_INFO);
 void wait();
-
+void handletraffic();
 void states_check(struct eNB_conn_info *, struct UE_INFO *);
+
+void drop_packets(struct eNB_conn_info);
 
 //setup_socket.c
 int setup_socket(struct conn_pair *, int);
