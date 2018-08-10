@@ -51,6 +51,7 @@ void handletraffic()
 			clock_gettime(CLOCK_REALTIME, &check);
 			printf("TIME = %ld s\n", check.tv_sec - start.tv_sec);
 		#endif
+<<<<<<< HEAD
 		if((((check.tv_sec - start.tv_sec) % my_states.uplink_power_control.short_drx_timer) == 0)
 				&& (check.tv_sec - start.tv_sec) != 0)
 		{
@@ -65,6 +66,22 @@ void handletraffic()
 		// 		my_states.battery_life -= 10;
 		// }
 	
+=======
+		// if((((check.tv_sec - start.tv_sec) % my_states.uplink_power_control.short_drx_timer) == 0)
+		// 		&& (check.tv_sec - start.tv_sec) != 0)
+		// {
+		// 	in_drx = !in_drx;
+		// }
+
+		if((((check.tv_sec - start.tv_sec) % 10) == 0)
+				&& (check.tv_sec - start.tv_sec) != 0)
+		{
+			in_drx = !in_drx;
+			if(my_states.battery_life >= 10)
+				my_states.battery_life -= 10;
+		}
+
+>>>>>>> 5d65119037139208b9b112df5bb64e62f285530a
 		ewait_flag = epoll_wait(efd, events, max_epoll_events, -1);
 		
 		if(!in_drx)
