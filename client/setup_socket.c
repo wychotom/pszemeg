@@ -1,7 +1,6 @@
 #include "header.h"
 
 #include <sys/fcntl.h>
-#include <errno.h>
 
 void setup_broadcast_socket(int * fd)
 {
