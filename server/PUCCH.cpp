@@ -17,11 +17,11 @@ ssize_t PUCCH::receive_message(int event_fd)
 {
     struct UPLINK_CONTROL_INFORMATION uci = {};
 
-    ssize_t received_bytes = recv(event_fd, &uci, sizeof(struct UPLINK_CONTROL_INFORMATION), 0);
+    ssize_t received_bytes = recv(event_fd, &uci, sizeof(struct UPLINK_CONTROL_INFORMATION), MSG_DONTWAIT);
 
     if(received_bytes > 0)
     {
-        std::cout << "\033[1;33m[PUCCH]\033[0m received \033[0;36mUCI\033[0m from " << uci.ue_info.RNTI << std::endl;
+        //std::cout << "\033[1;33m[PUCCH]\033[0m received \033[0;36mUCI\033[0m from " << uci.ue_info.RNTI << std::endl;
 
         auto it = std::find_if(clients.begin(), clients.end(), [this, &uci]( UE* client) {
             return client->C_RNTI == uci.C_RNTI;
