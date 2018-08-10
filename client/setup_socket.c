@@ -2,6 +2,8 @@
 
 #include <sys/fcntl.h>
 
+#define BROADCAST_PORT 20700
+
 void setup_broadcast_socket(int * fd)
 {
 	*fd = socket(AF_INET, SOCK_DGRAM, 0);

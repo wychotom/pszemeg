@@ -10,9 +10,6 @@
 
 
 #define BROADCAST_PORT 20700
-#define BLACK_BG "\e[37m\e[40m"
-#define GREEN_BG "\e[37m\e[42m"
-#define NORMAL_BG "\e[0m"
 
 //#define DEBUG 1
 

@@ -4,6 +4,7 @@
 
 #include <time.h>
 #include <sys/socket.h>
+#include <wchar.h>
 
 void handletraffic()
 {
@@ -46,13 +47,22 @@ void handletraffic()
 
 	while(1)
 	{
-		clock_gettime(CLOCK_REALTIME, &check);
-		printf("TIME = %ld s\n", check.tv_sec - start.tv_sec);
+		#ifdef DEBUG
+			clock_gettime(CLOCK_REALTIME, &check);
+			printf("TIME = %ld s\n", check.tv_sec - start.tv_sec);
+		#endif
+		// if((((check.tv_sec - start.tv_sec) % my_states.uplink_power_control.short_drx_timer) == 0)
+		// 		&& (check.tv_sec - start.tv_sec) != 0)
+		// {
+		// 	in_drx = !in_drx;
+		// }
 
-		if((((check.tv_sec - start.tv_sec) % my_states.uplink_power_control.short_drx_timer) == 0)
+		if((((check.tv_sec - start.tv_sec) % 10) == 0)
 				&& (check.tv_sec - start.tv_sec) != 0)
 		{
 			in_drx = !in_drx;
+			if(my_states.battery_life >= 10)
+				my_states.battery_life -= 10;
 		}
 
 		ewait_flag = epoll_wait(efd, events, max_epoll_events, -1);
@@ -163,57 +173,6 @@ void drop_packets(struct eNB_conn_info connections)
 	receive_msg(connections.pdcch.sock, NULL, sizeof(struct MIB_MESSAGE));
 }
 
-void print_cell(struct UE_INFO state)//im just goofing pls no atacc
-{
-	// const wchar_t white_arrow_up = '⬆';
-	// const wchar_t white_arrow_down = '⬇';
-	// const wchar_t black_arrow_up = '⇧';
-	// const wchar_t black_arrow_down = '⇩';
-
-	// const wchar_t connected = '▲';
-	// const wchar_t not_connected = '△';
-
-
-	// const int downward_arrow_pos = 21;
-	// const int upward_arrow_pos = 22;
-	// const int percent = 23;//23 24 25
-
-	const char cellphoneup[] = //I HOPE ITS BEAUTIFUL
-	"	                  "BLACK_BG".--."NORMAL_BG"\n"
-	"                          "BLACK_BG"|  |"NORMAL_BG"\n"
-	"                          "BLACK_BG"|  |"NORMAL_BG"\n"
-	"                          "BLACK_BG"|  |"NORMAL_BG"\n"
-	"                          "BLACK_BG"|  |"NORMAL_BG"\n"
-	"         "BLACK_BG"_.-----------._  |  |"NORMAL_BG"\n"
-	"      "BLACK_BG".-'      __       `-.  |"NORMAL_BG"\n"
-	"    "BLACK_BG".'       .'  `.        `.|"NORMAL_BG"\n"
-	"   "BLACK_BG";         :    :          ;"NORMAL_BG"\n"
-	"   "BLACK_BG"|         `.__.'          |"NORMAL_BG"\n"
-	"   "BLACK_BG"|   ___                   |"NORMAL_BG"\n"
-	"   "BLACK_BG"|  (_E_) E R I C S S O N  |"NORMAL_BG"\n"
-	"   "BLACK_BG"| "GREEN_BG".---------------------."BLACK_BG" |"NORMAL_BG"\n";
-
-	char cellphonedata[] = "   "BLACK_BG"| "GREEN_BG"|               ⇩⬆99%%|"BLACK_BG" |"NORMAL_BG"\n";
-	//	"   | |                     | |\n" //▲△✈ ⬇⇩ ⇧⬆
-
-	const char cellphonedown[] = 
-	"   "BLACK_BG"| "GREEN_BG"|                     |"BLACK_BG" |"NORMAL_BG"\n"
-	"   "BLACK_BG"| "GREEN_BG"|                     |"BLACK_BG" |"NORMAL_BG"\n"
-	"   "BLACK_BG"| "GREEN_BG"|                     |"BLACK_BG" |"NORMAL_BG"\n"
-	"   "BLACK_BG"| "GREEN_BG"|                     |"BLACK_BG" |"NORMAL_BG"\n"
-	"   "BLACK_BG"| "GREEN_BG"|                     |"BLACK_BG" |"NORMAL_BG"\n"
-	"   "BLACK_BG"| "GREEN_BG"|                     |"BLACK_BG" |"NORMAL_BG"\n"
-	"   "BLACK_BG"| "GREEN_BG"`---------------------'"BLACK_BG" |"NORMAL_BG"\n"
-	"   "BLACK_BG"|                         |"NORMAL_BG"\n"
-	"   "BLACK_BG"|                __       |"NORMAL_BG"\n"
-	"   "BLACK_BG"|  ________  .-~~__~~-.   |"NORMAL_BG"\n"
-	"   "BLACK_BG"| |___C___/ /  .'  `.  \\  |"NORMAL_BG"\n"
-	"   "BLACK_BG"|  ______  ;   : OK :   ; |"NORMAL_BG"\n"
-	"   "BLACK_BG"| |__A___| |  _`.__.'_  | |"NORMAL_BG"\n"
-	"   "BLACK_BG"|  _______ ; \\< |  | >/ ; |"NORMAL_BG"\n";
-
-	printf("\033[28A\r%s%s%s", cellphoneup, cellphonedata, cellphonedown);
-}
 
 inline void wait()
 {
