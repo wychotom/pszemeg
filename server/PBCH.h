@@ -6,8 +6,10 @@
 class PBCH : public Uplink_channel
 {
     public:
-        PBCH(int port, size_t counter_reset);
-        void send_mib();
+        PBCH(int port, double send_frequency);
+
+    private:
+        void timer_job() override;
 };
 
 

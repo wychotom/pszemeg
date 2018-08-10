@@ -7,17 +7,20 @@
 class Uplink_channel
 {
     public:
-        Uplink_channel(int port, size_t counter_reset);
+        Uplink_channel(int port, double send_frequency);
         ~Uplink_channel();
-        void send_message(void *message, size_t size);
-        size_t get_counter();
+        void run_timer_job();
 
     private:
         int port;
         int socket_fd;
-        size_t counter;
-        size_t counter_reset;
+        clock_t last_event_time;
+        double send_frequency;
         struct sockaddr_in server_addr, client_addr;
+        virtual void timer_job();
+
+    protected:
+        void send_message(void *message, size_t size);
 };
 
 

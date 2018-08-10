@@ -4,11 +4,11 @@
 
 #include <iostream>
 
-PDCCH::PDCCH(int port, size_t counter_reset) : Uplink_channel(port, counter_reset)
+PDCCH::PDCCH(int port, double send_frequency) : Uplink_channel(port, send_frequency)
 {
 }
 
-void PDCCH::send_dci(bool cqi_request)
+void PDCCH::timer_job()
 {
     struct DCI_MESSAGE dci_message;
 
@@ -27,7 +27,7 @@ void PDCCH::send_dci(bool cqi_request)
     dci_message.checksum += (long)dci_message.tpc;
     dci_message.cyclic_shift = 34;
     dci_message.checksum += (long)dci_message.cyclic_shift;
-    dci_message.cqi_request = static_cast<char>(cqi_request ? 1 : 0);
+    dci_message.cqi_request = 1;
     dci_message.checksum += (long)dci_message.cqi_request;
 
     send_message((void*) &dci_message, sizeof(struct DCI_MESSAGE));

@@ -6,8 +6,10 @@
 class PDCCH : public Uplink_channel
 {
     public:
-        PDCCH(int port, size_t counter_reset);
-        void send_dci(bool cqi_request);
+        PDCCH(int port, double send_frequency);
+
+    private:
+        void timer_job() override;
 };
 
 

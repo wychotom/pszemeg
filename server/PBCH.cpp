@@ -4,11 +4,11 @@
 
 #include <iostream>
 
-PBCH::PBCH(int port, size_t counter_reset) : Uplink_channel(port, counter_reset)
+PBCH::PBCH(int port, double send_frequency) : Uplink_channel(port, send_frequency)
 {
 }
 
-void PBCH::send_mib()
+void PBCH::timer_job()
 {
     struct MIB_MESSAGE mib_message = {};
 
