@@ -84,13 +84,14 @@ struct UE_INFO
     int ul_sch_config;
     int srb_identity;
     clock_t drx_cycle_start;
+    int battery_life;
 };
 
 struct UPLINK_CONTROL_INFORMATION//pucch
 {
     struct UE_INFO ue_info;
     int C_RNTI;
-    int scheduling_request; //UE battery life
+    int scheduling_request;
     int harq_ack;
     int cqi;
 };

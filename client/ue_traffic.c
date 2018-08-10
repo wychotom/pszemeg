@@ -33,67 +33,91 @@ void handletraffic()
 
 	int ewait_flag, i;
 
-	for(i = 0; i < 28; i++)
-		printf("\n");
+	struct timespec start, check;
+
+	clock_gettime(CLOCK_REALTIME, &start);
+
+	#ifndef DEBUG
+		for(i = 0; i < 29; i++) // TRZEBA BEDZIE ZAMIENIC XD
+			printf("\n");
+	#endif
+
+	int in_drx = 0;
 
 	while(1)
 	{
-		ewait_flag = epoll_wait(efd, events, max_epoll_events, -1);
-		states_check(&connection_information, &my_states);
-        send_uci(connection_information.pucch, &my_states);
+		clock_gettime(CLOCK_REALTIME, &check);
+		printf("TIME = %ld s\n", check.tv_sec - start.tv_sec);
 
-		if(ewait_flag == -1)
+		if((((check.tv_sec - start.tv_sec) % my_states.uplink_power_control.short_drx_timer) == 0)
+				&& (check.tv_sec - start.tv_sec) != 0)
 		{
-			perror("epoll wait ");
-			exit(EXIT_FAILURE);
+			in_drx = !in_drx;
 		}
-		for(i = 0; i < ewait_flag; i++)
+
+		ewait_flag = epoll_wait(efd, events, max_epoll_events, -1);
+		
+		if(!in_drx)
 		{
-			if(events[i].events & EPOLLIN)
+			states_check(&connection_information, &my_states);
+        	send_uci(connection_information.pucch, &my_states);
+
+			if(ewait_flag == -1)
 			{
+				perror("epoll wait ");
+				exit(EXIT_FAILURE);
+			}
+			for(i = 0; i < ewait_flag; i++)
+			{
+				if(events[i].events & EPOLLIN)
+				{
 
-				if(events[i].data.fd == connection_information.pdcch.sock)
-				{
-					#ifdef DEBUG
-						printf("receive_dci\n");
-					#endif
-					receive_dci(events[i].data.fd, &my_states);
-				}
-				if(events[i].data.fd == connection_information.broadcast.sock)
-				{
-					#ifdef DEBUG
-						printf("receive_broadcast\n");
-					#endif
-					receive_broadcast(events[i].data.fd, &my_states, &init_mib_msg);
-				}
+					if(events[i].data.fd == connection_information.pdcch.sock)
+					{
+						#ifdef DEBUG
+							printf("\nreceive_dci\n");
+						#endif
+						receive_dci(events[i].data.fd, &my_states);
+					}
+					if(events[i].data.fd == connection_information.broadcast.sock)
+					{
+						#ifdef DEBUG
+							printf("\nreceive_broadcast\n");
+						#endif
+						receive_broadcast(events[i].data.fd, &my_states, &init_mib_msg);
+					}
 
-				if((events[i].data.fd == connection_information.dl_sch.sock) 
-					&& (my_states.UE_state == 1))
-				{
-					#ifdef DEBUG
-						printf("receive_random_access_response\n");
-					#endif
-					receive_random_access_response(events[i].data.fd, &my_states);
-				}
+					if((events[i].data.fd == connection_information.dl_sch.sock) 
+						&& (my_states.UE_state == 1))
+					{
+						#ifdef DEBUG
+							printf("\nreceive_random_access_response\n");
+						#endif
+						receive_random_access_response(events[i].data.fd, &my_states);
+					}
 
-				if((events[i].data.fd == connection_information.dl_sch.sock) 
-					&& (my_states.UE_state == 3))
-				{
-					#ifdef DEBUG
-						printf("receive_rrc_setup\n");
-					#endif
-					receive_rrc_setup(events[i].data.fd, &my_states);
+					if((events[i].data.fd == connection_information.dl_sch.sock) 
+						&& (my_states.UE_state == 3))
+					{
+						#ifdef DEBUG
+							printf("\nreceive_rrc_setup\n");
+						#endif
+						receive_rrc_setup(events[i].data.fd, &my_states);
+					}
 				}
 			}
 		}
+		else
+		{
+			drop_packets(connection_information);
+		}
+		
 		#ifndef DEBUG
 			print_cell(my_states);
 		#endif
-		wait();
+		//wait();
 	}
 }
-
-
 
 void states_check(struct eNB_conn_info *connections, struct UE_INFO *info)
 {

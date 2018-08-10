@@ -125,14 +125,16 @@ void receive_rrc_setup(int fd, struct UE_INFO *info)
 		if(rrc_msg.C_RNTI == info->RNTI)
 		{
 			info->srb_identity = rrc_msg.srb_identity;
-			info->uplink_power_control = rrc_msg.uplink_power_control;
+			info->uplink_power_control.drx_cycle_type = rrc_msg.uplink_power_control.drx_cycle_type;
+			info->uplink_power_control.short_drx_timer = rrc_msg.uplink_power_control.short_drx_timer;
+
 			info->ul_sch_config = rrc_msg.ul_sch_config;
 			info->UE_state = 4;
 			
 			#ifdef DEBUG
-			printf("C_RNTI = %d\nC_RNTI = %d\nC_RNTI = %d\nC_RNTI = %d\nC_RNTI = %d\nC_RNTI = %d\nC_RNTI = %d\n"
+			printf("C_RNTI = %d\nSRB_ID = %d\nDL_AM_RLC = %d\nUL_AM_RLC = %d\nUL_SCH_CONF = %d\nPHR_CONF = %d\n"
 					,rrc_msg.C_RNTI, rrc_msg.srb_identity, rrc_msg.dl_am_rlc, rrc_msg.ul_am_rlc,
-					rrc_msg.ul_sch_config, rrc_msg.phr_config, rrc_msg.uplink_power_control);
+					rrc_msg.ul_sch_config, rrc_msg.phr_config);
 			#endif
 		}
 	}
