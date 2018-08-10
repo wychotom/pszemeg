@@ -58,13 +58,14 @@ int setup_socket(struct conn_pair * connection, int type)
 	else
 	{
         connection->sock = socket(AF_INET, SOCK_STREAM, 0);
-		sa.sin_addr.s_addr = inet_addr("192.168.40.129");
+		//sa.sin_addr.s_addr = inet_addr("192.168.40.129");
+		sa.sin_addr.s_addr = INADDR_ANY;
 	}
 
 	setsockopt(connection->sock, SOL_SOCKET, SO_REUSEADDR, &errflag, sizeof(errflag));
 	
 	sa.sin_family = AF_INET;
-	sa.sin_addr.s_addr = INADDR_ANY;
+	//sa.sin_addr.s_addr = INADDR_ANY;
 	sa.sin_port = htons(connection->port);
 
     if(type == SOCK_DGRAM)
