@@ -8,6 +8,9 @@
 #include <sys/epoll.h>
 
 #define BROADCAST_PORT 20700
+#define BLACK_BG "\e[37m\e[40m"
+#define GREEN_BG "\e[37m\e[42m"
+#define NORMAL_BG "\e[0m"
 
 //#define DEBUG 1
 
@@ -44,10 +47,13 @@ void setup_ue(struct UE_INFO *);
 void init_channel(struct conn_pair *, struct epoll_event *, int *);
 void setup_connection_information(struct eNB_conn_info *, struct MIB_MESSAGE);
 void open_channels(struct eNB_conn_info *, struct epoll_event *, int *);
-void print_cell();
+void print_cell(struct UE_INFO);
+void wait();
+
+void states_check(struct eNB_conn_info *, struct UE_INFO *);
 
 //setup_socket.c
-int setup_socket(int *, int, int);
+int setup_socket(struct conn_pair *, int);
 int set_non_block();
 void setup_broadcast_socket();
 void add_socket_epoll(struct epoll_event *, int *, int *);

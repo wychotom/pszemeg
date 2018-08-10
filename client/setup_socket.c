@@ -41,27 +41,27 @@ void setup_broadcast_socket(int * fd)
 	}
 }
 
-int setup_socket(int * sockfd, int port, int type)
+int setup_socket(struct conn_pair * connection, int type)
 {
 	int errflag = 1;
 
 	struct sockaddr_in sa;
 
 	if(type == SOCK_DGRAM) 
-		*sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+		connection->sock = socket(AF_INET, SOCK_DGRAM, 0);
 	else 
-		*sockfd = socket(AF_INET, SOCK_STREAM, 0);
+		connection->sock = socket(AF_INET, SOCK_STREAM, 0);
 
-	setsockopt(*sockfd, SOL_SOCKET, SO_REUSEADDR, &errflag, sizeof(errflag));
+	setsockopt(connection->sock, SOL_SOCKET, SO_REUSEADDR, &errflag, sizeof(errflag));
 	
 	sa.sin_family = AF_INET;
 	sa.sin_addr.s_addr = INADDR_ANY;
-	sa.sin_port = htons(port);
+	sa.sin_port = htons(connection->port);
 
     if(type == SOCK_DGRAM)
-		errflag = bind(*sockfd, (struct sockaddr *)&sa, sizeof(struct sockaddr));
+		errflag = bind(connection->sock, (struct sockaddr *)&sa, sizeof(struct sockaddr));
 	else
-		errflag = connect(*sockfd, (struct sockaddr *)&sa, sizeof(sa));
+		errflag = connect(connection->sock, (struct sockaddr *)&sa, sizeof(sa));
 
 	if (errflag == -1)
 	{
@@ -74,11 +74,13 @@ int setup_socket(int * sockfd, int port, int type)
 		}
 		else
 		{
-			if(type == SOCK_DGRAM)
-				perror("bind err: ");
-			else
-				perror("connect err: ");
-			
+			if(errno != EADDRINUSE)
+			{
+				if(type == SOCK_DGRAM)
+					perror("bind err: ");
+				else
+					perror("connect err: ");
+			}			
 			return -1;
 		}
 	}
