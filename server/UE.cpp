@@ -60,12 +60,12 @@ int UE::get_socket_fd() const
     return socket_fd;
 }
 
-int UE::get_scheduling_request() const
+int UE::get_battery_life() const
 {
-    return drx_type_choice;
+    return battery_life;
 }
 
-void UE::set_scheduling_request(int drx_type_choice)
+void UE::set_battery_life(int battery_life)
 {
-    UE::drx_type_choice = drx_type_choice;
+    UE::battery_life = battery_life;
 }
