@@ -56,6 +56,7 @@ struct DRX_CONFIG
     int on_duration_timer;
     int short_drx_timer;
     int long_drx_timer;
+    int drx_cycle_type; //0 - short, 1 - long
 };
 
 struct DCI_MESSAGE//pdcch

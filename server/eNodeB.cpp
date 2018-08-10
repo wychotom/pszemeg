@@ -11,7 +11,7 @@
 
 eNodeB::eNodeB() :
 pbch(Ports::pbch_port, 0.5),
-pdcch(Ports::pdcch_port, 1),
+pdcch(Ports::pdcch_port, 1, clients),
 pdsch(Ports::pdsch_port),
 prach(Ports::prach_port, ue_to_handle, clients),
 pusch(Ports::pusch_port, ue_to_handle, clients),
