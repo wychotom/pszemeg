@@ -1,4 +1,5 @@
 #include "UE.h"
+#include <ctime>
 
 UE::UE(int RA_RNTI)
 {
@@ -68,4 +69,19 @@ int UE::get_battery_life() const
 void UE::set_battery_life(int battery_life)
 {
     UE::battery_life = battery_life;
+}
+
+void UE::set_drx_cycle_start(clock_t drx_cycle_start)
+{
+    UE::drx_cycle_start = drx_cycle_start;
+}
+
+bool UE::is_transmission_possible()
+{
+    clock_t now = clock();
+    int on_duration_timer = this->uplink_power_control.on_duration_timer;
+
+    double elapsed_secs = double(now - this->drx_cycle_start) / CLOCKS_PER_SEC;
+
+    return elapsed_secs < on_duration_timer;
 }

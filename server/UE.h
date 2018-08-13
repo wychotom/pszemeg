@@ -16,8 +16,8 @@ class UE
         UE(int RA_RNTI);
         int RA_RNTI;
         int C_RNTI;
-        Action_to_perform get_flag();
 
+        Action_to_perform get_flag();
         void set_UE_state(int UE_state);
         void set_timing_advance(int timing_advance);
         void set_uplink_resource_grant(int uplink_resource_grant);
@@ -28,22 +28,22 @@ class UE
         void set_socket_fd(int socket_fd);
         int get_battery_life() const;
         void set_battery_life(int battery_life);
-
         int get_socket_fd() const;
+        void set_drx_cycle_start(clock_t drx_cycle_start);
+        bool is_transmission_possible();
 
     private:
         Action_to_perform flag;
-
         int socket_fd;
         int UE_state;
         int timing_advance;
         int uplink_resource_grant;
         struct DRX_CONFIG uplink_power_control;
+        clock_t drx_cycle_start;
         int ul_sch_config;
         int srb_identity;
         //int drx_type_choice;
         int battery_life;
 };
-
 
 #endif //SERVER_UE_H
