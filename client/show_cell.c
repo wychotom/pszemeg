@@ -73,3 +73,8 @@ void print_cell(struct UE_INFO state)//im just goofing pls no atacc
 	printf("\033[28A\r%s%s%s", cellphoneup, cellphonedata, cellphonedown);
 	
 }
+
+void extract_digits(int number)
+{
+	
+}

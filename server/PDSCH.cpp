@@ -46,15 +46,7 @@ void PDSCH::send_rrc_connection_response(UE &ue)
     drx_config.on_duration_timer = 2;
     drx_config.short_drx_timer = 5;
     drx_config.long_drx_timer = 10;
-
-    if(ue.get_battery_life() > 30)
-    {
-        drx_config.drx_cycle_type = 0;
-    }
-    else
-    {
-        drx_config.drx_cycle_type = 1;
-    }
+    drx_config.drx_cycle_type = 0;
 
     rcr_message.uplink_power_control = drx_config;
 
