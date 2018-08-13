@@ -71,17 +71,27 @@ void UE::set_battery_life(int battery_life)
     UE::battery_life = battery_life;
 }
 
-void UE::set_drx_cycle_start(clock_t drx_cycle_start)
+void UE::set_sleep_start(clock_t sleep_start)
 {
-    UE::drx_cycle_start = drx_cycle_start;
+    UE::sleep_start = sleep_start;
 }
 
 bool UE::is_transmission_possible()
 {
     clock_t now = clock();
     int on_duration_timer = this->uplink_power_control.on_duration_timer;
+    int cycle_duration;
 
-    double elapsed_secs = double(now - this->drx_cycle_start) / CLOCKS_PER_SEC;
+    if(this->uplink_power_control.drx_cycle_type == 0)
+    {
+        cycle_duration = this->uplink_power_control.short_drx_timer;
+    }
+    else
+    {
+        cycle_duration = this->uplink_power_control.long_drx_timer;
+    }
 
-    return elapsed_secs < on_duration_timer;
+    double elapsed_secs = double(now - this->sleep_start) / CLOCKS_PER_SEC;
+
+    return elapsed_secs >= (cycle_duration - on_duration_timer);
 }

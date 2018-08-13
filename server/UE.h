@@ -29,7 +29,7 @@ class UE
         int get_battery_life() const;
         void set_battery_life(int battery_life);
         int get_socket_fd() const;
-        void set_drx_cycle_start(clock_t drx_cycle_start);
+        void set_sleep_start(clock_t sleep_start);
         bool is_transmission_possible();
 
     private:
@@ -39,7 +39,7 @@ class UE
         int timing_advance;
         int uplink_resource_grant;
         struct DRX_CONFIG uplink_power_control;
-        clock_t drx_cycle_start;
+        clock_t sleep_start;
         int ul_sch_config;
         int srb_identity;
         //int drx_type_choice;
