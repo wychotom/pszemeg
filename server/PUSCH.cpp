@@ -18,7 +18,7 @@ ssize_t PUSCH::receive_message(int event_fd)
 {
     RRC_CONN_REQUEST rcr = {};
 
-    ssize_t received_bytes = recv(event_fd, &rcr, sizeof(RRC_CONN_REQUEST), 0);
+    ssize_t received_bytes = recv(event_fd, &rcr, sizeof(RRC_CONN_REQUEST), MSG_DONTWAIT);
 
     if(received_bytes > 0)
     {

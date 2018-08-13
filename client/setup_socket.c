@@ -1,6 +1,8 @@
 #include "header.h"
 
 #include <sys/fcntl.h>
+#include <errno.h>
+#include <arpa/inet.h>
 
 #define BROADCAST_PORT 20700
 
@@ -49,14 +51,21 @@ int setup_socket(struct conn_pair * connection, int type)
 	struct sockaddr_in sa;
 
 	if(type == SOCK_DGRAM) 
-		connection->sock = socket(AF_INET, SOCK_DGRAM, 0);
-	else 
-		connection->sock = socket(AF_INET, SOCK_STREAM, 0);
+	{
+        connection->sock = socket(AF_INET, SOCK_DGRAM, 0);
+		sa.sin_addr.s_addr = INADDR_ANY;
+	}
+	else
+	{
+        connection->sock = socket(AF_INET, SOCK_STREAM, 0);
+		//sa.sin_addr.s_addr = inet_addr("192.168.40.129");
+		sa.sin_addr.s_addr = INADDR_ANY;
+	}
 
 	setsockopt(connection->sock, SOL_SOCKET, SO_REUSEADDR, &errflag, sizeof(errflag));
 	
 	sa.sin_family = AF_INET;
-	sa.sin_addr.s_addr = INADDR_ANY;
+	//sa.sin_addr.s_addr = INADDR_ANY;
 	sa.sin_port = htons(connection->port);
 
     if(type == SOCK_DGRAM)
@@ -81,7 +90,7 @@ int setup_socket(struct conn_pair * connection, int type)
 					perror("bind err: ");
 				else
 					perror("connect err: ");
-			}			
+			}
 			return -1;
 		}
 	}

@@ -19,7 +19,7 @@ ssize_t PRACH::receive_message(int event_fd)
 {
     struct RANDOM_ACCESS_PREAMBLE rap = {};
 
-    ssize_t received_bytes = recv(event_fd, &rap, sizeof(struct RANDOM_ACCESS_PREAMBLE), 0);
+    ssize_t received_bytes = recv(event_fd, &rap, sizeof(struct RANDOM_ACCESS_PREAMBLE), MSG_DONTWAIT);
 
     if(received_bytes > 0)
     {

@@ -191,10 +191,14 @@ int send_msg(struct conn_pair connection, void *buffer, size_t buffer_size)
 {
 	struct sockaddr_in other;
 	unsigned int otherlen = sizeof(other);
+	int broadcast = 1;
 
 	other.sin_family = AF_INET;
-	other.sin_addr.s_addr = htonl(INADDR_ANY);
+	//other.sin_addr.s_addr = inet_addr("192.168.40.255");
+	other.sin_addr.s_addr = INADDR_ANY;
 	other.sin_port = htons(connection.port);
+
+	setsockopt(connection.sock, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast));
 	
     if(sendto(connection.sock, buffer, buffer_size, 0, (struct sockaddr *)&other, otherlen) == -1)
     {

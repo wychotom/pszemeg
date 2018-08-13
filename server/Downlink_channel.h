@@ -10,19 +10,15 @@ class Downlink_channel
         Downlink_channel(int port);
         ~Downlink_channel();
         void handle_connections();
-        virtual ssize_t receive_message(int event_fd) = 0;
+        virtual ssize_t receive_message(int socket_fd) = 0;
 
     private:
-        void set_socket_non_blocking(int socket_fd);
-        void read_incoming_data(int event_fd);
+        void read_incoming_data(int socket_fd);
 
         int port;
-        int socket_fd, epoll_fd;
+        int socket_fd;
         struct sockaddr_in addr;
         struct sockaddr client;
-        struct epoll_event event;
-        struct epoll_event *events;
-        const int max_number_of_events;
 };
 
 
