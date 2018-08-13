@@ -127,14 +127,19 @@ void receive_rrc_setup(int fd, struct UE_INFO *info)
 			info->srb_identity = rrc_msg.srb_identity;
 			info->uplink_power_control.drx_cycle_type = rrc_msg.uplink_power_control.drx_cycle_type;
 			info->uplink_power_control.short_drx_timer = rrc_msg.uplink_power_control.short_drx_timer;
+			info->uplink_power_control.long_drx_timer = rrc_msg.uplink_power_control.long_drx_timer;
+			info->uplink_power_control.on_duration_timer = rrc_msg.uplink_power_control.on_duration_timer;
+
 
 			info->ul_sch_config = rrc_msg.ul_sch_config;
 			info->UE_state = 4;
 			
 			#ifdef DEBUG
-			printf("C_RNTI = %d\nSRB_ID = %d\nDL_AM_RLC = %d\nUL_AM_RLC = %d\nUL_SCH_CONF = %d\nPHR_CONF = %d\n"
+			printf("C_RNTI = %d\nSRB_ID = %d\nDL_AM_RLC = %d\nUL_AM_RLC = %d"
+					"\nUL_SCH_CONF = %d\nPHR_CONF = %d\nON_DUR_TIMER = %d\n"
 					,rrc_msg.C_RNTI, rrc_msg.srb_identity, rrc_msg.dl_am_rlc, rrc_msg.ul_am_rlc,
-					rrc_msg.ul_sch_config, rrc_msg.phr_config);
+					rrc_msg.ul_sch_config, rrc_msg.phr_config,
+					rrc_msg.uplink_power_control.on_duration_timer);
 			#endif
 		}
 	}
@@ -193,12 +198,21 @@ int send_msg(struct conn_pair connection, void *buffer, size_t buffer_size)
 	other.sin_addr.s_addr = INADDR_ANY;
 	other.sin_port = htons(connection.port);
 
-	setsockopt(connection.sock, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast));
-	
+	//setsockopt(connection.sock, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast));
+
     if(sendto(connection.sock, buffer, buffer_size, 0, (struct sockaddr *)&other, otherlen) == -1)
     {
         perror("UCI send error: ");
 		return -1;
     }
 	return 0;
+}
+
+void drop_packets(struct eNB_conn_info connections)
+{
+	int drop[1024] = {};
+
+	receive_msg(connections.broadcast.sock, &drop, 1024);
+	receive_msg(connections.dl_sch.sock, &drop, 1024);
+	receive_msg(connections.pdcch.sock, &drop, 1024);
 }

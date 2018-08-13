@@ -46,7 +46,7 @@ void PDCCH::timer_job()
         drx_config.short_drx_timer = 5;
         drx_config.long_drx_timer = 10;
 
-        if(client->get_battery_life() < 30)
+        if(client->get_battery_life() > 30)
         {
             drx_config.drx_cycle_type = 0; // short cycle
         }

@@ -4,7 +4,6 @@
 
 #include <time.h>
 #include <sys/socket.h>
-#include <wchar.h>
 
 void handletraffic()
 {
@@ -43,31 +42,58 @@ void handletraffic()
 			printf("\n");
 	#endif
 
-	int in_drx = 0;
+	int drx_receiving = 1;
+	time_t runtime = 0;
+	int drx_timer = 0;
 
 	while(1)
 	{
-		#ifdef DEBUG
-			clock_gettime(CLOCK_REALTIME, &check);
-			printf("TIME = %ld s\n", check.tv_sec - start.tv_sec);
+		clock_gettime(CLOCK_REALTIME, &check);
+		runtime = check.tv_sec - start.tv_sec;
 
-			printf("xd1 = %ld s\n", my_states.uplink_power_control.short_drx_timer);
+		#ifdef DEBUG
+			if(my_states.UE_state >= 5)
+			{
+				printf("TIME = %ld s\n", runtime);
+				printf("drx_cycle_type = %d\n", my_states.uplink_power_control.drx_cycle_type);
+				printf("short_drx_timer = %d\n", my_states.uplink_power_control.short_drx_timer);
+				printf("long_drx_timer = %d\n", my_states.uplink_power_control.long_drx_timer);
+				printf("Battery = %d%%\n", my_states.battery_life);
+			}
 		#endif
+
 		if(my_states.UE_state >= 5)
 		{
-			if((((check.tv_sec - start.tv_sec) % my_states.uplink_power_control.short_drx_timer) == 0)
-				&& (check.tv_sec - start.tv_sec) != 0)
+			if(my_states.uplink_power_control.drx_cycle_type == 0)
+				drx_timer = my_states.uplink_power_control.short_drx_timer;
+			else
+				drx_timer = my_states.uplink_power_control.long_drx_timer;
+
+			if(runtime != 0 && ((runtime % my_states.uplink_power_control.on_duration_timer) == 0) && drx_receiving == 1)
 			{
-				in_drx = !in_drx;
+				drx_receiving = 0;
+				#ifdef DEBUG
+					printf("Sending UCI\n");
+				#endif
+				send_uci(connection_information.pucch, &my_states);
+			}
+			
+
+			if((runtime % drx_timer) == 0 && drx_receiving == 0)
+			{
+				drx_receiving = 1;
+				runtime = start.tv_sec = check.tv_sec;
+				if(my_states.battery_life >= 10)
+					my_states.battery_life -= 10;
 			}
 		}
 	
 		ewait_flag = epoll_wait(efd, events, max_epoll_events, -1);
 		
-		if(!in_drx)
+		if(drx_receiving)
 		{
 			states_check(&connection_information, &my_states);
-        	send_uci(connection_information.pucch, &my_states);
+        	//send_uci(connection_information.pucch, &my_states);
 
 			if(ewait_flag == -1)
 			{
@@ -116,13 +142,15 @@ void handletraffic()
 		}
 		else
 		{
+			#ifdef DEBUG
+				printf("dropping packets\n");
+			#endif
 			drop_packets(connection_information);
 		}
 		
 		#ifndef DEBUG
 			print_cell(my_states);
 		#endif
-		//wait();
 	}
 }
 
@@ -161,18 +189,4 @@ void states_check(struct eNB_conn_info *connections, struct UE_INFO *info)
 	{
 		send_rrc_setup_complete(connections->srb, info);
 	}
-}
-
-void drop_packets(struct eNB_conn_info connections)
-{
-	receive_msg(connections.broadcast.sock, NULL, sizeof(struct MIB_MESSAGE));
-	receive_msg(connections.dl_sch.sock, NULL, sizeof(struct MIB_MESSAGE));
-	receive_msg(connections.pdcch.sock, NULL, sizeof(struct MIB_MESSAGE));
-}
-
-
-inline void wait()
-{
-	for(int i = 0; i < 1000000; i++)
-		Nop();
 }
