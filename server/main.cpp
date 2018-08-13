@@ -7,7 +7,6 @@ void stop_handler(int sig)
 {
     if (sig == SIGINT)
     {
-        std::cout << "STOPPPPPP" << std::endl;
         eNodeB::is_running = false;
     }
 }
@@ -27,5 +26,5 @@ int main()
         std::cout << e << std::endl;
     }
 
-    std::cout << "MAIN STOPPPPPP" << std::endl;
+    std::cout << "MAIN HALT" << std::endl;
 }
