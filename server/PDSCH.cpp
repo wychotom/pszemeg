@@ -85,7 +85,7 @@ UE* PDSCH::get_next_ue(std::vector<UE*> &ue_vector, Action_to_perform action)
 {
     auto it = std::find_if(ue_vector.begin(), ue_vector.end(), [&action] (UE* client)
     {
-        return client->get_flag() == action;
+        return client->get_flag() == action && client->is_transmission_possible();
     });
 
     if(it == ue_vector.end())

@@ -14,6 +14,11 @@ void PDCCH::timer_job()
 {
     for(UE* client : clients)
     {
+        if(!client->is_transmission_possible())
+        {
+            continue;
+        }
+
         struct DCI_MESSAGE dci_message = {};
 
         dci_message.checksum = 0;
