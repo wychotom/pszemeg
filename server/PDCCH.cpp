@@ -14,7 +14,7 @@ void PDCCH::timer_job()
 {
     for(UE* client : clients)
     {
-        if(!client->is_transmission_possible())
+        if(!client->is_transmission_possible() || client->get_socket_fd() == 0)
         {
             continue;
         }
@@ -41,21 +41,19 @@ void PDCCH::timer_job()
         dci_message.cqi_request = 1;
         dci_message.checksum += (long)dci_message.cqi_request;
 
-        DRX_CONFIG drx_config = {};
-        drx_config.on_duration_timer = 2;
-        drx_config.short_drx_timer = 5;
-        drx_config.long_drx_timer = 10;
+        dci_message.drx_config.on_duration_timer = 2;
+        dci_message.drx_config.short_drx_timer = 5;
+        dci_message.drx_config.long_drx_timer = 10;
 
         if(client->get_battery_life() > 30)
         {
-            drx_config.drx_cycle_type = 0; // short cycle
+            dci_message.drx_config.drx_cycle_type = 0; // short cycle
         }
         else
         {
-            drx_config.drx_cycle_type = 1; // long cycle
+            dci_message.drx_config.drx_cycle_type = 1; // long cycle
         }
 
-        dci_message.drx_config = drx_config;
         dci_message.checksum += (long)dci_message.drx_config.on_duration_timer;
         dci_message.checksum += (long)dci_message.drx_config.short_drx_timer;
         dci_message.checksum += (long)dci_message.drx_config.long_drx_timer;

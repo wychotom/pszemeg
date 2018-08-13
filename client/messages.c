@@ -35,7 +35,9 @@ void receive_dci(int fd, struct UE_INFO *info)
 				"tpc = %d\ncyclic shift = %d\ncqi_request = %u\n",
 				dci_msg.format0_a_flag, dci_msg.freqency_hooping, dci_msg.riv, dci_msg.mcs,
 				dci_msg.ndi, dci_msg.tpc, dci_msg.cyclic_shift, dci_msg.cqi_request);
-		#endif
+        #endif
+
+		info->uplink_power_control.drx_cycle_type = dci_msg.drx_config.drx_cycle_type;
 	}
 }
 
