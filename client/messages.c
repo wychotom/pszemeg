@@ -3,7 +3,7 @@
 
 void receive_broadcast(int fd, struct UE_INFO *info, struct MIB_MESSAGE *mib_ret)
 {
-	struct MIB_MESSAGE mib_msg = {};
+	struct MIB_MESSAGE mib_msg;
 	int retval = receive_msg(fd, &mib_msg, sizeof(struct MIB_MESSAGE));
 	
 	if(retval == 0)
@@ -27,7 +27,7 @@ void receive_broadcast(int fd, struct UE_INFO *info, struct MIB_MESSAGE *mib_ret
 
 void receive_dci(int fd, struct UE_INFO *info)
 {
-	struct DCI_MESSAGE dci_msg = {};
+	struct DCI_MESSAGE dci_msg;
 	int retval = receive_msg(fd, &dci_msg, sizeof(struct DCI_MESSAGE));
 	if(retval == 0)
 	{
@@ -45,7 +45,7 @@ void receive_dci(int fd, struct UE_INFO *info)
 
 void send_random_access_preamble(struct conn_pair connection, struct UE_INFO * info)
 {
-    struct RANDOM_ACCESS_PREAMBLE rap_msg = {};
+    struct RANDOM_ACCESS_PREAMBLE rap_msg;
     const short int preamble_identifier = 1337;
 
     rap_msg.preamble = preamble_identifier;
@@ -62,7 +62,7 @@ void send_random_access_preamble(struct conn_pair connection, struct UE_INFO * i
 
 void receive_random_access_response(int fd, struct UE_INFO *info)
 {
-	struct RANDOM_ACCESS_RESPONSE rar_msg = {};
+	struct RANDOM_ACCESS_RESPONSE rar_msg;
 
 	int retval = receive_msg(fd, &rar_msg, sizeof(struct RANDOM_ACCESS_RESPONSE));
 	if(retval == 0)
@@ -99,7 +99,7 @@ void send_uci(struct conn_pair connection, struct UE_INFO *info)
 
 void send_rrc_req(struct conn_pair connection, struct UE_INFO *info)
 {
-	struct RRC_CONN_REQUEST rrc_msg = {};
+	struct RRC_CONN_REQUEST rrc_msg;
 
 	enum establishment_causes cause = mobile_originating_signaling;
 
@@ -116,7 +116,7 @@ void send_rrc_req(struct conn_pair connection, struct UE_INFO *info)
 
 void receive_rrc_setup(int fd, struct UE_INFO *info)
 {
-	struct RRC_CONN_SETUP rrc_msg = {};
+	struct RRC_CONN_SETUP rrc_msg;
 
 	int retval = receive_msg(fd, &rrc_msg, sizeof(struct RRC_CONN_SETUP));
 
@@ -144,7 +144,7 @@ void receive_rrc_setup(int fd, struct UE_INFO *info)
 
 void send_rrc_setup_complete(struct conn_pair connection, struct UE_INFO *info)
 {
-	struct RRC_CONN_SETUP_COMPLETE rrc_msg = {};
+	struct RRC_CONN_SETUP_COMPLETE rrc_msg;
 
 	rrc_msg.C_RNTI = info->RNTI;
     rrc_msg.PLMN_identity = 2137;
@@ -164,7 +164,7 @@ void send_rrc_setup_complete(struct conn_pair connection, struct UE_INFO *info)
 
 int receive_msg(int fd, void *buffer, size_t buffer_size)
 {
-	struct sockaddr_in clientConfig = {};
+	struct sockaddr_in clientConfig;
 	int recvbytes;
 
 	unsigned int ca_len = sizeof(clientConfig);
@@ -186,7 +186,7 @@ int receive_msg(int fd, void *buffer, size_t buffer_size)
 
 int send_msg(struct conn_pair connection, void *buffer, size_t buffer_size)
 {
-	struct sockaddr_in other = {};
+	struct sockaddr_in other;
 	unsigned int otherlen = sizeof(other);
 	int broadcast = 1;
 
@@ -207,7 +207,7 @@ int send_msg(struct conn_pair connection, void *buffer, size_t buffer_size)
 
 void drop_packets(struct eNB_conn_info connections)
 {
-	int drop[1024] = {};
+	int drop[1024];
 
 	receive_msg(connections.broadcast.sock, &drop, 1024);
 	receive_msg(connections.dl_sch.sock, &drop, 1024);
