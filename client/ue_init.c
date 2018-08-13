@@ -53,7 +53,7 @@ void setup_ue(struct UE_INFO *init_states)
 	init_states->UE_state = 0;
 	init_states->RNTI = RNTI;
 	init_states->timing_advance = 0;
-	init_states->uplink_resource_grant = 0;
+	init_states->uplink_resource_grant = 1;//bedzie do drx
 	init_states->ul_sch_config = 0;
 	init_states->srb_identity = 0;
 	init_states->battery_life = 100;
