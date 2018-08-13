@@ -5,32 +5,32 @@
 void open_channels(struct eNB_conn_info * eNB, struct epoll_event *ev, int *efd)
 {
 	#ifdef DEBUG
-	printf("broadcast\n");
+		printf("broadcast\n");
 	#endif
 	add_socket_epoll(ev, efd, &eNB->broadcast.sock);
 
 	#ifdef DEBUG
-	printf("pdcch\n");
+		printf("pdcch\n");
 	#endif
 	init_channel(&eNB->pdcch, ev, efd);
 
 	#ifdef DEBUG
-	printf("prach\n");
+		printf("prach\n");
 	#endif
 	init_channel(&eNB->prach, ev, efd);
 	
 	#ifdef DEBUG
-	printf("dl_sch\n");
+		printf("dl_sch\n");
 	#endif
 	init_channel(&eNB->dl_sch, ev, efd);
 
 	#ifdef DEBUG
-	printf("ul_sch\n");
+		printf("ul_sch\n");
 	#endif
 	init_channel(&eNB->ul_sch, ev, efd);
 	
 	#ifdef DEBUG
-	printf("pucch\n");
+		printf("pucch\n");
 	#endif
 	init_channel(&eNB->pucch, ev, efd);
 }
@@ -47,7 +47,7 @@ void setup_ue(struct UE_INFO *init_states)
 	int RNTI = get_unique_name();
 
 	#ifdef DEBUG
-	printf("Uniq name = %d\n", RNTI);
+		printf("Uniq name = %d\n", RNTI);
 	#endif
 	
 	init_states->UE_state = 0;
@@ -57,6 +57,13 @@ void setup_ue(struct UE_INFO *init_states)
 	init_states->ul_sch_config = 0;
 	init_states->srb_identity = 0;
 	init_states->battery_life = 100;
+	init_states->drx_cycle_start = 0;
+
+	init_states->uplink_power_control.drx_cycle_type = 0;
+	init_states->uplink_power_control.short_drx_timer = 0;
+	init_states->uplink_power_control.long_drx_timer = 0;
+	init_states->uplink_power_control.on_duration_timer = 0;
+
 }
 
 void setup_connection_information(struct eNB_conn_info *conn_info, struct MIB_MESSAGE init_msg)
