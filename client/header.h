@@ -44,12 +44,9 @@ void setup_connection_information(struct eNB_conn_info *, struct MIB_MESSAGE);
 void open_channels(struct eNB_conn_info *, struct epoll_event *, int *);
 
 //ue_traffic.c
-void print_cell(struct UE_INFO);
-void wait();
 void handletraffic();
 void states_check(struct eNB_conn_info *, struct UE_INFO *);
-
-void drop_packets(struct eNB_conn_info);
+void handle_drx(struct UE_INFO *, struct conn_pair, time_t *, time_t);
 
 //setup_socket.c
 int setup_socket(struct conn_pair *, int);
@@ -72,5 +69,12 @@ void receive_dci(int, struct UE_INFO *);
 void send_rrc_req(struct conn_pair, struct UE_INFO *);
 void receive_rrc_setup(int, struct UE_INFO *);
 void send_rrc_setup_complete(struct conn_pair, struct UE_INFO *);
+
+void drop_packets(struct eNB_conn_info);
+
+//show_cell.c
+void print_cell(struct UE_INFO);
+void extract_battery(int, char *);
+void print_initial_offset();
 
 #endif

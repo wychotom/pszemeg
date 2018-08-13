@@ -1,8 +1,9 @@
 #include "header.h"
+#include <string.h>
 
 void receive_broadcast(int fd, struct UE_INFO *info, struct MIB_MESSAGE *mib_ret)
 {
-	struct MIB_MESSAGE mib_msg;
+	struct MIB_MESSAGE mib_msg = {};
 	int retval = receive_msg(fd, &mib_msg, sizeof(struct MIB_MESSAGE));
 	
 	if(retval == 0)
@@ -26,22 +27,25 @@ void receive_broadcast(int fd, struct UE_INFO *info, struct MIB_MESSAGE *mib_ret
 
 void receive_dci(int fd, struct UE_INFO *info)
 {
-	struct DCI_MESSAGE dci_msg;
+	struct DCI_MESSAGE dci_msg = {};
 	int retval = receive_msg(fd, &dci_msg, sizeof(struct DCI_MESSAGE));
 	if(retval == 0)
 	{
 		#ifdef DEBUG
 		printf("\nformat_0 = %u\nfreq_hop = %u\nriv = %d\nmcs = %d\nndi = %u\n"
-				"tpc = %d\ncyclic shift = %d\ncqi_request = %u\n",
+				"tpc = %d\ncyclic shift = %d\ncqi_request = %u\n"
+				"DRX_CYCLE_TYPE = %d\n",
 				dci_msg.format0_a_flag, dci_msg.freqency_hooping, dci_msg.riv, dci_msg.mcs,
-				dci_msg.ndi, dci_msg.tpc, dci_msg.cyclic_shift, dci_msg.cqi_request);
+				dci_msg.ndi, dci_msg.tpc, dci_msg.cyclic_shift, dci_msg.cqi_request,
+				dci_msg.drx_config.drx_cycle_type);
 		#endif
+		info->uplink_power_control = dci_msg.drx_config;
 	}
 }
 
 void send_random_access_preamble(struct conn_pair connection, struct UE_INFO * info)
 {
-    struct RANDOM_ACCESS_PREAMBLE rap_msg;
+    struct RANDOM_ACCESS_PREAMBLE rap_msg = {};
     const short int preamble_identifier = 1337;
 
     rap_msg.preamble = preamble_identifier;
@@ -58,7 +62,7 @@ void send_random_access_preamble(struct conn_pair connection, struct UE_INFO * i
 
 void receive_random_access_response(int fd, struct UE_INFO *info)
 {
-	struct RANDOM_ACCESS_RESPONSE rar_msg;
+	struct RANDOM_ACCESS_RESPONSE rar_msg = {};
 
 	int retval = receive_msg(fd, &rar_msg, sizeof(struct RANDOM_ACCESS_RESPONSE));
 	if(retval == 0)
@@ -82,24 +86,20 @@ void receive_random_access_response(int fd, struct UE_INFO *info)
 
 void send_uci(struct conn_pair connection, struct UE_INFO *info)
 {
-	struct UPLINK_CONTROL_INFORMATION uci_msg;
-
+	struct UPLINK_CONTROL_INFORMATION uci_msg;//unitialized, because of memory alignment, probably xDDD
+	
 	uci_msg.ue_info = *info;
 	uci_msg.C_RNTI = info->RNTI;
 	uci_msg.harq_ack = 1;
 	uci_msg.cqi = 1;
 	uci_msg.scheduling_request = 1;
 	
-	int retval = send_msg(connection, &uci_msg, sizeof(struct UPLINK_CONTROL_INFORMATION));
-	if(retval == 0)
-	{
-		;//
-	}
+	send_msg(connection, &uci_msg, sizeof(struct UPLINK_CONTROL_INFORMATION));
 }
 
 void send_rrc_req(struct conn_pair connection, struct UE_INFO *info)
 {
-	struct RRC_CONN_REQUEST rrc_msg;
+	struct RRC_CONN_REQUEST rrc_msg = {};
 
 	enum establishment_causes cause = mobile_originating_signaling;
 
@@ -116,7 +116,7 @@ void send_rrc_req(struct conn_pair connection, struct UE_INFO *info)
 
 void receive_rrc_setup(int fd, struct UE_INFO *info)
 {
-	struct RRC_CONN_SETUP rrc_msg;
+	struct RRC_CONN_SETUP rrc_msg = {};
 
 	int retval = receive_msg(fd, &rrc_msg, sizeof(struct RRC_CONN_SETUP));
 
@@ -125,11 +125,7 @@ void receive_rrc_setup(int fd, struct UE_INFO *info)
 		if(rrc_msg.C_RNTI == info->RNTI)
 		{
 			info->srb_identity = rrc_msg.srb_identity;
-			info->uplink_power_control.drx_cycle_type = rrc_msg.uplink_power_control.drx_cycle_type;
-			info->uplink_power_control.short_drx_timer = rrc_msg.uplink_power_control.short_drx_timer;
-			info->uplink_power_control.long_drx_timer = rrc_msg.uplink_power_control.long_drx_timer;
-			info->uplink_power_control.on_duration_timer = rrc_msg.uplink_power_control.on_duration_timer;
-
+			info->uplink_power_control = rrc_msg.uplink_power_control;
 
 			info->ul_sch_config = rrc_msg.ul_sch_config;
 			info->UE_state = 4;
@@ -137,9 +133,10 @@ void receive_rrc_setup(int fd, struct UE_INFO *info)
 			#ifdef DEBUG
 			printf("C_RNTI = %d\nSRB_ID = %d\nDL_AM_RLC = %d\nUL_AM_RLC = %d"
 					"\nUL_SCH_CONF = %d\nPHR_CONF = %d\nON_DUR_TIMER = %d\n"
+					"CYCLE_TYPE = %d\n"
 					,rrc_msg.C_RNTI, rrc_msg.srb_identity, rrc_msg.dl_am_rlc, rrc_msg.ul_am_rlc,
 					rrc_msg.ul_sch_config, rrc_msg.phr_config,
-					rrc_msg.uplink_power_control.on_duration_timer);
+					rrc_msg.uplink_power_control.on_duration_timer, rrc_msg.uplink_power_control.drx_cycle_type);
 			#endif
 		}
 	}
@@ -147,7 +144,7 @@ void receive_rrc_setup(int fd, struct UE_INFO *info)
 
 void send_rrc_setup_complete(struct conn_pair connection, struct UE_INFO *info)
 {
-	struct RRC_CONN_SETUP_COMPLETE rrc_msg;
+	struct RRC_CONN_SETUP_COMPLETE rrc_msg = {};
 
 	rrc_msg.C_RNTI = info->RNTI;
     rrc_msg.PLMN_identity = 2137;
@@ -167,7 +164,7 @@ void send_rrc_setup_complete(struct conn_pair connection, struct UE_INFO *info)
 
 int receive_msg(int fd, void *buffer, size_t buffer_size)
 {
-	struct sockaddr_in clientConfig;
+	struct sockaddr_in clientConfig = {};
 	int recvbytes;
 
 	unsigned int ca_len = sizeof(clientConfig);
@@ -189,7 +186,7 @@ int receive_msg(int fd, void *buffer, size_t buffer_size)
 
 int send_msg(struct conn_pair connection, void *buffer, size_t buffer_size)
 {
-	struct sockaddr_in other;
+	struct sockaddr_in other = {};
 	unsigned int otherlen = sizeof(other);
 	int broadcast = 1;
 

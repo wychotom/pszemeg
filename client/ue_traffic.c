@@ -1,13 +1,32 @@
 #include "header.h"
 
-#define Nop() asm (" nop ");
-
 #include <time.h>
 #include <sys/socket.h>
 
 void handletraffic()
 {
 	struct eNB_conn_info connection_information;//Ideally it would be an array, information about multiple eNB
+
+	connection_information.broadcast.port = 0;
+	connection_information.broadcast.sock = 0;
+
+	connection_information.pdcch.port = 0;
+	connection_information.pdcch.sock = 0;
+
+	connection_information.pucch.port = 0;
+	connection_information.pucch.sock = 0;
+
+	connection_information.ul_sch.port = 0;
+	connection_information.ul_sch.sock = 0;
+
+	connection_information.prach.port = 0;
+	connection_information.prach.sock = 0;
+
+	connection_information.srb.port = 0;
+	connection_information.srb.sock = 0;
+
+	connection_information.dl_sch.port = 0;
+	connection_information.dl_sch.sock = 0;
 
 	struct UE_INFO my_states;
 	struct MIB_MESSAGE init_mib_msg;
@@ -23,11 +42,10 @@ void handletraffic()
 	setup_connection_information(&connection_information, init_mib_msg);
 	connection_information.broadcast.sock = broadcast_sock;
 
-	int efd;
 	const int max_epoll_events = 6;
-	struct epoll_event ev, events[max_epoll_events];
+	struct epoll_event ev = {}, events[max_epoll_events];
 
-	efd = epoll_create(1);
+	int efd = epoll_create(1);
 
 	open_channels(&connection_information, &ev, &efd);
 
@@ -38,68 +56,27 @@ void handletraffic()
 	clock_gettime(CLOCK_REALTIME, &start);
 
 	#ifndef DEBUG
-		for(i = 0; i < 29; i++) // TRZEBA BEDZIE ZAMIENIC XD
-			printf("\n");
+		print_initial_offset();
 	#endif
 
-	int drx_receiving = 1;
-	time_t runtime = 0;
-	int drx_timer = 0;
-
+	//int drx_receiving = 1;
+	
 	while(1)
 	{
 		clock_gettime(CLOCK_REALTIME, &check);
-		runtime = check.tv_sec - start.tv_sec;
-
-		#ifdef DEBUG
-			if(my_states.UE_state >= 5)
-			{
-				printf("TIME = %ld s\n", runtime);
-				printf("drx_cycle_type = %d\n", my_states.uplink_power_control.drx_cycle_type);
-				printf("short_drx_timer = %d\n", my_states.uplink_power_control.short_drx_timer);
-				printf("long_drx_timer = %d\n", my_states.uplink_power_control.long_drx_timer);
-				printf("Battery = %d%%\n", my_states.battery_life);
-			}
-		#endif
-
 		if(my_states.UE_state >= 5)
-		{
-			if(my_states.uplink_power_control.drx_cycle_type == 0)
-				drx_timer = my_states.uplink_power_control.short_drx_timer;
-			else
-				drx_timer = my_states.uplink_power_control.long_drx_timer;
+			handle_drx(&my_states, connection_information.pucch, &start.tv_sec, check.tv_sec);
 
-			if(runtime != 0 && ((runtime % my_states.uplink_power_control.on_duration_timer) == 0) && drx_receiving == 1)
-			{
-				drx_receiving = 0;
-				#ifdef DEBUG
-					printf("Sending UCI\n");
-				#endif
-				send_uci(connection_information.pucch, &my_states);
-			}
-			
-
-			if((runtime % drx_timer) == 0 && drx_receiving == 0)
-			{
-				drx_receiving = 1;
-				runtime = start.tv_sec = check.tv_sec;
-				if(my_states.battery_life >= 10)
-					my_states.battery_life -= 10;
-			}
-		}
-	
 		ewait_flag = epoll_wait(efd, events, max_epoll_events, -1);
-		
-		if(drx_receiving)
+		if(ewait_flag == -1)
+		{
+			perror("epoll wait ");
+			exit(EXIT_FAILURE);
+		}
+
+		if(my_states.uplink_resource_grant)
 		{
 			states_check(&connection_information, &my_states);
-        	//send_uci(connection_information.pucch, &my_states);
-
-			if(ewait_flag == -1)
-			{
-				perror("epoll wait ");
-				exit(EXIT_FAILURE);
-			}
 			for(i = 0; i < ewait_flag; i++)
 			{
 				if(events[i].events & EPOLLIN)
@@ -151,6 +128,11 @@ void handletraffic()
 		#ifndef DEBUG
 			print_cell(my_states);
 		#endif
+		if(my_states.battery_life <= 0)
+		{
+			printf("I guess I will die ¯\\_(ツ)_/¯\n");
+			exit(EXIT_SUCCESS);
+		}
 	}
 }
 
@@ -189,4 +171,40 @@ void states_check(struct eNB_conn_info *connections, struct UE_INFO *info)
 	{
 		send_rrc_setup_complete(connections->srb, info);
 	}
+}
+
+void handle_drx(struct UE_INFO *info, struct conn_pair pucch, time_t *start, time_t check)
+{
+	int drx_timer = 0;
+	time_t runtime = check - *start;
+	#ifdef DEBUG
+			printf("TIME = %ld s\n", runtime);
+			printf("drx_cycle_type = %d\n", info->uplink_power_control.drx_cycle_type);
+			printf("short_drx_timer = %d\n", info->uplink_power_control.short_drx_timer);
+			printf("long_drx_timer = %d\n", info->uplink_power_control.long_drx_timer);
+			printf("Battery = %d%%\n", info->battery_life);
+	#endif
+
+		if(info->uplink_power_control.drx_cycle_type == 0)
+			drx_timer = info->uplink_power_control.short_drx_timer;
+		else
+			drx_timer = info->uplink_power_control.long_drx_timer;
+
+		if(runtime != 0 && ((runtime % info->uplink_power_control.on_duration_timer) == 0) && info->uplink_resource_grant == 1)
+		{
+			info->uplink_resource_grant = 0;
+			#ifdef DEBUG
+				printf("Sending UCI\n");
+			#endif
+			send_uci(pucch, info);
+		}
+		
+
+		if((runtime % drx_timer) == 0 && info->uplink_resource_grant == 0)
+		{
+			info->uplink_resource_grant = 1;
+			*start = check;
+			if(info->battery_life >= 10)
+				info->battery_life -= 10;
+		}
 }
