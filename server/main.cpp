@@ -1,9 +1,21 @@
 #include <iostream>
 #include "eNodeB.h"
 #include <string>
+#include <csignal>
+
+void stop_handler(int sig)
+{
+    if (sig == SIGINT)
+    {
+        std::cout << "STOPPPPPP" << std::endl;
+        eNodeB::is_running = false;
+    }
+}
 
 int main()
 {
+    signal(SIGINT, stop_handler);
+
     try
     {
         eNodeB enb;
@@ -14,4 +26,6 @@ int main()
     {
         std::cout << e << std::endl;
     }
+
+    std::cout << "MAIN STOPPPPPP" << std::endl;
 }

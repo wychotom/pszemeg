@@ -18,6 +18,7 @@ class eNodeB
         eNodeB();
         void start();
         std::vector<UE*> clients;
+        static bool is_running;
 
     private:
         PDCCH pdcch;

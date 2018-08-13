@@ -9,6 +9,8 @@
 #include <vector>
 #include <iostream>
 
+bool eNodeB::is_running = true;
+
 eNodeB::eNodeB() :
 pbch(Ports::pbch_port, 0.5),
 pdcch(Ports::pdcch_port, 1, clients),
@@ -22,7 +24,7 @@ srb(Ports::srb_port, clients)
 
 void eNodeB::start()
 {
-    while(true)
+    while(eNodeB::is_running)
     {
         this->pbch.run_timer_job();
 
