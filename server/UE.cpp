@@ -4,11 +4,13 @@
 UE::UE(int RA_RNTI)
 {
     this->RA_RNTI = RA_RNTI;
+    this->battery_life = -1;
 }
 
 UE::UE(Action_to_perform flag)
 {
     this->flag = flag;
+    this->battery_life = -1;
 }
 
 Action_to_perform UE::get_flag()
@@ -33,7 +35,7 @@ void UE::set_uplink_resource_grant(int uplink_resource_grant)
 
 void UE::set_uplink_power_control(struct DRX_CONFIG drx_config)
 {
-    UE::uplink_power_control = uplink_power_control;
+    UE::uplink_power_control = drx_config;
 }
 
 void UE::set_pusch_config(int ul_sch_config)

@@ -14,7 +14,7 @@ void PDCCH::timer_job()
 {
     for(UE* client : clients)
     {
-        if(!client->is_transmission_possible() || client->get_socket_fd() == 0)
+        if(!client->is_transmission_possible() || client->get_socket_fd() == 0 || client->get_battery_life() == -1)
         {
             continue;
         }
