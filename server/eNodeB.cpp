@@ -5,6 +5,7 @@
 #include "PRACH.h"
 #include "SRB.h"
 #include "ports.h"
+#include "Antenna.h"
 
 #include <vector>
 #include <iostream>
@@ -26,6 +27,8 @@ void eNodeB::start()
 {
     while(eNodeB::is_running)
     {
+        antenna.render_antenna();
+
         this->pbch.run_timer_job();
 
         this->pdcch.run_timer_job();

@@ -11,6 +11,7 @@
 #include "PUCCH.h"
 #include "SRB.h"
 #include "UE.h"
+#include "Antenna.h"
 
 class eNodeB
 {
@@ -18,10 +19,11 @@ class eNodeB
         eNodeB();
         ~eNodeB();
         void start();
-        std::vector<UE*> clients;
         static bool is_running;
 
     private:
+        Antenna antenna;
+
         PBCH pbch;
         PDCCH pdcch;
         PDSCH pdsch;
@@ -29,6 +31,8 @@ class eNodeB
         PUSCH pusch;
         PUCCH pucch;
         SRB srb;
+
+        std::vector<UE*> clients;
         std::vector<UE*> ue_to_handle;
 };
 

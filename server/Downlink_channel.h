@@ -1,6 +1,8 @@
 #ifndef SERVER_DOWNLINK_CHANNEL_H
 #define SERVER_DOWNLINK_CHANNEL_H
 
+#include "Antenna.h"
+
 #include <netinet/in.h>
 #include <sys/epoll.h>
 
@@ -19,6 +21,8 @@ class Downlink_channel
         int socket_fd;
         struct sockaddr_in addr;
         struct sockaddr client;
+
+        Antenna antenna;
 };
 
 

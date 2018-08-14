@@ -10,7 +10,8 @@ std::map<Colors, std::string> Log::colors = {
         {Colors::Red, "\033[1;31m"},
         {Colors::Magenta, "\033[1;32m"},
         {Colors::Green, "\033[1;35m"},
-        {Colors::Cyan, "\033[1;36m"}
+        {Colors::Cyan, "\033[1;36m"},
+        {Colors::Blue, "\033[1;34m"}
 };
 
 void Log::info(const std::string &channel, const std::string &message)

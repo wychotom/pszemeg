@@ -1,5 +1,7 @@
 #include "Uplink_channel.h"
 
+#include "Log.h"
+
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -54,6 +56,9 @@ Uplink_channel::Uplink_channel(int port, double send_frequency) : last_event_tim
 
 void Uplink_channel::send_message(void *message, size_t size)
 {
+    this->antenna.set_color(Colors::Yellow);
+    this->antenna.set_transmitting();
+
     if(sendto(this->socket_fd, message, size, 0, (struct sockaddr*) &this->server_addr, sizeof(this->server_addr)) < 0)
     {
         close(this->socket_fd);

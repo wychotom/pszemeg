@@ -1,4 +1,6 @@
 #include "Downlink_channel.h"
+#include "Log.h"
+#include "Antenna.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -40,5 +42,9 @@ void Downlink_channel::handle_connections()
 
 void Downlink_channel::read_incoming_data(int socket_fd)
 {
-    receive_message(socket_fd);
+    if(receive_message(socket_fd) > 0)
+    {
+        this->antenna.set_color(Colors::Blue);
+        this->antenna.set_transmitting();
+    }
 }

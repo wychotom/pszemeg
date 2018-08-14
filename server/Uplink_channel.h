@@ -4,6 +4,8 @@
 #include <netinet/in.h>
 #include <sys/epoll.h>
 
+#include "Antenna.h"
+
 class Uplink_channel
 {
     public:
@@ -17,6 +19,7 @@ class Uplink_channel
         clock_t last_event_time;
         double send_frequency;
         struct sockaddr_in server_addr, client_addr;
+        Antenna antenna;
         virtual void timer_job();
 
     protected:

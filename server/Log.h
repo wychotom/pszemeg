@@ -11,6 +11,7 @@ enum Colors
     Green,
     Magenta,
     Cyan,
+    Blue,
     Default
 };
 
