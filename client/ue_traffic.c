@@ -82,34 +82,22 @@ void handletraffic()
 				{
 					if(events[i].data.fd == connection_information.pdcch.sock)
 					{
-						#ifdef DEBUG
-							printf("\nreceive_dci\n");
-						#endif
 						receive_dci(events[i].data.fd, &my_states);
 					}
 					if(events[i].data.fd == connection_information.broadcast.sock)
 					{
-						#ifdef DEBUG
-							printf("\nreceive_broadcast\n");
-						#endif
 						receive_broadcast(events[i].data.fd, &my_states, &init_mib_msg);
 					}
 
 					if((events[i].data.fd == connection_information.dl_sch.sock) 
 						&& (my_states.UE_state == RANDOM_ACCESS_PREAMBLE))
 					{
-						#ifdef DEBUG
-							printf("\nreceive_random_access_response\n");
-						#endif
 						receive_random_access_response(events[i].data.fd, &my_states);
 					}
 
 					if((events[i].data.fd == connection_information.dl_sch.sock) 
 						&& (my_states.UE_state == RRC_REQUEST))
 					{
-						#ifdef DEBUG
-							printf("\nreceive_rrc_setup\n");
-						#endif
 						receive_rrc_setup(events[i].data.fd, &my_states);
 					}
 				}
@@ -118,7 +106,7 @@ void handletraffic()
 		else
 		{
 			#ifdef DEBUG
-				printf("dropping packets\n");
+				printlog(connection_information);
 			#endif
 			drop_packets(connection_information);
 		}
@@ -138,17 +126,11 @@ void states_check(struct eNB_conn_info *connections, struct UE_INFO *info)
 {
 	if(info->UE_state == RANDOM_ACCESS_PREAMBLE)
 	{
-		#ifdef DEBUG
-			printf("send_random_access_preamble\n");
-		#endif
 		send_random_access_preamble(connections->prach, info);
 	}
 
 	if(info->UE_state == RANDOM_ACCESS_RESPONSE)
 	{
-		#ifdef DEBUG
-			printf("send_rrc_req\n");
-		#endif
 		send_rrc_req(connections->ul_sch, info);
 	}
 
@@ -157,9 +139,6 @@ void states_check(struct eNB_conn_info *connections, struct UE_INFO *info)
 		connections->srb.port = info->srb_identity;
 		if(setup_socket(&connections->srb, SOCK_STREAM) == -1)
 		{
-			#ifdef DEBUG
-				printf("Error on setup socket\n");
-			#endif
 			exit(EXIT_FAILURE);
 		}
 		info->UE_state = RRC_SETUP_COMPLETE;
@@ -176,11 +155,7 @@ void handle_drx(struct UE_INFO *info, struct conn_pair pucch, time_t *start, tim
 	int drx_timer = 0;
 	time_t runtime = check - *start;
 	#ifdef DEBUG
-		printf("TIME = %ld s\n", runtime);
-		printf("drx_cycle_type = %d\n", info->uplink_power_control.drx_cycle_type);
-		printf("short_drx_timer = %d\n", info->uplink_power_control.short_drx_timer);
-		printf("long_drx_timer = %d\n", info->uplink_power_control.long_drx_timer);
-		printf("Battery = %d%%\n", info->battery_life);
+		printlog(info->uplink_power_control);
 	#endif
 
 	if(info->uplink_power_control.drx_cycle_type == 0)
@@ -191,9 +166,6 @@ void handle_drx(struct UE_INFO *info, struct conn_pair pucch, time_t *start, tim
 	if(runtime != 0 && ((runtime % info->uplink_power_control.on_duration_timer) == 0) && info->uplink_resource_grant == 1)
 	{
 		info->uplink_resource_grant = 0;
-		#ifdef DEBUG
-			printf("Sending UCI\n");
-		#endif
 		send_uci(pucch, info);
 	}
 

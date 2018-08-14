@@ -8,7 +8,19 @@
 #include <sys/epoll.h>
 #include <errno.h>
 
-//#define DEBUG 1
+#define printlog(X) _Generic((X),										\
+							struct MIB_MESSAGE: printlog_mib,			\
+							struct DCI_MESSAGE: printlog_dci,			\
+							struct RANDOM_ACCESS_RESPONSE: printlog_rar,\
+							struct RRC_CONN_SETUP: printlog_rrc,		\
+							struct DRX_CONFIG: printlog_drx,			\
+                            struct eNB_conn_info: printlog_drop,		\
+							default: printlog_default					\
+							)(X)	
+
+
+//Define DEBUG for messages
+//Define INIT_DEBUG for connecting and stuff
 
 // States
 // 0 - Before MIB_MESSAGE
@@ -75,5 +87,14 @@ void drop_packets(struct eNB_conn_info);
 void print_cell(struct UE_INFO);
 void extract_battery(int, char *);
 void print_initial_offset();
+
+//log.c
+void printlog_mib(struct MIB_MESSAGE);
+void printlog_dci(struct DCI_MESSAGE);
+void printlog_rar(struct RANDOM_ACCESS_RESPONSE);
+void printlog_rrc(struct RRC_CONN_SETUP);
+void printlog_drx(struct DRX_CONFIG);
+void printlog_drop(struct eNB_conn_info);
+void printlog_default(void);
 
 #endif
