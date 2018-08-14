@@ -4,15 +4,15 @@
 #define BLACK_BG "\e[37m\e[40m"
 #define BLACK_TEXT_GREEN_BG "\e[30m\e[42m"
 #define DEFAULT "\e[0m"
-#define CELL_BEGINNING_POSITION "\033[28A\r"
+#define CELL_BEGINNING_POSITION "\e[28A\r"
 
 void print_cell(struct UE_INFO state)//im just goofing pls no atacc
 {
 	const char connected = 'C';
 	const char not_connected = 'D';
 
-	// const char sending = '^';
-	// const char receiving = 'v';
+	const char sending = '^';
+	const char receiving = 'v';
 
 
 	const int downward_arrow_pos = 38;
@@ -55,39 +55,32 @@ void print_cell(struct UE_INFO state)//im just goofing pls no atacc
 
 	cellphonedata[upward_arrow_pos] = ' ';
 	cellphonedata[downward_arrow_pos] = ' ';
-
+	
 	switch(state.UE_state)
 	{
 		case INIT_BROADCAST:
-			cellphonedata[downward_arrow_pos] = 'v';
+			cellphonedata[downward_arrow_pos] = receiving;
 			break;
 		case RANDOM_ACCESS_PREAMBLE:
-			cellphonedata[upward_arrow_pos] = '^';
-			cellphonedata[downward_arrow_pos] = 'v';
+			cellphonedata[upward_arrow_pos] = sending;
+			cellphonedata[downward_arrow_pos] = receiving;
 			break;
 		case RANDOM_ACCESS_RESPONSE:
-			cellphonedata[upward_arrow_pos] = '^';
+			cellphonedata[upward_arrow_pos] = sending;
 			break;
 		case RRC_REQUEST:
-			cellphonedata[upward_arrow_pos] = '^';
-			cellphonedata[downward_arrow_pos] = 'v';
+			cellphonedata[upward_arrow_pos] = sending;
+			cellphonedata[downward_arrow_pos] = receiving;
 			break;
 		case RRC_SETUP:
-			cellphonedata[downward_arrow_pos] = 'v';
+			cellphonedata[downward_arrow_pos] = receiving;
 			break;
 		case RRC_SETUP_COMPLETE:
-			cellphonedata[upward_arrow_pos] = '^';
+			cellphonedata[upward_arrow_pos] = sending;
 			break;
 		case CONNECTED:
 			break;
 	}
-
-	// cellphonedata[downward_arrow_pos] = '^';
-	// cellphonedata[upward_arrow_pos] = 'v';
-
-	// cellphonedata[connection_sign] = connected;
-
-	//	"   | |                     | |\n" //▲△✈ ⬇⇩ ⇧⬆
 
 	const char cellphonedown[] = 
 	"   "BLACK_BG"| "BLACK_TEXT_GREEN_BG"|                     |"BLACK_BG" |"DEFAULT"\n"

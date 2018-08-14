@@ -1,5 +1,6 @@
 #include "header.h"
 
+
 void receive_broadcast(int fd, struct UE_INFO *info, struct MIB_MESSAGE *mib_ret)
 {
 	struct MIB_MESSAGE mib_msg;
@@ -17,9 +18,7 @@ void receive_broadcast(int fd, struct UE_INFO *info, struct MIB_MESSAGE *mib_ret
 		mib_ret->pdcch_port = mib_msg.pdcch_port;
 		mib_ret->pucch_port = mib_msg.pucch_port;
 		#ifdef DEBUG
-		printf("\nBROADCAST = %d\nPRACH = %d\nDL_SCH = %d\nUL_SCH = %d\nPDDCH = %d\nPUCCH = %d\n",
-				mib_msg.broadcast_port, mib_msg.prach_port, mib_msg.dl_sch_port,
-				mib_msg.ul_sch_port, mib_msg.pdcch_port, mib_msg.pucch_port);
+			printlog(mib_msg);
 		#endif
 	}
 }
@@ -31,12 +30,7 @@ void receive_dci(int fd, struct UE_INFO *info)
 	if(retval == 0)
 	{
 		#ifdef DEBUG
-		printf("\nformat_0 = %u\nfreq_hop = %u\nriv = %d\nmcs = %d\nndi = %u\n"
-				"tpc = %d\ncyclic shift = %d\ncqi_request = %u\n"
-				"DRX_CYCLE_TYPE = %d\n",
-				dci_msg.format0_a_flag, dci_msg.freqency_hooping, dci_msg.riv, dci_msg.mcs,
-				dci_msg.ndi, dci_msg.tpc, dci_msg.cyclic_shift, dci_msg.cqi_request,
-				dci_msg.drx_config.drx_cycle_type);
+			printlog(dci_msg);
 		#endif
 		info->uplink_power_control = dci_msg.drx_config;
 	}
@@ -75,9 +69,7 @@ void receive_random_access_response(int fd, struct UE_INFO *info)
 			info->RNTI = rar_msg.temporary_c_rnti;
 
 		#ifdef DEBUG
-		printf("\ntim_adv = %d urg = %d, temp_rnti = %d, checksum = %ld\n",
-			rar_msg.timing_advance, rar_msg.uplink_resource_grant,
-			rar_msg.temporary_c_rnti, rar_msg.checksum);
+			printlog(rar_msg);
 		#endif
 		info->UE_state = RANDOM_ACCESS_RESPONSE;
 	}
@@ -85,7 +77,7 @@ void receive_random_access_response(int fd, struct UE_INFO *info)
 
 void send_uci(struct conn_pair connection, struct UE_INFO *info)
 {
-	struct UPLINK_CONTROL_INFORMATION uci_msg;//unitialized, because of memory alignment, probably xDDD
+	struct UPLINK_CONTROL_INFORMATION uci_msg;
 
 	uci_msg.ue_info = *info;
 	uci_msg.C_RNTI = info->RNTI;
@@ -130,12 +122,7 @@ void receive_rrc_setup(int fd, struct UE_INFO *info)
 			info->UE_state = RRC_SETUP;
 			
 			#ifdef DEBUG
-			printf("C_RNTI = %d\nSRB_ID = %d\nDL_AM_RLC = %d\nUL_AM_RLC = %d"
-					"\nUL_SCH_CONF = %d\nPHR_CONF = %d\nON_DUR_TIMER = %d\n"
-					"CYCLE_TYPE = %d\n"
-					,rrc_msg.C_RNTI, rrc_msg.srb_identity, rrc_msg.dl_am_rlc, rrc_msg.ul_am_rlc,
-					rrc_msg.ul_sch_config, rrc_msg.phr_config,
-					rrc_msg.uplink_power_control.on_duration_timer, rrc_msg.uplink_power_control.drx_cycle_type);
+				printlog(rrc_msg);
 			#endif
 		}
 	}
