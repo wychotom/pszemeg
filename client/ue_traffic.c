@@ -5,41 +5,43 @@
 
 void handletraffic()
 {
-	struct eNB_conn_info connection_information;//Ideally it would be an array, information about multiple eNB
+	struct eNB_conn_info connection_information =
+	{
+		.broadcast.port = 0,
+		.broadcast.sock = 0,
 
-	connection_information.broadcast.port = 0;
-	connection_information.broadcast.sock = 0;
+		.pdcch.port = 0,
+		.pdcch.sock = 0,
 
-	connection_information.pdcch.port = 0;
-	connection_information.pdcch.sock = 0;
+		.pucch.port = 0,
+		.pucch.sock = 0,
 
-	connection_information.pucch.port = 0;
-	connection_information.pucch.sock = 0;
+		.ul_sch.port = 0,
+		.ul_sch.sock = 0,
 
-	connection_information.ul_sch.port = 0;
-	connection_information.ul_sch.sock = 0;
+		.prach.port = 0,
+		.prach.sock = 0,
 
-	connection_information.prach.port = 0;
-	connection_information.prach.sock = 0;
+		.srb.port = 0,
+		.srb.sock = 0,
 
-	connection_information.srb.port = 0;
-	connection_information.srb.sock = 0;
-
-	connection_information.dl_sch.port = 0;
-	connection_information.dl_sch.sock = 0;
+		.dl_sch.port = 0,
+		.dl_sch.sock = 0	
+	};
 
 	struct UE_INFO my_states;
-	struct MIB_MESSAGE init_mib_msg;
 
 	setup_ue(&my_states);
 
 	int broadcast_sock;
+	struct MIB_MESSAGE init_mib_msg;
 	setup_broadcast_socket(&broadcast_sock);
 	while(my_states.UE_state == 0)
 	{
 		receive_broadcast(broadcast_sock, &my_states, &init_mib_msg);
 	}
 	setup_connection_information(&connection_information, init_mib_msg);
+
 	connection_information.broadcast.sock = broadcast_sock;
 
 	const int max_epoll_events = 6;
@@ -50,7 +52,6 @@ void handletraffic()
 	open_channels(&connection_information, &ev, &efd);
 
 	int ewait_flag, i;
-
 	struct timespec start, check;
 
 	clock_gettime(CLOCK_REALTIME, &start);
@@ -58,8 +59,6 @@ void handletraffic()
 	#ifndef DEBUG
 		print_initial_offset();
 	#endif
-
-	//int drx_receiving = 1;
 	
 	while(1)
 	{
@@ -81,7 +80,6 @@ void handletraffic()
 			{
 				if(events[i].events & EPOLLIN)
 				{
-
 					if(events[i].data.fd == connection_information.pdcch.sock)
 					{
 						#ifdef DEBUG
@@ -98,7 +96,7 @@ void handletraffic()
 					}
 
 					if((events[i].data.fd == connection_information.dl_sch.sock) 
-						&& (my_states.UE_state == 1))
+						&& (my_states.UE_state == RANDOM_ACCESS_PREAMBLE))
 					{
 						#ifdef DEBUG
 							printf("\nreceive_random_access_response\n");
@@ -107,7 +105,7 @@ void handletraffic()
 					}
 
 					if((events[i].data.fd == connection_information.dl_sch.sock) 
-						&& (my_states.UE_state == 3))
+						&& (my_states.UE_state == RRC_REQUEST))
 					{
 						#ifdef DEBUG
 							printf("\nreceive_rrc_setup\n");
@@ -138,7 +136,7 @@ void handletraffic()
 
 void states_check(struct eNB_conn_info *connections, struct UE_INFO *info)
 {
-	if(info->UE_state == 1)
+	if(info->UE_state == RANDOM_ACCESS_PREAMBLE)
 	{
 		#ifdef DEBUG
 			printf("send_random_access_preamble\n");
@@ -146,7 +144,7 @@ void states_check(struct eNB_conn_info *connections, struct UE_INFO *info)
 		send_random_access_preamble(connections->prach, info);
 	}
 
-	if(info->UE_state == 2)
+	if(info->UE_state == RANDOM_ACCESS_RESPONSE)
 	{
 		#ifdef DEBUG
 			printf("send_rrc_req\n");
@@ -154,7 +152,7 @@ void states_check(struct eNB_conn_info *connections, struct UE_INFO *info)
 		send_rrc_req(connections->ul_sch, info);
 	}
 
-	if(info->UE_state == 4)
+	if(info->UE_state == RRC_SETUP)
 	{
 		connections->srb.port = info->srb_identity;
 		if(setup_socket(&connections->srb, SOCK_STREAM) == -1)
@@ -164,10 +162,10 @@ void states_check(struct eNB_conn_info *connections, struct UE_INFO *info)
 			#endif
 			exit(EXIT_FAILURE);
 		}
-		info->UE_state = 5;
+		info->UE_state = RRC_SETUP_COMPLETE;
 	}
 
-	if(info->UE_state == 5)
+	if(info->UE_state == RRC_SETUP_COMPLETE)
 	{
 		send_rrc_setup_complete(connections->srb, info);
 	}
@@ -178,33 +176,32 @@ void handle_drx(struct UE_INFO *info, struct conn_pair pucch, time_t *start, tim
 	int drx_timer = 0;
 	time_t runtime = check - *start;
 	#ifdef DEBUG
-			printf("TIME = %ld s\n", runtime);
-			printf("drx_cycle_type = %d\n", info->uplink_power_control.drx_cycle_type);
-			printf("short_drx_timer = %d\n", info->uplink_power_control.short_drx_timer);
-			printf("long_drx_timer = %d\n", info->uplink_power_control.long_drx_timer);
-			printf("Battery = %d%%\n", info->battery_life);
+		printf("TIME = %ld s\n", runtime);
+		printf("drx_cycle_type = %d\n", info->uplink_power_control.drx_cycle_type);
+		printf("short_drx_timer = %d\n", info->uplink_power_control.short_drx_timer);
+		printf("long_drx_timer = %d\n", info->uplink_power_control.long_drx_timer);
+		printf("Battery = %d%%\n", info->battery_life);
 	#endif
 
-		if(info->uplink_power_control.drx_cycle_type == 0)
-			drx_timer = info->uplink_power_control.short_drx_timer;
-		else
-			drx_timer = info->uplink_power_control.long_drx_timer;
+	if(info->uplink_power_control.drx_cycle_type == 0)
+		drx_timer = info->uplink_power_control.short_drx_timer;
+	else
+		drx_timer = info->uplink_power_control.long_drx_timer;
 
-		if(runtime != 0 && ((runtime % info->uplink_power_control.on_duration_timer) == 0) && info->uplink_resource_grant == 1)
-		{
-			info->uplink_resource_grant = 0;
-			#ifdef DEBUG
-				printf("Sending UCI\n");
-			#endif
-			send_uci(pucch, info);
-		}
-		
+	if(runtime != 0 && ((runtime % info->uplink_power_control.on_duration_timer) == 0) && info->uplink_resource_grant == 1)
+	{
+		info->uplink_resource_grant = 0;
+		#ifdef DEBUG
+			printf("Sending UCI\n");
+		#endif
+		send_uci(pucch, info);
+	}
 
-		if((runtime % drx_timer) == 0 && info->uplink_resource_grant == 0)
-		{
-			info->uplink_resource_grant = 1;
-			*start = check;
-			if(info->battery_life >= 10)
-				info->battery_life -= 10;
-		}
+	if((runtime % drx_timer) == 0 && info->uplink_resource_grant == 0)
+	{
+		info->uplink_resource_grant = 1;
+		*start = check;
+		if(info->battery_life >= 10)
+			info->battery_life -= 10;
+	}
 }
