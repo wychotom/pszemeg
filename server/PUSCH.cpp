@@ -23,7 +23,7 @@ ssize_t PUSCH::receive_message(int event_fd)
 
     if(received_bytes > 0)
     {
-        Log::info("PUSCH", "received \033[0;35mRRC\033[0m Request from " + std::to_string(rcr.C_RNTI));
+        Log::info("PUSCH", "received " + Log::colors[Colors::Green] + "RRC" + Log::colors[Colors::Default] + " Request from " + std::to_string(rcr.C_RNTI));
 
         auto first_client_occurence_iterator = std::find_if(clients.begin(), clients.end(), [this, &rcr](UE* client) {
             return client->C_RNTI == rcr.C_RNTI;

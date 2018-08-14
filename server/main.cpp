@@ -14,17 +14,17 @@ void stop_handler(int sig)
 
 void render_antenna()
 {
-    std::cout << "\033[1;33m                   ,                          .                   " << std::endl;
-    std::cout << "\033[1;33m                 :;                            ;;                 " << std::endl;
-    std::cout << "\033[1;33m                ;,  ;:                      :;  .;                " << std::endl;
-    std::cout << "\033[1;33m               ,;  ;,  ;                   ;  .;  :,               " << std::endl;
-    std::cout << "\033[1;33m               '  .;  ;.  .     \033[1;31m,,.\033[0m\033[1;33m     .  .;  ;.  '               " << std::endl;
-    std::cout << "\033[1;33m               '  ;.  '  '    \033[1;31m'''''''\033[0m\033[1;33m    '  '  `;  '`              " << std::endl;
-    std::cout << "\033[1;33m               '  ;.  '  '`  \033[1;31m'''''''''\033[0m\033[1;33m  `'  '  `;  '               " << std::endl;
-    std::cout << "\033[1;33m               '  `'  :,     \033[1;31m'''''''''\033[0m\033[1;33m    ,   ,;  '`                 " << std::endl;
-    std::cout << "\033[1;33m               .;  ::  ::     \033[0m,\033[1;31m'''''\033[0m,\033[1;33m    ::  :;  ;.               " << std::endl;
-    std::cout << "\033[1;33m                ::  ,;        \033[0m''' '''\033[1;33m       ;,  ::                \033[0m" << std::endl;
-    std::cout << "\033[1;33m                 ,;          \033[0m:'': ,'';\033[1;33m         ;,                 \033[0m" << std::endl;
+    std::cout << Log::colors[Colors::Yellow] << "                   ,                          .                   " << std::endl;
+    std::cout << Log::colors[Colors::Yellow] << "                 :;                            ;;                 " << std::endl;
+    std::cout << Log::colors[Colors::Yellow] << "                ;,  ;:                      :;  .;                " << std::endl;
+    std::cout << Log::colors[Colors::Yellow] << "               ,;  ;,  ;                   ;  .;  :,               " << std::endl;
+    std::cout << Log::colors[Colors::Yellow] << "               '  .;  ;.  .     " << Log::colors[Colors::Red] << ",,." << Log::colors[Colors::Default] << "" << Log::colors[Colors::Yellow] << "     .  .;  ;.  '               " << std::endl;
+    std::cout << Log::colors[Colors::Yellow] << "               '  ;.  '  '    " << Log::colors[Colors::Red] << "'''''''" << Log::colors[Colors::Default] << "" << Log::colors[Colors::Yellow] << "    '  '  `;  '`              " << std::endl;
+    std::cout << Log::colors[Colors::Yellow] << "               '  ;.  '  '`  " << Log::colors[Colors::Red] << "'''''''''" << Log::colors[Colors::Default] << "" << Log::colors[Colors::Yellow] << "  `'  '  `;  '               " << std::endl;
+    std::cout << Log::colors[Colors::Yellow] << "               '  `'  :,     " << Log::colors[Colors::Red] << "'''''''''" << Log::colors[Colors::Default] << "" << Log::colors[Colors::Yellow] << "    ,   ,;  '`                 " << std::endl;
+    std::cout << Log::colors[Colors::Yellow] << "               .;  ::  ::     " << Log::colors[Colors::Default] << "," << Log::colors[Colors::Red] << "'''''" << Log::colors[Colors::Default] << "," << Log::colors[Colors::Yellow] << "    ::  :;  ;.               " << std::endl;
+    std::cout << Log::colors[Colors::Yellow] << "                ::  ,;        " << Log::colors[Colors::Default] << "''' '''" << Log::colors[Colors::Yellow] << "       ;,  ::                " << Log::colors[Colors::Default] << std::endl;
+    std::cout << Log::colors[Colors::Yellow] << "                 ,;          " << Log::colors[Colors::Default] << ":'': ,'';" << Log::colors[Colors::Yellow] << "         ;,                 " << Log::colors[Colors::Default] << std::endl;
     std::cout << "                             ''' `''''                            " << std::endl;
     std::cout << "                            ;'':'''''''                           " << std::endl;
     std::cout << "                           `''''''  ;''`                          " << std::endl;
@@ -53,12 +53,15 @@ void render_antenna()
 int main()
 {
     signal(SIGINT, stop_handler);
-    render_antenna();
+
+    #ifndef DEBUG
+        render_antenna();
+    #endif
 
     try
     {
         eNodeB enb;
-        std::cout << "\n\n\033[1;31mPROGRAMMET FUNGERAR\033[0m\n\n";
+        Log::general("\n\nPROGRAMMET FUNGERAR\n\n");
         enb.start();
     }
     catch(std::string e)
@@ -66,5 +69,5 @@ int main()
         Log::error(e);
     }
 
-    std::cout << "\n\n\033[1;31mMAIN HALT\033[0m\n\n" << std::endl;
+    Log::general("\n\nMAIN HALT\n\n");
 }

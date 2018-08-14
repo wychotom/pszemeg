@@ -32,7 +32,7 @@ ssize_t SRB::recv_message(int event_fd)
             (*first_client_occurence_iterator)->set_socket_fd(event_fd);
         }
 
-        Log::info("SRB", "received \033[1;31mCSC\033[0m from " + std::to_string(csc.C_RNTI));
+        Log::info("SRB", "received " + Log::colors[Colors::Red] + "CSC" + Log::colors[Colors::Default] + " from " + std::to_string(csc.C_RNTI));
     }
 
     return received_bytes;

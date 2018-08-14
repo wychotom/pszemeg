@@ -29,7 +29,7 @@ void PDSCH::send_random_access_response(UE &ue)
 
     send_message((void*) &rar_message, sizeof(struct RANDOM_ACCESS_RESPONSE));
 
-    Log::info("PDSCH", "\033[1;32mRAR\033[0m sent to " + std::to_string(ue.RA_RNTI ));
+    Log::info("PDSCH", Log::colors[Colors::Magenta] + "RAR" + Log::colors[Colors::Default] + " sent to " + std::to_string(ue.RA_RNTI ));
 }
 
 void PDSCH::send_rrc_connection_response(UE &ue)
@@ -53,7 +53,7 @@ void PDSCH::send_rrc_connection_response(UE &ue)
 
     send_message((void*) &rcr_message, sizeof(struct RRC_CONN_SETUP));
 
-    Log::info("PDSCH", "\033[0;35mRCR\033[0m sent to " + std::to_string(ue.C_RNTI));
+    Log::info("PDSCH", Log::colors[Colors::Green] + "RCR" + Log::colors[Colors::Default] + " sent to " + std::to_string(ue.C_RNTI));
 }
 
 void PDSCH::handle_queue(std::vector<UE*> &ue_vector)
