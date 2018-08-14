@@ -2,6 +2,7 @@
 #include "../common_header.h"
 #include "Downlink_channel.h"
 #include "UE.h"
+#include "Log.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -22,7 +23,7 @@ ssize_t PUSCH::receive_message(int event_fd)
 
     if(received_bytes > 0)
     {
-        std::cout << "\033[1;33m[PUSCH]\033[0m received \033[0;35mRRC\033[0m Request from " << rcr.C_RNTI << std::endl;
+        Log::info("PUSCH", "received " + Log::colors[Colors::Green] + "RRC" + Log::colors[Colors::Default] + " Request from " + std::to_string(rcr.C_RNTI));
 
         auto first_client_occurence_iterator = std::find_if(clients.begin(), clients.end(), [this, &rcr](UE* client) {
             return client->C_RNTI == rcr.C_RNTI;
@@ -30,7 +31,7 @@ ssize_t PUSCH::receive_message(int event_fd)
 
         if (first_client_occurence_iterator != clients.end())
         {
-            (*first_client_occurence_iterator)->set_flag(Action_to_perform::rrc_connection_response);
+            (*first_client_occurence_iterator)->set_action(Action_to_perform::rrc_connection_response);
             ue_to_handle.push_back(*first_client_occurence_iterator);
         }
 

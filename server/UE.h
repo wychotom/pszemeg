@@ -5,6 +5,7 @@
 
 enum Action_to_perform
 {
+    no_action,
     random_access_response,
     rrc_connection_response
 };
@@ -12,23 +13,22 @@ enum Action_to_perform
 class UE
 {
     public:
-        UE(Action_to_perform flag);
         UE(int RA_RNTI);
         int RA_RNTI;
         int C_RNTI;
 
-        Action_to_perform get_flag();
+        Action_to_perform get_action();
+        void set_action(Action_to_perform flag);
         void set_UE_state(int UE_state);
         void set_timing_advance(int timing_advance);
         void set_uplink_resource_grant(int uplink_resource_grant);
         void set_uplink_power_control(struct DRX_CONFIG drx_config);
         void set_pusch_config(int ul_sch_config);
         void set_srb_identity(int srb_identity);
-        void set_flag(Action_to_perform flag);
-        void set_socket_fd(int socket_fd);
         int get_battery_life() const;
         void set_battery_life(int battery_life);
         int get_socket_fd() const;
+        void set_socket_fd(int socket_fd);
         void set_sleep_start(clock_t sleep_start);
         bool is_transmission_possible();
 
@@ -42,7 +42,6 @@ class UE
         clock_t sleep_start;
         int ul_sch_config;
         int srb_identity;
-        //int drx_type_choice;
         int battery_life;
 };
 

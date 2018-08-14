@@ -60,6 +60,11 @@ Dedicated_bearer::Dedicated_bearer(int port, std::vector<UE*> &clients) : max_nu
 
 Dedicated_bearer::~Dedicated_bearer()
 {
+    for(auto client : clients)
+    {
+        close(client->get_socket_fd());
+    }
+
     delete[] this->events;
     close(this->socket_fd);
 }
@@ -135,6 +140,7 @@ void Dedicated_bearer::read_incoming_data(int event_fd)
 
         if (first_client_occurence_iterator != clients.end())
         {
+            delete *first_client_occurence_iterator;
             clients.erase(first_client_occurence_iterator);
         }
 

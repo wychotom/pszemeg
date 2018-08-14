@@ -2,6 +2,7 @@
 #include "../common_header.h"
 #include "Downlink_channel.h"
 #include "UE.h"
+#include "Log.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -23,7 +24,7 @@ ssize_t PRACH::receive_message(int event_fd)
 
     if(received_bytes > 0)
     {
-        std::cout << "\033[1;33m[PRACH]\033[0m received \033[1;32mRAP\033[0m from " << rap.RA_RNTI << std::endl;
+        Log::info("PRACH", "received " + Log::colors[Colors::Magenta] + "RAP" + Log::colors[Colors::Default] + " from " + std::to_string(rap.RA_RNTI));
 
         auto first_occurence_iterator = std::find_if(clients.begin(), clients.end(), [this, &rap](UE* client) {
             return client->RA_RNTI == rap.RA_RNTI;
@@ -32,7 +33,7 @@ ssize_t PRACH::receive_message(int event_fd)
         if (first_occurence_iterator == clients.end())
         {
             UE *new_client = new UE(rap.RA_RNTI);
-            new_client->set_flag(Action_to_perform::random_access_response);
+            new_client->set_action(Action_to_perform::random_access_response);
             clients.push_back(new_client);
             ue_to_handle.push_back(new_client);
         }

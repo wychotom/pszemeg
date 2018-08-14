@@ -2,6 +2,7 @@
 #include "../common_header.h"
 #include "Downlink_channel.h"
 #include "UE.h"
+#include "Log.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -22,7 +23,7 @@ ssize_t PUCCH::receive_message(int event_fd)
 
     if(received_bytes > 0)
     {
-        std::cout << "\033[1;33m[PUCCH]\033[0m received \033[0;36mUCI\033[0m from " << uci.ue_info.RNTI << std::endl;
+        Log::info("PUCCH", "received " + Log::colors[Colors::Cyan] + "UCI" + Log::colors[Colors::Default] + " from " + std::to_string(uci.ue_info.RNTI));
 
         auto it = std::find_if(clients.begin(), clients.end(), [this, &uci]( UE* client) {
             return client->C_RNTI == uci.C_RNTI;

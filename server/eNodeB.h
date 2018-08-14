@@ -16,13 +16,14 @@ class eNodeB
 {
     public:
         eNodeB();
+        ~eNodeB();
         void start();
         std::vector<UE*> clients;
         static bool is_running;
 
     private:
-        PDCCH pdcch;
         PBCH pbch;
+        PDCCH pdcch;
         PDSCH pdsch;
         PRACH prach;
         PUSCH pusch;
