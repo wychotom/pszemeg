@@ -3,6 +3,7 @@
 #include "Uplink_channel.h"
 #include "UE.h"
 #include "ports.h"
+#include "Log.h"
 
 #include <iostream>
 #include <vector>
@@ -14,7 +15,7 @@ PDSCH::PDSCH(int port) : Uplink_channel(port, 0)
 
 void PDSCH::send_random_access_response(UE &ue)
 {
-    struct RANDOM_ACCESS_RESPONSE rar_message;
+    struct RANDOM_ACCESS_RESPONSE rar_message = {};
 
     rar_message.checksum = 0;
     rar_message.RA_RNTI = ue.RA_RNTI;
@@ -28,12 +29,12 @@ void PDSCH::send_random_access_response(UE &ue)
 
     send_message((void*) &rar_message, sizeof(struct RANDOM_ACCESS_RESPONSE));
 
-    std::cout << "\033[1;33m[PDSCH]\033[0m \033[1;32mRAR\033[0m sent to " << ue.RA_RNTI << std::endl;
+    Log::info("PDSCH", "\033[1;32mRAR\033[0m sent to " + std::to_string(ue.RA_RNTI ));
 }
 
 void PDSCH::send_rrc_connection_response(UE &ue)
 {
-    struct RRC_CONN_SETUP rcr_message;
+    struct RRC_CONN_SETUP rcr_message = {};
 
     rcr_message.C_RNTI = ue.C_RNTI;
     rcr_message.dl_am_rlc = 0;
@@ -52,12 +53,12 @@ void PDSCH::send_rrc_connection_response(UE &ue)
 
     send_message((void*) &rcr_message, sizeof(struct RRC_CONN_SETUP));
 
-    std::cout << "\033[1;33m[PDSCH]\033[0m \033[0;35mRCR\033[0m sent to " << ue.C_RNTI << std::endl;
+    Log::info("PDSCH", "\033[0;35mRCR\033[0m sent to " + std::to_string(ue.C_RNTI));
 }
 
 void PDSCH::handle_queue(std::vector<UE*> &ue_vector)
 {
-    UE *ue;
+    UE *ue = nullptr;
     Action_to_perform rar_action = Action_to_perform::random_access_response;
     Action_to_perform rcr_action = Action_to_perform::rrc_connection_response;
 
@@ -77,7 +78,7 @@ UE* PDSCH::get_next_ue(std::vector<UE*> &ue_vector, Action_to_perform action)
 {
     auto it = std::find_if(ue_vector.begin(), ue_vector.end(), [&action] (UE* client)
     {
-        return client->get_flag() == action && client->is_transmission_possible();
+        return client->get_action() == action && client->is_transmission_possible();
     });
 
     if(it == ue_vector.end())

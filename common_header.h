@@ -38,7 +38,7 @@ struct MIB_MESSAGE
 struct RANDOM_ACCESS_PREAMBLE//prach
 {
     int RA_RNTI;
-    short int preamble; //1337
+    int preamble; //1337
     long checksum;
 };
 

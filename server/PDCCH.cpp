@@ -2,6 +2,7 @@
 #include "../common_header.h"
 #include "Uplink_channel.h"
 #include "UE.h"
+#include "Log.h"
 
 #include <iostream>
 #include <vector>
@@ -12,7 +13,7 @@ PDCCH::PDCCH(int port, double send_frequency, std::vector<UE*> &clients) : Uplin
 
 void PDCCH::timer_job()
 {
-    for(UE* client : clients)
+    for(auto client : clients)
     {
         if(!client->is_transmission_possible() || client->get_socket_fd() == 0 || client->get_battery_life() == -1)
         {
@@ -60,7 +61,7 @@ void PDCCH::timer_job()
         dci_message.checksum += (long)dci_message.drx_config.drx_cycle_type;
 
         send_message((void*) &dci_message, sizeof(struct DCI_MESSAGE));
-        std::cout << "\033[1;33m[PDCCH]\033[0m DCI sent" << std::endl;
+        Log::info("PDCCH", "DCI sent");
     }
 }
 
