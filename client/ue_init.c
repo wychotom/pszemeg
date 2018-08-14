@@ -4,32 +4,32 @@
 
 void open_channels(struct eNB_conn_info * eNB, struct epoll_event *ev, int *efd)
 {
-	#ifdef DEBUG
+	#ifdef INIT_DEBUG
 		printf("broadcast\n");
 	#endif
 	add_socket_epoll(ev, efd, &eNB->broadcast.sock);
 
-	#ifdef DEBUG
+	#ifdef INIT_DEBUG
 		printf("pdcch\n");
 	#endif
 	init_channel(&eNB->pdcch, ev, efd);
 
-	#ifdef DEBUG
+	#ifdef INIT_DEBUG
 		printf("prach\n");
 	#endif
 	init_channel(&eNB->prach, ev, efd);
 	
-	#ifdef DEBUG
+	#ifdef INIT_DEBUG
 		printf("dl_sch\n");
 	#endif
 	init_channel(&eNB->dl_sch, ev, efd);
 
-	#ifdef DEBUG
+	#ifdef INIT_DEBUG
 		printf("ul_sch\n");
 	#endif
 	init_channel(&eNB->ul_sch, ev, efd);
 	
-	#ifdef DEBUG
+	#ifdef INIT_DEBUG
 		printf("pucch\n");
 	#endif
 	init_channel(&eNB->pucch, ev, efd);
@@ -46,7 +46,7 @@ void setup_ue(struct UE_INFO *init_states)
 {
 	int RNTI = get_unique_name();
 
-	#ifdef DEBUG
+	#ifdef INIT_DEBUG
 		printf("Uniq name = %d\n", RNTI);
 	#endif
 	
