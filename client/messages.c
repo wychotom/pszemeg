@@ -7,8 +7,8 @@ void receive_broadcast(int fd, struct UE_INFO *info, struct MIB_MESSAGE *mib_ret
 	
 	if(retval == 0)
 	{
-		if(info->UE_state == 0)
-			info->UE_state = 1;
+		if(info->UE_state == INIT_BROADCAST)
+			info->UE_state = RANDOM_ACCESS_PREAMBLE;
 
 		mib_ret->broadcast_port = mib_msg.broadcast_port;
 		mib_ret->prach_port = mib_msg.prach_port;
@@ -42,20 +42,20 @@ void receive_dci(int fd, struct UE_INFO *info)
 	}
 }
 
-void send_random_access_preamble(struct conn_pair connection, struct UE_INFO * info)
+void send_random_access_preamble(struct conn_pair connection, struct UE_INFO *info)
 {
     struct RANDOM_ACCESS_PREAMBLE rap_msg;
     const short int preamble_identifier = 1337;
 
-    rap_msg.preamble = preamble_identifier;
     rap_msg.RA_RNTI = info->RNTI;
+    rap_msg.preamble = preamble_identifier;
     rap_msg.checksum = preamble_identifier + info->RNTI;
-
+	
 	int retval = send_msg(connection, &rap_msg, sizeof(struct RANDOM_ACCESS_PREAMBLE));
 
 	if(retval == 0)
 	{
-	    info->UE_state = 1; // sending rap all the time
+	    info->UE_state = RANDOM_ACCESS_PREAMBLE; // sending rap all the time
 	}
 }
 
@@ -79,7 +79,7 @@ void receive_random_access_response(int fd, struct UE_INFO *info)
 			rar_msg.timing_advance, rar_msg.uplink_resource_grant,
 			rar_msg.temporary_c_rnti, rar_msg.checksum);
 		#endif
-		info->UE_state = 2;
+		info->UE_state = RANDOM_ACCESS_RESPONSE;
 	}
 }
 
@@ -89,10 +89,10 @@ void send_uci(struct conn_pair connection, struct UE_INFO *info)
 
 	uci_msg.ue_info = *info;
 	uci_msg.C_RNTI = info->RNTI;
+	uci_msg.scheduling_request = 1;
 	uci_msg.harq_ack = 1;
 	uci_msg.cqi = 1;
-	uci_msg.scheduling_request = 1;
-	
+
 	send_msg(connection, &uci_msg, sizeof(struct UPLINK_CONTROL_INFORMATION));
 }
 
@@ -109,7 +109,7 @@ void send_rrc_req(struct conn_pair connection, struct UE_INFO *info)
 	int retval = send_msg(connection, &rrc_msg, sizeof(struct RRC_CONN_REQUEST));
 	if(retval == 0)
 	{
-		info->UE_state = 3;
+		info->UE_state = RRC_REQUEST;
 	}
 }
 
@@ -127,7 +127,7 @@ void receive_rrc_setup(int fd, struct UE_INFO *info)
 			info->uplink_power_control = rrc_msg.uplink_power_control;
 
 			info->ul_sch_config = rrc_msg.ul_sch_config;
-			info->UE_state = 4;
+			info->UE_state = RRC_SETUP;
 			
 			#ifdef DEBUG
 			printf("C_RNTI = %d\nSRB_ID = %d\nDL_AM_RLC = %d\nUL_AM_RLC = %d"
@@ -157,7 +157,7 @@ void send_rrc_setup_complete(struct conn_pair connection, struct UE_INFO *info)
 	int retval = send_msg(connection, &rrc_msg, sizeof(struct RRC_CONN_SETUP_COMPLETE));
 	if(retval == 0)
 	{
-		info->UE_state = 6;
+		info->UE_state = CONNECTED;
 	}
 }
 
@@ -187,14 +187,10 @@ int send_msg(struct conn_pair connection, void *buffer, size_t buffer_size)
 {
 	struct sockaddr_in other;
 	unsigned int otherlen = sizeof(other);
-	int broadcast = 1;
 
 	other.sin_family = AF_INET;
-	//other.sin_addr.s_addr = inet_addr("192.168.40.255");
 	other.sin_addr.s_addr = INADDR_ANY;
 	other.sin_port = htons(connection.port);
-
-	//setsockopt(connection.sock, SOL_SOCKET, SO_BROADCAST, &broadcast, sizeof(broadcast));
 
     if(sendto(connection.sock, buffer, buffer_size, 0, (struct sockaddr *)&other, otherlen) == -1)
     {

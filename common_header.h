@@ -24,6 +24,17 @@ enum establishment_causes
     mobile_originating_data
 };
 
+enum ue_states
+{
+    INIT_BROADCAST,
+    RANDOM_ACCESS_PREAMBLE,
+    RANDOM_ACCESS_RESPONSE,
+    RRC_REQUEST,
+    RRC_SETUP,
+    RRC_SETUP_COMPLETE,
+    CONNECTED
+};
+
 struct MIB_MESSAGE
 {
     int prach_port;
@@ -76,7 +87,7 @@ struct DCI_MESSAGE//pdcch
 
 struct UE_INFO
 {
-    int UE_state;
+    enum ue_states UE_state;
     int RNTI;
     int timing_advance;
     int uplink_resource_grant;
