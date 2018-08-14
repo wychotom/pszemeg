@@ -5,15 +5,13 @@ UE::UE(int RA_RNTI)
 {
     this->RA_RNTI = RA_RNTI;
     this->battery_life = -1;
+    this->uplink_power_control = {};
+    this->flag = Action_to_perform::no_action;
+    this->socket_fd = 0;
+    this->sleep_start = 0;
 }
 
-UE::UE(Action_to_perform flag)
-{
-    this->flag = flag;
-    this->battery_life = -1;
-}
-
-Action_to_perform UE::get_flag()
+Action_to_perform UE::get_action()
 {
     return this->flag;
 }
@@ -48,7 +46,7 @@ void UE::set_srb_identity(int srb_identity)
     UE::srb_identity = srb_identity;
 }
 
-void UE::set_flag(Action_to_perform flag)
+void UE::set_action(Action_to_perform flag)
 {
     UE::flag = flag;
 }

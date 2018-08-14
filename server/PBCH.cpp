@@ -1,6 +1,7 @@
 #include "PBCH.h"
 #include "../common_header.h"
 #include "Uplink_channel.h"
+#include "Log.h"
 
 #include <iostream>
 
@@ -28,5 +29,5 @@ void PBCH::timer_job()
 
     send_message((void*) &mib_message, sizeof(struct MIB_MESSAGE));
 
-    std::cout << " \033[1;33m[PBCH]\033[0m MIB sent" << std::endl;
+    Log::info("PBCH", "MIB sent");
 }

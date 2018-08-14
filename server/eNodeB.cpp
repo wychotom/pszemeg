@@ -41,3 +41,16 @@ void eNodeB::start()
         this->srb.handle_connections();
     }
 }
+
+eNodeB::~eNodeB()
+{
+    for(auto ue : this->clients)
+    {
+        delete ue;
+    }
+
+    for(auto ue : this->ue_to_handle)
+    {
+        delete ue;
+    }
+}

@@ -54,16 +54,19 @@ void setup_ue(struct UE_INFO *init_states)
 	init_states->RNTI = RNTI;
 	init_states->timing_advance = 0;
 	init_states->uplink_resource_grant = 1;//bedzie do drx
-	init_states->ul_sch_config = 0;
-	init_states->srb_identity = 0;
-	init_states->battery_life = 100;
-	init_states->drx_cycle_start = 0;
 
-	init_states->uplink_power_control.drx_cycle_type = 0;
+	init_states->uplink_power_control.on_duration_timer = 0;
 	init_states->uplink_power_control.short_drx_timer = 0;
 	init_states->uplink_power_control.long_drx_timer = 0;
-	init_states->uplink_power_control.on_duration_timer = 0;
+	init_states->uplink_power_control.drx_cycle_type = 0;
 
+	init_states->ul_sch_config = 0;
+	init_states->srb_identity = 0;
+	init_states->drx_cycle_start = 0;
+	init_states->battery_life = 100;
+
+	int *uninitalised_val = (int *)((void *)(&init_states->battery_life + 1));//unaligned memory
+	*uninitalised_val = 0;
 }
 
 void setup_connection_information(struct eNB_conn_info *conn_info, struct MIB_MESSAGE init_msg)

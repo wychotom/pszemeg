@@ -30,9 +30,7 @@ void setup_broadcast_socket(int * fd)
 		perror("Failed on so_reuseaddr\n");
 	}
 
-
 	struct sockaddr_in socketConfig;
-
     socketConfig.sin_family = AF_INET;
 	socketConfig.sin_port = htons(BROADCAST_PORT);
 	socketConfig.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -47,7 +45,6 @@ void setup_broadcast_socket(int * fd)
 int setup_socket(struct conn_pair * connection, int type)
 {
 	int errflag = 1;
-
 	struct sockaddr_in sa;
 
 	if(type == SOCK_DGRAM) 
@@ -100,7 +97,6 @@ int setup_socket(struct conn_pair * connection, int type)
 int set_non_block(int sockfd)
 {
 	int flags, retval;
-
 	flags = fcntl (sockfd, F_GETFL, 0);
 	if (flags == -1)
 	{
