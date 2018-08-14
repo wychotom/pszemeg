@@ -42,7 +42,6 @@ class UE
         clock_t sleep_start;
         int ul_sch_config;
         int srb_identity;
-        //int drx_type_choice;
         int battery_life;
 };
 

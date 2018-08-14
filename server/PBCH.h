@@ -1,5 +1,5 @@
-#ifndef PSZEMEG_PBCH_H
-#define PSZEMEG_PBCH_H
+#ifndef SERVER_PBCH_H
+#define SERVER_PBCH_H
 
 #include "Uplink_channel.h"
 
@@ -13,4 +13,4 @@ class PBCH : public Uplink_channel
 };
 
 
-#endif //PSZEMEG_PBCH_H
+#endif //SERVER_PBCH_H

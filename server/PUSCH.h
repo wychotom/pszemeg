@@ -1,5 +1,5 @@
-#ifndef PSZEMEG_PUSCH_H
-#define PSZEMEG_PUSCH_H
+#ifndef SERVER_PUSCH_H
+#define SERVER_PUSCH_H
 
 #include "Downlink_channel.h"
 #include "UE.h"
@@ -18,4 +18,4 @@ class PUSCH : public Downlink_channel
 };
 
 
-#endif //PSZEMEG_PUSCH_H
+#endif //SERVER_PUSCH_H
