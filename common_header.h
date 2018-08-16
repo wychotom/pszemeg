@@ -139,7 +139,7 @@ struct FILE_DATA
 {
     char file_name[20];
     size_d size;
-    char data[5000000];
+    char data[200000];
 };
 
 #endif

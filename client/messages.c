@@ -172,7 +172,7 @@ void send_file(struct conn_pair connection, int *flag)
 	memcpy(file_msg.file_name, filename, 20);
 
 	file_msg.size = filesize;
-	memset(file_msg.data, 0, 500000);
+	memset(file_msg.data, 0, 200000);
 	fread(file_msg.data, sizeof(char), filesize, my_beautiful_badger);
 
 	send_msg(connection, &file_msg, sizeof(struct FILE_DATA));
