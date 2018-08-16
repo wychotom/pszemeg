@@ -46,6 +46,11 @@ void UE::set_srb_identity(int srb_identity)
     UE::srb_identity = srb_identity;
 }
 
+void UE::set_drb_identity(int drb_identity)
+{
+    UE::drb_identity = drb_identity;
+}
+
 void UE::set_action(Action_to_perform flag)
 {
     UE::flag = flag;

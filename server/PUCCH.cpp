@@ -33,6 +33,7 @@ ssize_t PUCCH::receive_message(int event_fd)
         {
             int index = (int)std::distance(clients.begin(), it);
             clients[index]->set_srb_identity(uci.ue_info.srb_identity);
+            clients[index]->set_drb_identity(uci.ue_info.drb_identity);
             clients[index]->set_timing_advance(uci.ue_info.timing_advance);
             clients[index]->set_UE_state(uci.ue_info.UE_state);
             clients[index]->set_pusch_config(uci.ue_info.ul_sch_config);
