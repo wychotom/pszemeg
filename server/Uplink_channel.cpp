@@ -6,7 +6,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/epoll.h>
-#include <errno.h>
+#include <cerrno>
 #include <iostream>
 #include <string>
 #include <cstring>
@@ -24,7 +24,7 @@ Uplink_channel::Uplink_channel(int port, double send_frequency) : last_event_tim
     int broadcast = 1;
 
     this->server_addr.sin_family = AF_INET;
-    this->server_addr.sin_port = htons(this->port);
+    this->server_addr.sin_port = htons(static_cast<uint16_t>(this->port));
     //this->server_addr.sin_addr.s_addr = inet_addr("192.168.40.255");
     this->server_addr.sin_addr.s_addr = htons(INADDR_ANY);
 

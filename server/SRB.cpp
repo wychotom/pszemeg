@@ -23,13 +23,13 @@ ssize_t SRB::recv_message(int event_fd)
 
     if(received_bytes > 0)
     {
-        auto first_client_occurence_iterator = std::find_if(clients.begin(), clients.end(), [this, &csc](UE* client) {
+        auto first_client_occurrence_iterator = std::find_if(clients.begin(), clients.end(), [this, &csc](UE* client) {
             return client->C_RNTI == csc.C_RNTI;
         });
 
-        if (first_client_occurence_iterator != clients.end())
+        if (first_client_occurrence_iterator != clients.end())
         {
-            (*first_client_occurence_iterator)->set_socket_fd(event_fd);
+            (*first_client_occurrence_iterator)->set_socket_fd(event_fd);
         }
 
         Log::info("SRB", "received " + Log::colors[Colors::Red] + "CSC" + Log::colors[Colors::Default] + " from " + std::to_string(csc.C_RNTI));

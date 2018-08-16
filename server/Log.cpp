@@ -50,18 +50,18 @@ void Log::general(const std::string &message)
 std::string Log::get_time()
 {
     char buffer[20];
-    timeval tp;
-    gettimeofday(&tp, 0);
-    time_t curtime = tp.tv_sec;
-    tm *t = localtime(&curtime);
+    timeval time_of_day = {};
+    gettimeofday(&time_of_day, nullptr);
+    time_t current_time = time_of_day.tv_sec;
+    tm *local_time = localtime(&current_time);
 
-    strftime(buffer,20,"%X",t);
+    strftime(buffer, 20, "%X", local_time);
 
     std::string time_str(buffer);
     time_str += ".";
-    time_str += tp.tv_usec/1000 < 100 ? "0" : "";
-    time_str += tp.tv_usec/1000 < 10 ? "0" : "";
-    time_str += std::to_string(tp.tv_usec/1000);
+    time_str += time_of_day.tv_usec/1000 < 100 ? "0" : "";
+    time_str += time_of_day.tv_usec/1000 < 10 ? "0" : "";
+    time_str += std::to_string(time_of_day.tv_usec/1000);
 
     return time_str;
 }

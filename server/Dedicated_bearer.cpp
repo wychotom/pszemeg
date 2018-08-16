@@ -5,7 +5,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/epoll.h>
-#include <errno.h>
+#include <cerrno>
 #include <iostream>
 #include <string>
 #include <cstring>
@@ -21,7 +21,7 @@ Dedicated_bearer::Dedicated_bearer(int port, std::vector<UE*> &clients) : max_nu
     this->socket_fd = socket(AF_INET, SOCK_STREAM, 0);
 
     this->addr.sin_family = AF_INET;
-    this->addr.sin_port = htons(this->port);
+    this->addr.sin_port = htons(static_cast<uint16_t>(this->port));
     this->addr.sin_addr.s_addr = INADDR_ANY;
 
     if(bind(this->socket_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1)
@@ -51,7 +51,7 @@ Dedicated_bearer::Dedicated_bearer(int port, std::vector<UE*> &clients) : max_nu
     if(epoll_ctl(this->epoll_fd, EPOLL_CTL_ADD, this->socket_fd, &event) == -1)
     {
         perror("ERROR: ");
-        throw std::string("Epoll ctl fail");
+        throw std::string("Epoll_ctl fail");
     }
 
     this->events = new epoll_event[max_number_of_events];
@@ -117,9 +117,8 @@ void Dedicated_bearer::accept_new_connection()
         if(epoll_ctl(this->epoll_fd, EPOLL_CTL_ADD, new_client_fd, &event) == -1)
         {
             perror("ERROR: ");
-            throw std::string("Epoll ctl fail");
+            throw std::string("Epoll_ctl fail");
         }
-
     }
 }
 
@@ -134,14 +133,14 @@ void Dedicated_bearer::read_incoming_data(int event_fd)
     }
     else if(bytes_count == 0)
     {
-        auto first_client_occurence_iterator = std::find_if(clients.begin(), clients.end(), [this, &event_fd](UE* client) {
+        auto first_client_occurrence_iterator = std::find_if(clients.begin(), clients.end(), [this, &event_fd](UE* client) {
             return client->get_socket_fd() == event_fd;
         });
 
-        if (first_client_occurence_iterator != clients.end())
+        if (first_client_occurrence_iterator != clients.end())
         {
-            delete *first_client_occurence_iterator;
-            clients.erase(first_client_occurence_iterator);
+            delete *first_client_occurrence_iterator;
+            clients.erase(first_client_occurrence_iterator);
             close(event_fd);
         }
     }

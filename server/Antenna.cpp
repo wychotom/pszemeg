@@ -9,8 +9,7 @@ clock_t Antenna::transmission_start_time;
 std::queue<Colors> Antenna::transmission_queue;
 
 Antenna::Antenna()
-{
-}
+= default;
 
 void Antenna::render_antenna()
 {
@@ -22,7 +21,7 @@ void Antenna::render_antenna()
     {
         antenna_color = Log::colors[Colors::Default];
 
-        if(transmission_queue.size() > 0)
+        if(!transmission_queue.empty())
         {
             transmission_start_time = clock();
             antenna_color = Log::colors[transmission_queue.front()];

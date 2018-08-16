@@ -25,14 +25,14 @@ ssize_t PUSCH::receive_message(int event_fd)
     {
         Log::info("PUSCH", "received " + Log::colors[Colors::Green] + "RRC" + Log::colors[Colors::Default] + " Request from " + std::to_string(rcr.C_RNTI));
 
-        auto first_client_occurence_iterator = std::find_if(clients.begin(), clients.end(), [this, &rcr](UE* client) {
+        auto first_client_occurrence_iterator = std::find_if(clients.begin(), clients.end(), [this, &rcr](UE* client) {
             return client->C_RNTI == rcr.C_RNTI;
         });
 
-        if (first_client_occurence_iterator != clients.end())
+        if (first_client_occurrence_iterator != clients.end())
         {
-            (*first_client_occurence_iterator)->set_action(Action_to_perform::rrc_connection_response);
-            ue_to_handle.push_back(*first_client_occurence_iterator);
+            (*first_client_occurrence_iterator)->set_action(Action_to_perform::rrc_connection_response);
+            ue_to_handle.push_back(*first_client_occurrence_iterator);
         }
 
     }

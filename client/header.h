@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <netinet/in.h>
 #include <sys/epoll.h>
-#include <errno.h>
+#include <cerrno>
 
 #define printlog(X) _Generic((X),										            \
 							struct MIB_MESSAGE: printlog_mib,			            \

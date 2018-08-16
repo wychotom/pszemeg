@@ -20,7 +20,6 @@ class Downlink_channel
         int port;
         int socket_fd;
         struct sockaddr_in addr;
-        struct sockaddr client;
 
         Antenna antenna;
 };

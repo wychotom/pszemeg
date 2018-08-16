@@ -26,13 +26,13 @@ ssize_t PRACH::receive_message(int event_fd)
     {
         Log::info("PRACH", "received " + Log::colors[Colors::Magenta] + "RAP" + Log::colors[Colors::Default] + " from " + std::to_string(rap.RA_RNTI));
 
-        auto first_occurence_iterator = std::find_if(clients.begin(), clients.end(), [this, &rap](UE* client) {
+        auto first_occurrence_iterator = std::find_if(clients.begin(), clients.end(), [this, &rap](UE* client) {
             return client->RA_RNTI == rap.RA_RNTI;
         });
 
-        if (first_occurence_iterator == clients.end())
+        if (first_occurrence_iterator == clients.end())
         {
-            UE *new_client = new UE(rap.RA_RNTI);
+            auto *new_client = new UE(rap.RA_RNTI);
             new_client->set_action(Action_to_perform::random_access_response);
             clients.push_back(new_client);
             ue_to_handle.push_back(new_client);
