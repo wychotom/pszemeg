@@ -27,7 +27,9 @@ void eNodeB::start()
 {
     while(eNodeB::is_running)
     {
-        antenna.render_antenna();
+        #ifndef DEBUG
+            antenna.render_antenna();
+        #endif
 
         this->pbch.run_timer_job();
 
