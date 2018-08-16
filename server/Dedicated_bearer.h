@@ -2,6 +2,7 @@
 #define SERVER_DEDICATED_BEARER_H
 
 #include "UE.h"
+#include "Antenna.h"
 
 #include <netinet/in.h>
 #include <sys/epoll.h>
@@ -27,6 +28,7 @@ class Dedicated_bearer
         struct epoll_event event;
         struct epoll_event *events;
         const int max_number_of_events;
+        Antenna antenna;
 
         std::vector<UE*> &clients;
 };

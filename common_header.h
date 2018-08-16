@@ -2,7 +2,7 @@
 #define COMMON_HEADER_H
 
 typedef long int clock_t;
-typedef long unsigned int size_t;
+typedef long unsigned int size_d;
 
 struct MIB_MESSAGE;
 struct RANDOM_ACCESS_PREAMBLE;
@@ -138,7 +138,7 @@ struct RRC_CONN_SETUP_COMPLETE
 struct FILE_DATA
 {
     char file_name[20];
-    size_t size;
+    size_d size;
     char data[5000000];
 };
 

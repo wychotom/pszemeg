@@ -1,5 +1,7 @@
 #include "Dedicated_bearer.h"
 #include "UE.h"
+#include "Antenna.h"
+#include "Log.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -144,5 +146,9 @@ void Dedicated_bearer::read_incoming_data(int event_fd)
             clients.erase(first_client_occurence_iterator);
             close(event_fd);
         }
+    }
+    else if(bytes_count > 0)
+    {
+        this->antenna.set_transmitting(Colors::Yellow);
     }
 }
