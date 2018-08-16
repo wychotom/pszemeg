@@ -43,14 +43,12 @@ struct MIB_MESSAGE
     int ul_sch_port; 
     int pdcch_port;
     int pucch_port;
-    long checksum;
 };
 
 struct RANDOM_ACCESS_PREAMBLE//prach
 {
     int RA_RNTI;
     int preamble; //1337
-    long checksum;
 };
 
 struct RANDOM_ACCESS_RESPONSE//dl-sch
@@ -59,7 +57,6 @@ struct RANDOM_ACCESS_RESPONSE//dl-sch
     int timing_advance;
     int uplink_resource_grant;
     int temporary_c_rnti;
-    long checksum;
 };
 
 struct DRX_CONFIG
@@ -82,7 +79,6 @@ struct DCI_MESSAGE//pdcch
     int cyclic_shift;
     unsigned char cqi_request;
     struct DRX_CONFIG drx_config;
-    long checksum;
 };
 
 struct UE_INFO
