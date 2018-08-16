@@ -8,14 +8,18 @@
 #include <sys/epoll.h>
 #include <errno.h>
 
-#define printlog(X) _Generic((X),										\
-							struct MIB_MESSAGE: printlog_mib,			\
-							struct DCI_MESSAGE: printlog_dci,			\
-							struct RANDOM_ACCESS_RESPONSE: printlog_rar,\
-							struct RRC_CONN_SETUP: printlog_rrc,		\
-							struct DRX_CONFIG: printlog_drx,			\
-                            struct eNB_conn_info: printlog_drop,		\
-							default: printlog_default					\
+#define printlog(X) _Generic((X),										            \
+							struct MIB_MESSAGE: printlog_mib,			            \
+							struct DCI_MESSAGE: printlog_dci,			            \
+							struct RANDOM_ACCESS_RESPONSE: printlog_rar,            \
+							struct RRC_CONN_SETUP: printlog_rrc_setup,	            \
+							struct DRX_CONFIG: printlog_drx,			            \
+                            struct eNB_conn_info: printlog_drop,		            \
+                            struct RANDOM_ACCESS_PREAMBLE: printlog_rap,            \
+                            struct UPLINK_CONTROL_INFORMATION: printlog_uci,        \
+                            struct RRC_CONN_REQUEST: printlog_rrc_req,              \
+                            struct RRC_CONN_SETUP_COMPLETE: printlog_rrc_complete,  \
+							default: printlog_default					            \
 							)(X)	
 
 
@@ -45,6 +49,7 @@ struct eNB_conn_info
     struct conn_pair pdcch;
     struct conn_pair pucch;
     struct conn_pair srb;
+    struct conn_pair drb;
 };
 
 
@@ -92,9 +97,13 @@ void print_initial_offset();
 void printlog_mib(struct MIB_MESSAGE);
 void printlog_dci(struct DCI_MESSAGE);
 void printlog_rar(struct RANDOM_ACCESS_RESPONSE);
-void printlog_rrc(struct RRC_CONN_SETUP);
+void printlog_rrc_setup(struct RRC_CONN_SETUP);
 void printlog_drx(struct DRX_CONFIG);
 void printlog_drop(struct eNB_conn_info);
 void printlog_default(void);
 
+void printlog_rap(struct RANDOM_ACCESS_PREAMBLE rap_msg);
+void printlog_uci(struct UPLINK_CONTROL_INFORMATION uci_msg);
+void printlog_rrc_req(struct RRC_CONN_REQUEST rrc_msg);
+void printlog_rrc_complete(struct RRC_CONN_SETUP_COMPLETE rrc_msg);
 #endif

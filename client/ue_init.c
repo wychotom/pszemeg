@@ -91,6 +91,9 @@ void setup_connection_information(struct eNB_conn_info *conn_info, struct MIB_ME
 
 	conn_info->srb.port = 0;
 	conn_info->srb.sock = 0;
+
+	conn_info->drb.port = 0;
+	conn_info->drb.sock = 0;
 }
 
 int get_unique_name()

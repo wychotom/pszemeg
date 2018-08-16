@@ -141,6 +141,11 @@ void states_check(struct eNB_conn_info *connections, struct UE_INFO *info)
 		{
 			exit(EXIT_FAILURE);
 		}
+		connections->drb.port = info->drb_identity;
+		if(setup_socket(&connections->drb, SOCK_STREAM) == -1)
+		{
+			exit(EXIT_FAILURE);
+		}
 		info->UE_state = RRC_SETUP_COMPLETE;
 	}
 

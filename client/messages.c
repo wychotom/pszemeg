@@ -49,6 +49,9 @@ void send_random_access_preamble(struct conn_pair connection, struct UE_INFO *in
 
 	if(retval == 0)
 	{
+		#ifdef DEBUG
+			printlog(rap_msg);
+		#endif
 	    info->UE_state = RANDOM_ACCESS_PREAMBLE; // sending rap all the time
 	}
 }
@@ -60,11 +63,6 @@ void receive_random_access_response(int fd, struct UE_INFO *info)
 	int retval = receive_msg(fd, &rar_msg, sizeof(struct RANDOM_ACCESS_RESPONSE));
 	if(retval == 0)
 	{
-		// int calc_check_sum = 0;
-
-		// calc_check_sum += rar_msg.timing_advance;
-		// calc_check_sum += rar_msg.uplink_resource_grant;
-		// calc_check_sum += rar_msg.temporary_c_rnti;
 		if(rar_msg.RA_RNTI == info->RNTI)
 			info->RNTI = rar_msg.temporary_c_rnti;
 
@@ -85,7 +83,12 @@ void send_uci(struct conn_pair connection, struct UE_INFO *info)
 	uci_msg.harq_ack = 1;
 	uci_msg.cqi = 1;
 
-	send_msg(connection, &uci_msg, sizeof(struct UPLINK_CONTROL_INFORMATION));
+	if(send_msg(connection, &uci_msg, sizeof(struct UPLINK_CONTROL_INFORMATION)) == 0)
+	{
+		#ifdef DEBUG
+			printlog(uci_msg);
+		#endif
+	}
 }
 
 void send_rrc_req(struct conn_pair connection, struct UE_INFO *info)
@@ -101,6 +104,9 @@ void send_rrc_req(struct conn_pair connection, struct UE_INFO *info)
 	int retval = send_msg(connection, &rrc_msg, sizeof(struct RRC_CONN_REQUEST));
 	if(retval == 0)
 	{
+		#ifdef DEBUG
+			printlog(rrc_msg);
+		#endif
 		info->UE_state = RRC_REQUEST;
 	}
 }
@@ -116,6 +122,8 @@ void receive_rrc_setup(int fd, struct UE_INFO *info)
 		if(rrc_msg.C_RNTI == info->RNTI)
 		{
 			info->srb_identity = rrc_msg.srb_identity;
+			info->drb_identity = rrc_msg.drb_identity;
+			
 			info->uplink_power_control = rrc_msg.uplink_power_control;
 
 			info->ul_sch_config = rrc_msg.ul_sch_config;
@@ -144,6 +152,9 @@ void send_rrc_setup_complete(struct conn_pair connection, struct UE_INFO *info)
 	int retval = send_msg(connection, &rrc_msg, sizeof(struct RRC_CONN_SETUP_COMPLETE));
 	if(retval == 0)
 	{
+		#ifdef DEBUG
+				printlog(rrc_msg);
+		#endif
 		info->UE_state = CONNECTED;
 	}
 }

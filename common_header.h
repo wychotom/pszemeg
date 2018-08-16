@@ -94,6 +94,7 @@ struct UE_INFO
     struct DRX_CONFIG uplink_power_control;
     int ul_sch_config;
     int srb_identity;
+    int drb_identity;
     clock_t drx_cycle_start;
     int battery_life;
 };
@@ -142,7 +143,7 @@ struct FILE_DATA//drb
 {
     char file_name[20];
     unsigned long int size;
-    char file_data[10000000];
+    char data[10000000];
 };
 
 #endif
