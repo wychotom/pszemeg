@@ -9,7 +9,8 @@ enum Ports
     pdcch_port = 20703,
     pucch_port = 20704,
     prach_port = 20705,
-    srb_port   = 20706
+    srb_port   = 20706,
+    drb_port   = 20707
 };
 
 #endif //SERVER_PORTS_H

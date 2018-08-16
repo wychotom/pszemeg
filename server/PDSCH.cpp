@@ -40,6 +40,7 @@ void PDSCH::send_rrc_connection_response(UE &ue)
     rcr_message.dl_am_rlc = 0;
     rcr_message.phr_config = 1;
     rcr_message.srb_identity = Ports::srb_port;
+    rcr_message.drb_identity = Ports::drb_port;
     rcr_message.ul_am_rlc = 1;
     rcr_message.ul_sch_config = 2;
 

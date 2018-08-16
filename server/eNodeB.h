@@ -10,6 +10,7 @@
 #include "PUSCH.h"
 #include "PUCCH.h"
 #include "SRB.h"
+#include "DRB.h"
 #include "UE.h"
 #include "Antenna.h"
 
@@ -31,6 +32,7 @@ class eNodeB
         PUSCH pusch;
         PUCCH pucch;
         SRB srb;
+        DRB drb;
 
         std::vector<UE*> clients;
         std::vector<UE*> ue_to_handle;

@@ -3,9 +3,10 @@
 
 #include <iostream>
 #include <ctime>
+#include <queue>
 
-clock_t Antenna::transmission_start_time = 0;
-std::string Antenna::antenna_color = "";
+clock_t Antenna::transmission_start_time;
+std::queue<Colors> Antenna::transmission_queue;
 
 Antenna::Antenna()
 {
@@ -14,11 +15,19 @@ Antenna::Antenna()
 void Antenna::render_antenna()
 {
     clock_t now = clock();
-    double elapsed_secs = double(now - Antenna::transmission_start_time) / CLOCKS_PER_SEC;
+    double elapsed_secs = double(now - transmission_start_time) / CLOCKS_PER_SEC;
+    double duration = map(transmission_queue.size(), 0, 3, 0.3, 0.08);
 
-    if(elapsed_secs > 0.4)
+    if(elapsed_secs > duration)
     {
         antenna_color = Log::colors[Colors::Default];
+
+        if(transmission_queue.size() > 0)
+        {
+            transmission_start_time = clock();
+            antenna_color = Log::colors[transmission_queue.front()];
+            transmission_queue.pop();
+        }
     }
 
     std::string antenna =
@@ -61,14 +70,14 @@ void Antenna::render_antenna()
     std::cout << antenna << std::flush;
 }
 
-void Antenna::set_transmitting()
+void Antenna::set_transmitting(Colors color)
 {
-    Antenna::transmission_start_time = clock();
+    transmission_queue.push(color);
 }
 
-void Antenna::set_color(Colors color)
+double Antenna::map(double x, double in_min, double in_max, double out_min, double out_max)
 {
-    antenna_color = Log::colors[color];
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
 

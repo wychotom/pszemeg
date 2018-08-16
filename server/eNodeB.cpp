@@ -4,6 +4,7 @@
 #include "PDSCH.h"
 #include "PRACH.h"
 #include "SRB.h"
+#include "DRB.h"
 #include "ports.h"
 #include "Antenna.h"
 
@@ -19,7 +20,8 @@ pdsch(Ports::pdsch_port),
 prach(Ports::prach_port, ue_to_handle, clients),
 pusch(Ports::pusch_port, ue_to_handle, clients),
 pucch(Ports::pucch_port, clients),
-srb(Ports::srb_port, clients)
+srb(Ports::srb_port, clients),
+drb(Ports::drb_port, clients)
 {
 }
 
@@ -27,7 +29,9 @@ void eNodeB::start()
 {
     while(eNodeB::is_running)
     {
-        antenna.render_antenna();
+        #ifndef DEBUG
+            antenna.render_antenna();
+        #endif
 
         this->pbch.run_timer_job();
 
@@ -42,6 +46,8 @@ void eNodeB::start()
         this->pucch.handle_connections();
 
         this->srb.handle_connections();
+
+        this->drb.handle_connections();
     }
 }
 

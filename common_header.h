@@ -118,6 +118,7 @@ struct RRC_CONN_SETUP//dl-sch
 {
     int C_RNTI;
     int srb_identity;
+    int drb_identity;
     int dl_am_rlc;
     int ul_am_rlc;
     int ul_sch_config;
@@ -135,6 +136,13 @@ struct RRC_CONN_SETUP_COMPLETE//dl-sch
     int ul_sch_config;
     int phr_config;
     int uplink_power_control;
+};
+
+struct FILE_DATA//drb
+{
+    char file_name[20];
+    unsigned long int size;
+    char file_data[10000000];
 };
 
 #endif
