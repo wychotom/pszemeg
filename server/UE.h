@@ -25,6 +25,7 @@ class UE
         void set_uplink_power_control(struct DRX_CONFIG drx_config);
         void set_pusch_config(int ul_sch_config);
         void set_srb_identity(int srb_identity);
+        void set_drb_identity(int drb_identity);
         int get_battery_life() const;
         void set_battery_life(int battery_life);
         int get_socket_fd() const;
@@ -42,6 +43,7 @@ class UE
         clock_t sleep_start;
         int ul_sch_config;
         int srb_identity;
+        int drb_identity;
         int battery_life;
 };
 

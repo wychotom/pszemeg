@@ -18,16 +18,16 @@ DRB::DRB(int port, std::vector<UE*> &clients) : Dedicated_bearer(port, clients),
 
 ssize_t DRB::recv_message(int event_fd)
 {
-    struct FILE_DATA file = {};
+    struct FILE_DATA file_data = {};
 
-    ssize_t received_bytes = recv(event_fd, &file, sizeof(struct RRC_CONN_SETUP_COMPLETE), 0);
+    ssize_t received_bytes = recv(event_fd, &file_data, sizeof(struct FILE_DATA), 0);
 
     if(received_bytes > 0)
     {
-        Log::info("DRB", "received " + Log::colors[Colors::Blue] + "FILE" + Log::colors[Colors::Default] + " from " + std::to_string(csc.C_RNTI));
+        Log::info("DRB", "received " + Log::colors[Colors::Blue] + "FILE" + Log::colors[Colors::Default]);
 
-        std::ofstream file("file.png");
-        file.write(data, size);
+        std::ofstream file(file_data.file_name);
+        file.write(file_data.data, file_data.size);
         file.close();
     }
 
