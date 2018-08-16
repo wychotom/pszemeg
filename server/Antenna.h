@@ -18,6 +18,7 @@ class Antenna
         double map(double x, double in_min, double in_max, double out_min, double out_max);
         static clock_t transmission_start_time;
         static std::queue<Colors> transmission_queue;
+        void show_antenna();
         std::string antenna_color;
 };
 
