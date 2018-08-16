@@ -53,6 +53,7 @@ void handletraffic()
 
 	int ewait_flag, i;
 	struct timespec start, check;
+	int fileflag = 0;//this is just to show we can send things woow
 
 	clock_gettime(CLOCK_REALTIME, &start);
 
@@ -114,6 +115,12 @@ void handletraffic()
 		#ifndef DEBUG
 			print_cell(my_states);
 		#endif
+		if(my_states.battery_life == 90)//hardcoded af
+		{
+			if(fileflag == 0)
+				send_file(connection_information.drb, &fileflag);
+		}
+		
 		if(my_states.battery_life <= 0)
 		{
 			printf("I guess I will die ¯\\_(ツ)_/¯\n");

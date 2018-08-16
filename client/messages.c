@@ -1,5 +1,5 @@
 #include "header.h"
-
+#include <string.h>
 
 void receive_broadcast(int fd, struct UE_INFO *info, struct MIB_MESSAGE *mib_ret)
 {
@@ -43,7 +43,6 @@ void send_random_access_preamble(struct conn_pair connection, struct UE_INFO *in
 
     rap_msg.RA_RNTI = info->RNTI;
     rap_msg.preamble = preamble_identifier;
-    rap_msg.checksum = preamble_identifier + info->RNTI;
 	
 	int retval = send_msg(connection, &rap_msg, sizeof(struct RANDOM_ACCESS_PREAMBLE));
 
@@ -123,7 +122,7 @@ void receive_rrc_setup(int fd, struct UE_INFO *info)
 		{
 			info->srb_identity = rrc_msg.srb_identity;
 			info->drb_identity = rrc_msg.drb_identity;
-			
+
 			info->uplink_power_control = rrc_msg.uplink_power_control;
 
 			info->ul_sch_config = rrc_msg.ul_sch_config;
@@ -157,6 +156,29 @@ void send_rrc_setup_complete(struct conn_pair connection, struct UE_INFO *info)
 		#endif
 		info->UE_state = CONNECTED;
 	}
+}
+
+void send_file(struct conn_pair connection, int *flag)
+{
+	const char * filename = "BEAUTFUL_BADger.jpg";
+	FILE * my_beautiful_badger = fopen(filename, "rb");
+
+	fseek(my_beautiful_badger, 0, SEEK_END);
+	size_t filesize = ftell(my_beautiful_badger);
+	fseek(my_beautiful_badger, 0, SEEK_SET);
+
+	struct FILE_DATA file_msg;
+
+	memcpy(file_msg.file_name, filename, 20);
+
+	file_msg.size = filesize;
+	printf("FILE SIZE = %ld xD\n", filesize);
+	memset(file_msg.data, 0, 500000);
+	fread(file_msg.data, sizeof(char), filesize, my_beautiful_badger);
+
+	send_msg(connection, &file_msg, sizeof(struct FILE_DATA));
+
+	*flag = 1;
 }
 
 int receive_msg(int fd, void *buffer, size_t buffer_size)
