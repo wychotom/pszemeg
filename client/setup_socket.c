@@ -1,7 +1,7 @@
 #include "header.h"
 
 #include <sys/fcntl.h>
-#include <cerrno>
+#include <errno.h>
 #include <arpa/inet.h>
 
 #define BROADCAST_PORT 20700
