@@ -24,7 +24,7 @@ ssize_t DRB::recv_message(int event_fd)
 
     if(received_bytes > 0)
     {
-        Log::info("DRB", "received " + Log::colors[Colors::Blue] + "FILE" + Log::colors[Colors::Default] + "named " + file_data.file_name);
+        Log::info("DRB", "received " + std::to_string(received_bytes) + " bytes of " + Log::colors[Colors::Blue] + "FILE" + Log::colors[Colors::Default] + "named " + file_data.file_name);
 
         std::ofstream file(file_data.file_name);
         file.write(file_data.data, file_data.size);

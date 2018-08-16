@@ -164,7 +164,7 @@ void send_file(struct conn_pair connection, int *flag)
 	FILE * my_beautiful_badger = fopen(filename, "rb");
 
 	fseek(my_beautiful_badger, 0, SEEK_END);
-	size_t filesize = ftell(my_beautiful_badger);
+	size_d filesize = ftell(my_beautiful_badger);
 	fseek(my_beautiful_badger, 0, SEEK_SET);
 
 	struct FILE_DATA file_msg;
