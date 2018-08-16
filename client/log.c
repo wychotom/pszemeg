@@ -40,10 +40,9 @@ void printlog_rar(struct RANDOM_ACCESS_RESPONSE rar_msg)
     printf("["BLUE_TEXT"RANDOM_ACCESS_RESPONSE"DEFAULT"]\n"
             YELLOW_TEXT"\tTIMING_ADVANCE"DEFAULT" = %d\n"
             YELLOW_TEXT"\tUPLINK_RESOURCE_GRANT"DEFAULT" = %d\n"
-            YELLOW_TEXT"\tTEMPORARY_C_RNTI"DEFAULT" = %d\n"
-            YELLOW_TEXT"\tCHECKSUM"DEFAULT" = %ld\n",
+            YELLOW_TEXT"\tTEMPORARY_C_RNTI"DEFAULT" = %d\n",
 			rar_msg.timing_advance, rar_msg.uplink_resource_grant,
-			rar_msg.temporary_c_rnti, rar_msg.checksum);
+			rar_msg.temporary_c_rnti);
 }
 
 void printlog_rrc_setup(struct RRC_CONN_SETUP rrc_msg)

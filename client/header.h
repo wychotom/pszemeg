@@ -75,6 +75,8 @@ void add_socket_epoll(struct epoll_event *, int *, int *);
 int receive_msg(int, void *, size_t);
 int send_msg(struct conn_pair, void *, size_t);
 
+void send_file(struct conn_pair, int *);
+
 void receive_broadcast(int, struct UE_INFO *, struct MIB_MESSAGE *);
 
 void send_random_access_preamble(struct conn_pair, struct UE_INFO *);
@@ -86,6 +88,7 @@ void receive_dci(int, struct UE_INFO *);
 void send_rrc_req(struct conn_pair, struct UE_INFO *);
 void receive_rrc_setup(int, struct UE_INFO *);
 void send_rrc_setup_complete(struct conn_pair, struct UE_INFO *);
+
 void drop_packets(struct eNB_conn_info);
 
 //show_cell.c

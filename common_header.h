@@ -1,9 +1,9 @@
 #ifndef COMMON_HEADER_H
 #define COMMON_HEADER_H
 
-//#include <time.h>
-
 typedef long int clock_t;
+typedef long unsigned int size_t;
+
 struct MIB_MESSAGE;
 struct RANDOM_ACCESS_PREAMBLE;
 struct RANDOM_ACCESS_RESPONSE;
@@ -45,13 +45,13 @@ struct MIB_MESSAGE
     int pucch_port;
 };
 
-struct RANDOM_ACCESS_PREAMBLE//prach
+struct RANDOM_ACCESS_PREAMBLE
 {
     int RA_RNTI;
-    int preamble; //1337
+    int preamble;
 };
 
-struct RANDOM_ACCESS_RESPONSE//dl-sch
+struct RANDOM_ACCESS_RESPONSE
 {
     int RA_RNTI;
     int timing_advance;
@@ -64,10 +64,10 @@ struct DRX_CONFIG
     int on_duration_timer;
     int short_drx_timer;
     int long_drx_timer;
-    int drx_cycle_type; //0 - short, 1 - long
+    int drx_cycle_type;
 };
 
-struct DCI_MESSAGE//pdcch
+struct DCI_MESSAGE
 {
     int C_RNTI;
     unsigned char format0_a_flag;
@@ -95,7 +95,7 @@ struct UE_INFO
     int battery_life;
 };
 
-struct UPLINK_CONTROL_INFORMATION//pucch
+struct UPLINK_CONTROL_INFORMATION
 {
     struct UE_INFO ue_info;
     int C_RNTI;
@@ -104,14 +104,14 @@ struct UPLINK_CONTROL_INFORMATION//pucch
     int cqi;
 };
 
-struct RRC_CONN_REQUEST//ul-sch
+struct RRC_CONN_REQUEST
 {
     int C_RNTI;
     int UE_identity;
     int establishment_cause;
 };
 
-struct RRC_CONN_SETUP//dl-sch
+struct RRC_CONN_SETUP
 {
     int C_RNTI;
     int srb_identity;
@@ -123,7 +123,7 @@ struct RRC_CONN_SETUP//dl-sch
     struct DRX_CONFIG uplink_power_control;
 };
 
-struct RRC_CONN_SETUP_COMPLETE//dl-sch
+struct RRC_CONN_SETUP_COMPLETE
 {
     int C_RNTI;
     int PLMN_identity;
@@ -135,11 +135,11 @@ struct RRC_CONN_SETUP_COMPLETE//dl-sch
     int uplink_power_control;
 };
 
-struct FILE_DATA//drb
+struct FILE_DATA
 {
     char file_name[20];
-    unsigned long int size;
-    char data[10000000];
+    size_t size;
+    char data[5000000];
 };
 
 #endif

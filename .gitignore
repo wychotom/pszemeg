@@ -3,6 +3,7 @@
 **/cmake-build-debug/**
 *.out
 *.o
+*.jpg
 CMakeLists.txt
 CMakeCache.txt
 **/CMakeFiles/**
