@@ -16,46 +16,49 @@ void Antenna::render_antenna()
     clock_t now = clock();
     double elapsed_secs = double(now - Antenna::transmission_start_time) / CLOCKS_PER_SEC;
 
-    if(elapsed_secs > 0.1)
+    if(elapsed_secs > 0.4)
     {
         antenna_color = Log::colors[Colors::Default];
     }
 
+    std::string antenna =
+    antenna_color + "                   ,                          .                   \n" +
+    antenna_color + "                 :;                            ;;                 \n" +
+    antenna_color + "                ;,  ;:                      :;  .;                \n" +
+    antenna_color + "               ,;  ;,  ;                   ;  .;  :,               \n" +
+    antenna_color + "               '  .;  ;.  .     " + Log::colors[Colors::Red] + ",,." + Log::colors[Colors::Default] + "" + antenna_color + "     .  .;  ;.  '               \n" +
+    antenna_color + "               '  ;.  '  '    " + Log::colors[Colors::Red] + "'''''''" + Log::colors[Colors::Default] + "" + antenna_color + "    '  '  `;  '`              \n" +
+    antenna_color + "               '  ;.  '  '`  " + Log::colors[Colors::Red] + "'''''''''" + Log::colors[Colors::Default] + "" + antenna_color + "  `'  '  `;  '               \n" +
+    antenna_color + "               '  `'  :,     " + Log::colors[Colors::Red] + "'''''''''" + Log::colors[Colors::Default] + "" + antenna_color + "    ,   ,;  '`                 \n" +
+    antenna_color + "               .;  ::  ::     " + Log::colors[Colors::Default] + "," + Log::colors[Colors::Red] + "'''''" + Log::colors[Colors::Default] + "," + antenna_color + "    ::  :;  ;.               \n" +
+    antenna_color + "                ::  ,;        " + Log::colors[Colors::Default] + "''' '''" + antenna_color + "       ;,  ::                " + Log::colors[Colors::Default] + "\n" +
+    antenna_color + "                 ,;          " + Log::colors[Colors::Default] + ":'': ,'';" + antenna_color + "         ;,                 " + Log::colors[Colors::Default] + "\n" +
+    "                             ''' `''''                            \n" +
+    "                            ;'':'''''''                           \n" +
+    "                           `''''''  ;''`                          \n" +
+    "                           '''';     '''                          \n" +
+    "                          ,'''';     ;'':                         \n" +
+    "                          '''.'''',   '''                         \n" +
+    "                         :'':   ;'''; ,'';                        \n" +
+    "                         '''      :'''''''                        \n" +
+    "                        ;''.         ''''''                       \n" +
+    "                       `'''            ;'''.                      \n" +
+    "                       '''           ,''''''                      \n" +
+    "                      ,'';         :'''' ;'':                     \n" +
+    "                      '''        ;''':    '''                     \n" +
+    "                     ;'',     `'''':      ,'';                    \n" +
+    "                     '''    `''''.         '''                    \n" +
+    "                    '''.  ,''''            `'''                   \n" +
+    "                   `''' ;''''               ;''.                  \n" +
+    "                   ''';''':                  '''                  \n" +
+    "                  ,''''',                    :'':                 \n" +
+    "                  ''''.                       '''                 \n" +
+    "                 ;'',                         .'';                \n" +
+    "                 '''                           '''`               \n" +
+    "                 `:`                           `:`                \n";
+
     std::cout << "\033[35A\r";
-    std::cout << antenna_color << "                   ,                          .                   " << std::endl;
-    std::cout << antenna_color << "                 :;                            ;;                 " << std::endl;
-    std::cout << antenna_color << "                ;,  ;:                      :;  .;                " << std::endl;
-    std::cout << antenna_color << "               ,;  ;,  ;                   ;  .;  :,               " << std::endl;
-    std::cout << antenna_color << "               '  .;  ;.  .     " << Log::colors[Colors::Red] << ",,." << Log::colors[Colors::Default] << "" << antenna_color << "     .  .;  ;.  '               " << std::endl;
-    std::cout << antenna_color << "               '  ;.  '  '    " << Log::colors[Colors::Red] << "'''''''" << Log::colors[Colors::Default] << "" << antenna_color << "    '  '  `;  '`              " << std::endl;
-    std::cout << antenna_color << "               '  ;.  '  '`  " << Log::colors[Colors::Red] << "'''''''''" << Log::colors[Colors::Default] << "" << antenna_color << "  `'  '  `;  '               " << std::endl;
-    std::cout << antenna_color << "               '  `'  :,     " << Log::colors[Colors::Red] << "'''''''''" << Log::colors[Colors::Default] << "" << antenna_color << "    ,   ,;  '`                 " << std::endl;
-    std::cout << antenna_color << "               .;  ::  ::     " << Log::colors[Colors::Default] << "," << Log::colors[Colors::Red] << "'''''" << Log::colors[Colors::Default] << "," << antenna_color << "    ::  :;  ;.               " << std::endl;
-    std::cout << antenna_color << "                ::  ,;        " << Log::colors[Colors::Default] << "''' '''" << antenna_color << "       ;,  ::                " << Log::colors[Colors::Default] << std::endl;
-    std::cout << antenna_color << "                 ,;          " << Log::colors[Colors::Default] << ":'': ,'';" << antenna_color << "         ;,                 " << Log::colors[Colors::Default] << std::endl;
-    std::cout << "                             ''' `''''                            " << std::endl;
-    std::cout << "                            ;'':'''''''                           " << std::endl;
-    std::cout << "                           `''''''  ;''`                          " << std::endl;
-    std::cout << "                           '''';     '''                          " << std::endl;
-    std::cout << "                          ,'''';     ;'':                         " << std::endl;
-    std::cout << "                          '''.'''',   '''                         " << std::endl;
-    std::cout << "                         :'':   ;'''; ,'';                        " << std::endl;
-    std::cout << "                         '''      :'''''''                        " << std::endl;
-    std::cout << "                        ;''.         ''''''                       " << std::endl;
-    std::cout << "                       `'''            ;'''.                      " << std::endl;
-    std::cout << "                       '''           ,''''''                      " << std::endl;
-    std::cout << "                      ,'';         :'''' ;'':                     " << std::endl;
-    std::cout << "                      '''        ;''':    '''                     " << std::endl;
-    std::cout << "                     ;'',     `'''':      ,'';                    " << std::endl;
-    std::cout << "                     '''    `''''.         '''                    " << std::endl;
-    std::cout << "                    '''.  ,''''            `'''                   " << std::endl;
-    std::cout << "                   `''' ;''''               ;''.                  " << std::endl;
-    std::cout << "                   ''';''':                  '''                  " << std::endl;
-    std::cout << "                  ,''''',                    :'':                 " << std::endl;
-    std::cout << "                  ''''.                       '''                 " << std::endl;
-    std::cout << "                 ;'',                         .'';                " << std::endl;
-    std::cout << "                 '''                           '''`               " << std::endl;
-    std::cout << "                 `:`                           `:`                " << std::endl << std::flush;
+    std::cout << antenna << std::flush;
 }
 
 void Antenna::set_transmitting()
