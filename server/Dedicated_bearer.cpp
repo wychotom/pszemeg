@@ -142,8 +142,7 @@ void Dedicated_bearer::read_incoming_data(int event_fd)
         {
             delete *first_client_occurence_iterator;
             clients.erase(first_client_occurence_iterator);
+            close(event_fd);
         }
-
-        close(event_fd);
     }
 }
