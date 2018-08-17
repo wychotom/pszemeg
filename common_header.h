@@ -32,7 +32,9 @@ enum ue_states
     RRC_REQUEST,
     RRC_SETUP,
     RRC_SETUP_COMPLETE,
-    CONNECTED
+    CONNECTED,
+    CONN_RECEIVE,
+    CONN_SENDING
 };
 
 struct MIB_MESSAGE
@@ -139,7 +141,7 @@ struct FILE_DATA
 {
     char file_name[20];
     size_t size;
-    char data[5000000];
+    unsigned char data[200000];
 };
 
 #endif

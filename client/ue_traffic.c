@@ -25,8 +25,11 @@ void handletraffic()
 		.srb.port = 0,
 		.srb.sock = 0,
 
+		.drb.port = 0,
+		.drb.sock = 0,
+
 		.dl_sch.port = 0,
-		.dl_sch.sock = 0	
+		.dl_sch.sock = 0
 	};
 
 	struct UE_INFO my_states;
@@ -64,7 +67,7 @@ void handletraffic()
 	while(1)
 	{
 		clock_gettime(CLOCK_REALTIME, &check);
-		if(my_states.UE_state >= 5)
+		if(my_states.UE_state >= RRC_SETUP_COMPLETE)
 			handle_drx(&my_states, connection_information.pucch, &start.tv_sec, check.tv_sec);
 
 		ewait_flag = epoll_wait(efd, events, max_epoll_events, -1);
@@ -113,17 +116,19 @@ void handletraffic()
 		}
 		
 		#ifndef DEBUG
-			print_cell(my_states);
+			print_cell(&my_states);
 		#endif
 		if(my_states.battery_life == 90)//hardcoded af
 		{
 			if(fileflag == 0)
+			{
 				send_file(connection_information.drb, &fileflag);
+				my_states.UE_state = CONN_SENDING;
+			}
 		}
 		
 		if(my_states.battery_life <= 0)
 		{
-			printf("I guess I will die ¯\\_(ツ)_/¯\n");
 			exit(EXIT_SUCCESS);
 		}
 	}

@@ -11,6 +11,9 @@ void receive_broadcast(int fd, struct UE_INFO *info, struct MIB_MESSAGE *mib_ret
 		if(info->UE_state == INIT_BROADCAST)
 			info->UE_state = RANDOM_ACCESS_PREAMBLE;
 
+		if(info->UE_state >= CONNECTED)
+			info->UE_state = CONN_RECEIVE;
+
 		mib_ret->broadcast_port = mib_msg.broadcast_port;
 		mib_ret->prach_port = mib_msg.prach_port;
 		mib_ret->dl_sch_port = mib_msg.dl_sch_port;
@@ -29,6 +32,9 @@ void receive_dci(int fd, struct UE_INFO *info)
 	int retval = receive_msg(fd, &dci_msg, sizeof(struct DCI_MESSAGE));
 	if(retval == 0)
 	{
+		if(info->UE_state == CONNECTED)
+			info->UE_state = CONN_RECEIVE;
+
 		#ifdef DEBUG
 			printlog(dci_msg);
 		#endif
@@ -81,6 +87,9 @@ void send_uci(struct conn_pair connection, struct UE_INFO *info)
 	uci_msg.scheduling_request = 1;
 	uci_msg.harq_ack = 1;
 	uci_msg.cqi = 1;
+
+	if(info->UE_state == CONNECTED)
+		info->UE_state = CONN_SENDING;
 
 	if(send_msg(connection, &uci_msg, sizeof(struct UPLINK_CONTROL_INFORMATION)) == 0)
 	{
@@ -160,23 +169,32 @@ void send_rrc_setup_complete(struct conn_pair connection, struct UE_INFO *info)
 
 void send_file(struct conn_pair connection, int *flag)
 {
-	const char * filename = "BEAUTFUL_BADger.jpg";
-	FILE * my_beautiful_badger = fopen(filename, "rb");
+	const char filename[] = "BEAUTFUL_BADger.jpg";
 
-	fseek(my_beautiful_badger, 0, SEEK_END);
-	size_t filesize = ftell(my_beautiful_badger);
-	fseek(my_beautiful_badger, 0, SEEK_SET);
+	FILE * fp = fopen(filename, "rb");
+
+	if(fp == NULL)
+	{
+		*flag = 1;
+		fclose(fp);
+		return;
+	}
+
+	fseek(fp, 0, SEEK_END);
+	size_t filesize = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
 
 	struct FILE_DATA file_msg;
 
 	memcpy(file_msg.file_name, filename, 20);
 
 	file_msg.size = filesize;
-	memset(file_msg.data, 0, 500000);
-	fread(file_msg.data, sizeof(char), filesize, my_beautiful_badger);
+	memset(file_msg.data, 0, 200000);
+	fread(file_msg.data, sizeof(char), filesize, fp);
 
 	send_msg(connection, &file_msg, sizeof(struct FILE_DATA));
 
+	fclose(fp);
 	*flag = 1;
 }
 
