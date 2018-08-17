@@ -30,7 +30,7 @@ void eNodeB::start()
     while(eNodeB::is_running)
     {
         #ifndef DEBUG
-            antenna.render_antenna();
+            antenna.render_antenna(clients.size());
         #endif
 
         this->pbch.run_timer_job();

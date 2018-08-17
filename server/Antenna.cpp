@@ -11,7 +11,7 @@ std::queue<Colors> Antenna::transmission_queue;
 Antenna::Antenna()
 = default;
 
-void Antenna::render_antenna()
+void Antenna::render_antenna(int clients_count)
 {
     clock_t now = clock();
     double elapsed_secs = double(now - transmission_start_time) / CLOCKS_PER_SEC;
@@ -28,7 +28,7 @@ void Antenna::render_antenna()
         }
 
         transmission_start_time = clock();
-        show_antenna();
+        show_antenna(clients_count);
     }
 
 }
@@ -43,7 +43,7 @@ double Antenna::map(double x, double in_min, double in_max, double out_min, doub
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-void Antenna::show_antenna()
+void Antenna::show_antenna(int clients_count)
 {
     std::string antenna =
             antenna_color + "                   ,                          .                   \n" +
@@ -80,6 +80,8 @@ void Antenna::show_antenna()
             "                 ;'',                         .'';                \n" +
             "                 '''                           '''`               \n" +
             "                 `:`                           `:`                \n";
+
+    antenna += "Clients count: " + std::to_string(clients_count) + "\n";
 
     std::cout << "\033[35A\r" << antenna << std::flush;
 }
