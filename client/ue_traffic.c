@@ -118,7 +118,7 @@ void handletraffic()
 		if(my_states.battery_life == 90)//hardcoded af
 		{
 			if(fileflag == 0)
-				send_file(connection_information.drb, &fileflag);
+				send_file(connection_information.drb, &my_states, &fileflag);
 		}
 		
 		if(my_states.battery_life <= 0)
