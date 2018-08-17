@@ -64,6 +64,10 @@ void eNodeB::start()
             }
         }
     }
+
+    #ifdef TRAVIS
+        eNodeB::is_running = false;
+    #endif
 }
 
 eNodeB::~eNodeB()
