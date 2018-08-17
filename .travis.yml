@@ -11,5 +11,5 @@ install:
   - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
 
 script: 
-  - g++ server/*.cpp -std=c++17 -o server
-  - ./server
+  - g++ server/*.cpp -std=c++17 -o server.o
+  - ./server.o
