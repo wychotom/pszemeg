@@ -23,6 +23,7 @@ class UE
         void set_timing_advance(int timing_advance);
         void set_uplink_resource_grant(int uplink_resource_grant);
         void set_uplink_power_control(struct DRX_CONFIG drx_config);
+        DRX_CONFIG get_uplink_power_control();
         void set_pusch_config(int ul_sch_config);
         void set_srb_identity(int srb_identity);
         void set_drb_identity(int drb_identity);

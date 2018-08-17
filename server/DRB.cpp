@@ -24,23 +24,21 @@ ssize_t DRB::recv_message(int event_fd)
 
     if(received_bytes > 0)
     {
-        Log::info("DRB", "received " + std::to_string(file_data.size) + " bytes of " + Log::colors[Colors::Blue] + "FILE " + Log::colors[Colors::Default] + "named " + file_data.file_name);
+        Log::info("DRB", "received " + std::to_string(file_data.size) + " bytes of " + Log::colors[Colors::Blue] +
+            "FILE " + Log::colors[Colors::Default] + "named " + file_data.file_name + " from " + std::to_string(file_data.C_RNTI));
 
         std::ofstream file(file_data.file_name);
         file.write(file_data.data, file_data.size);
         file.close();
 
-        auto first_client_occurrence_iterator = std::find_if(clients.begin(), clients.end(), [this, &csc](UE* client) {
-            return client->C_RNTI == csc.C_RNTI;
+        auto first_client_occurrence_iterator = std::find_if(clients.begin(), clients.end(), [this, &file_data](UE* client) {
+            return client->C_RNTI == file_data.C_RNTI;
         });
 
         if (first_client_occurrence_iterator != clients.end())
         {
-            (*first_client_occurrence_iterator)->set_socket_fd(event_fd);
             (*first_client_occurrence_iterator)->set_last_response_time(clock());
         }
-
-
     }
 
     return received_bytes;

@@ -36,6 +36,11 @@ void UE::set_uplink_power_control(struct DRX_CONFIG drx_config)
     UE::uplink_power_control = drx_config;
 }
 
+DRX_CONFIG UE::get_uplink_power_control()
+{
+    return uplink_power_control;
+}
+
 void UE::set_pusch_config(int ul_sch_config)
 {
     UE::ul_sch_config = ul_sch_config;
