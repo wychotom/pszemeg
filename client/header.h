@@ -92,7 +92,7 @@ void send_rrc_setup_complete(struct conn_pair, struct UE_INFO *);
 void drop_packets(struct eNB_conn_info);
 
 //show_cell.c
-void print_cell(struct UE_INFO);
+void print_cell(struct UE_INFO *);
 void extract_battery(int, char *);
 void print_initial_offset();
 

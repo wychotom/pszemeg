@@ -45,5 +45,6 @@ void Downlink_channel::read_incoming_data(int socket_fd)
     if(receive_message(socket_fd) > 0)
     {
         this->antenna.set_transmitting(Colors::Blue);
+
     }
 }

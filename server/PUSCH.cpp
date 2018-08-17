@@ -31,6 +31,7 @@ ssize_t PUSCH::receive_message(int event_fd)
 
         if (first_client_occurrence_iterator != clients.end())
         {
+            (*first_client_occurrence_iterator)->set_last_response_time(clock());
             (*first_client_occurrence_iterator)->set_action(Action_to_perform::rrc_connection_response);
             ue_to_handle.push_back(*first_client_occurrence_iterator);
         }

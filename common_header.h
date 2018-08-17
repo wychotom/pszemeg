@@ -32,7 +32,9 @@ enum ue_states
     RRC_REQUEST,
     RRC_SETUP,
     RRC_SETUP_COMPLETE,
-    CONNECTED
+    CONNECTED,
+    CONN_RECEIVE,
+    CONN_SENDING
 };
 
 struct MIB_MESSAGE

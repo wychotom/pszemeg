@@ -37,10 +37,13 @@ ssize_t PUCCH::receive_message(int event_fd)
             clients[index]->set_timing_advance(uci.ue_info.timing_advance);
             clients[index]->set_UE_state(uci.ue_info.UE_state);
             clients[index]->set_pusch_config(uci.ue_info.ul_sch_config);
+            uci.ue_info.uplink_power_control.long_drx_timer = 10;
             clients[index]->set_uplink_power_control(uci.ue_info.uplink_power_control);
+
             clients[index]->set_uplink_resource_grant(uci.ue_info.uplink_resource_grant);
             clients[index]->set_battery_life(uci.ue_info.battery_life);
             clients[index]->set_sleep_start(clock());
+            clients[index]->set_last_response_time(clock());
         }
 
     }

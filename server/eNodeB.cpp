@@ -10,6 +10,8 @@
 
 #include <vector>
 #include <iostream>
+#include <unistd.h>
+#include <algorithm>
 
 bool eNodeB::is_running = true;
 
@@ -48,6 +50,19 @@ void eNodeB::start()
         this->srb.handle_connections();
 
         this->drb.handle_connections();
+
+        for(auto client : clients)
+        {
+            double elapsed_secs = double(clock()  - client->get_last_response_time()) / CLOCKS_PER_SEC;
+
+            if(elapsed_secs > 3 && client->get_socket_fd() == 0) //timeout
+            {
+                clients.erase(std::find_if(clients.begin(), clients.end(), [&client](UE* ue)
+                    {
+                        return ue == client;
+                    }));
+            }
+        }
     }
 }
 
