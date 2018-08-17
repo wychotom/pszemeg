@@ -25,8 +25,11 @@ Uplink_channel::Uplink_channel(int port, double send_frequency) : last_event_tim
 
     this->server_addr.sin_family = AF_INET;
     this->server_addr.sin_port = htons(static_cast<uint16_t>(this->port));
-    //this->server_addr.sin_addr.s_addr = inet_addr("192.168.40.255");
     this->server_addr.sin_addr.s_addr = htons(INADDR_ANY);
+
+    #ifdef LANCONN
+        this->server_addr.sin_addr.s_addr = inet_addr("192.168.40.255");
+    #endif
 
     /* socket creation */
     this->socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
