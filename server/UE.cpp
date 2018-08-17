@@ -36,6 +36,11 @@ void UE::set_uplink_power_control(struct DRX_CONFIG drx_config)
     UE::uplink_power_control = drx_config;
 }
 
+DRX_CONFIG UE::get_uplink_power_control()
+{
+    return uplink_power_control;
+}
+
 void UE::set_pusch_config(int ul_sch_config)
 {
     UE::ul_sch_config = ul_sch_config;
@@ -79,6 +84,16 @@ void UE::set_battery_life(int battery_life)
 void UE::set_sleep_start(clock_t sleep_start)
 {
     UE::sleep_start = sleep_start;
+}
+
+clock_t UE::get_last_response_time() const
+{
+    return last_response_time;
+}
+
+void UE::set_last_response_time(clock_t last_response_time)
+{
+    UE::last_response_time = last_response_time;
 }
 
 bool UE::is_transmission_possible()

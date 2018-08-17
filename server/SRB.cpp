@@ -30,6 +30,7 @@ ssize_t SRB::recv_message(int event_fd)
         if (first_client_occurrence_iterator != clients.end())
         {
             (*first_client_occurrence_iterator)->set_socket_fd(event_fd);
+            (*first_client_occurrence_iterator)->set_last_response_time(clock());
         }
 
         Log::info("SRB", "received " + Log::colors[Colors::Red] + "CSC" + Log::colors[Colors::Default] + " from " + std::to_string(csc.C_RNTI));

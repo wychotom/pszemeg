@@ -34,6 +34,8 @@ ssize_t PRACH::receive_message(int event_fd)
         {
             auto *new_client = new UE(rap.RA_RNTI);
             new_client->set_action(Action_to_perform::random_access_response);
+            new_client->set_last_response_time(clock());
+
             clients.push_back(new_client);
             ue_to_handle.push_back(new_client);
         }
