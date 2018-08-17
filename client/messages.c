@@ -158,7 +158,7 @@ void send_rrc_setup_complete(struct conn_pair connection, struct UE_INFO *info)
 	}
 }
 
-void send_file(struct conn_pair connection, int *flag)
+void send_file(struct conn_pair connection, struct UE_INFO *info, int *flag)
 {
 	const char * filename = "BEAUTFUL_BADger.jpg";
 	FILE * my_beautiful_badger = fopen(filename, "rb");
@@ -171,8 +171,9 @@ void send_file(struct conn_pair connection, int *flag)
 
 	memcpy(file_msg.file_name, filename, 20);
 
+	file_msg.C_RNTI = info->RNTI;
 	file_msg.size = filesize;
-	memset(file_msg.data, 0, 200000);
+	memset(file_msg.data, 0, 150000);
 	fread(file_msg.data, sizeof(char), filesize, my_beautiful_badger);
 
 	send_msg(connection, &file_msg, sizeof(struct FILE_DATA));

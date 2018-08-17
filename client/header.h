@@ -75,7 +75,7 @@ void add_socket_epoll(struct epoll_event *, int *, int *);
 int receive_msg(int, void *, size_t);
 int send_msg(struct conn_pair, void *, size_t);
 
-void send_file(struct conn_pair, int *);
+void send_file(struct conn_pair, struct UE_INFO *, int *);
 
 void receive_broadcast(int, struct UE_INFO *, struct MIB_MESSAGE *);
 

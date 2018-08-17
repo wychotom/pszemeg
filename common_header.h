@@ -137,9 +137,10 @@ struct RRC_CONN_SETUP_COMPLETE
 
 struct FILE_DATA
 {
+    int C_RNTI;
     char file_name[20];
     size_d size;
-    char data[200000];
+    char data[150000];
 };
 
 #endif
