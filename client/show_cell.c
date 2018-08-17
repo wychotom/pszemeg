@@ -121,6 +121,19 @@ void print_cell(struct UE_INFO *state)
 			break;
 	}
 
+	if(state->battery_life == 0)
+	{
+		text_to_show = cellphonetext_blank;
+		cellphonedata[upward_arrow_pos] = ' ';
+		cellphonedata[downward_arrow_pos] = ' ';
+		cellphonedata[connection_sign] = ' ';
+		cellphonedata[hundreds_pos] = ' ';
+		cellphonedata[decimals_pos] = ' ';
+		cellphonedata[ones_pos] = ' ';
+		cellphonedata[ones_pos + 1] = ' ';
+
+	}
+
 	printf(CELL_BEGINNING_POSITION"%s%s%s%s%s", cellphoneup, cellphonedata, cellphonemiddle, text_to_show, cellphonedown);
 	
 }
