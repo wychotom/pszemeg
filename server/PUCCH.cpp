@@ -41,6 +41,7 @@ ssize_t PUCCH::receive_message(int event_fd)
             clients[index]->set_uplink_resource_grant(uci.ue_info.uplink_resource_grant);
             clients[index]->set_battery_life(uci.ue_info.battery_life);
             clients[index]->set_sleep_start(clock());
+            clients[index]->set_last_response_time(clock());
         }
 
     }

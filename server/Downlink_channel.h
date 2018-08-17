@@ -2,6 +2,7 @@
 #define SERVER_DOWNLINK_CHANNEL_H
 
 #include "Antenna.h"
+#include "UE.h"
 
 #include <netinet/in.h>
 #include <sys/epoll.h>

@@ -31,6 +31,9 @@ class UE
         int get_socket_fd() const;
         void set_socket_fd(int socket_fd);
         void set_sleep_start(clock_t sleep_start);
+        clock_t get_last_response_time() const;
+        void set_last_response_time(clock_t last_response_time);
+
         bool is_transmission_possible();
 
     private:
@@ -45,6 +48,7 @@ class UE
         int srb_identity;
         int drb_identity;
         int battery_life;
+        clock_t last_response_time;
 };
 
 #endif //SERVER_UE_H

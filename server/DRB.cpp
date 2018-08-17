@@ -29,6 +29,18 @@ ssize_t DRB::recv_message(int event_fd)
         std::ofstream file(file_data.file_name);
         file.write(file_data.data, file_data.size);
         file.close();
+
+        auto first_client_occurrence_iterator = std::find_if(clients.begin(), clients.end(), [this, &csc](UE* client) {
+            return client->C_RNTI == csc.C_RNTI;
+        });
+
+        if (first_client_occurrence_iterator != clients.end())
+        {
+            (*first_client_occurrence_iterator)->set_socket_fd(event_fd);
+            (*first_client_occurrence_iterator)->set_last_response_time(clock());
+        }
+
+
     }
 
     return received_bytes;

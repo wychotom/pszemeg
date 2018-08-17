@@ -81,6 +81,16 @@ void UE::set_sleep_start(clock_t sleep_start)
     UE::sleep_start = sleep_start;
 }
 
+clock_t UE::get_last_response_time() const
+{
+    return last_response_time;
+}
+
+void UE::set_last_response_time(clock_t last_response_time)
+{
+    UE::last_response_time = last_response_time;
+}
+
 bool UE::is_transmission_possible()
 {
     clock_t now = clock();
